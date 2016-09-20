@@ -24,29 +24,6 @@
     overflow-x: hidden;
 }
 
-@import url('http://getbootstrap.com/dist/css/bootstrap.css');
-.glyphicon-random {
-    fill: #fff;
-    -webkit-animation: animation-button 20000ms infinite;
-    -moz-animation: animation-button 20000ms infinite;
-    -o-animation: animation-button 20000ms infinite;
-    animation: animation-button 20000ms infinite;
-}
-
-@-webkit-keyframes animation-button {
-    0%   {color:red; }
-    25%  {color:yellow; }
-    50%  {color:blue; }
-    75%  {color:green; }
-    100% {color:red; }
-}
-@keyframes animation-button {
-    0%   {color:red; }
-    25%  {color:yellow; }
-    50%  {color:blue; }
-    75%  {color:green; }
-    100% {color:red; }
-}
 
     </style>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
@@ -79,7 +56,11 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-    
+
+    <a class="navbar-brand" data-toggle="tooltip" title="Load new shop in new tab" href="#" onclick="openStuff();">
+<span style="color:#CCCCCC" class="glyphicon glyphicon-new-window"></span>
+</a>
+
     <a class="navbar-brand" data-toggle="tooltip" title="Load new shop" href="#">
     <span id="btn" class="glyphicon glyphicon-random"></span>
     </a>
@@ -98,7 +79,21 @@
        <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script type="text/javascript">
- 
+
+ // URLs to open in new tab
+var links = [
+    ];
+
+openStuff = function () {
+    // get a random number between 0 and the number of links
+    var randIdx = Math.random() * links.length;
+    // round it, so it can be used as array index
+    randIdx = parseInt(randIdx, 10);
+    // construct the link to be opened
+    var link = 'http://' + links[randIdx];    // open it in a new window
+    window.open(link);
+};
+
 
         var cat1 = [
         "https://uselessfacts.net/",
@@ -128,3 +123,6 @@
 
 </body>
 </html>
+
+
+
