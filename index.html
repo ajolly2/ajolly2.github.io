@@ -14,155 +14,111 @@
     <!-- Custom styles for this template -->
     <link href="sticky-footer-navbar.css" rel="stylesheet">
     <style>
-        body{
-            padding-top: 50px;
-        }
-        .row{
-    margin-left:0px;
-    margin-right:0px;
+       
+   height: 100%;
 }
 
-#wrapper {
-    padding-left: 70px;
-    transition: all .4s ease 0s;
-    height: 100%
+.wrapper, .row {
+   height: 100%;
+   margin-left:0;
+   margin-right:0;
 }
 
-#sidebar-wrapper {
-    margin-left: -150px;
-    left: 70px;
-    width: 150px;
-    background: #222;
-    position: fixed;
-    height: 100%;
-    z-index: 10000;
-    transition: all .4s ease 0s;
+.wrapper:before, .wrapper:after,
+.column:before, .column:after {
+    content: "";
+    display: table;
 }
 
-.sidebar-nav {
-    display: block;
-    float: left;
-    width: 150px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.wrapper:after,
+.column:after {
+    clear: both;
 }
-#page-content-wrapper {
+
+#sidebar {
+    background-color: #eee;
     padding-left: 0;
-    margin-left: 0;
-    width: 100%;
-    height: auto;
-}
-#wrapper.active {
-    padding-left: 150px;
-}
-#wrapper.active #sidebar-wrapper {
-    left: 150px;
-}
-
-#page-content-wrapper {
-  width: 100%;
-}
-
-#sidebar_menu li a, .sidebar-nav li a {
-    color: #999;
-    display: block;
     float: left;
-    text-decoration: none;
-    width: 150px;
-    background: #252525;
-    border-top: 1px solid #373737;
-    border-bottom: 1px solid #1A1A1A;
-    -webkit-transition: background .5s;
-    -moz-transition: background .5s;
-    -o-transition: background .5s;
-    -ms-transition: background .5s;
-    transition: background .5s;
-}
-.sidebar_name {
-    padding-top: 25px;
-    color: #fff;
-    opacity: .7;
+    min-height: 100%;
 }
 
-.sidebar-nav li {
-  line-height: 40px;
-  text-indent: 20px;
+#sidebar .collapse.in {
+    display: inline;
 }
 
-.sidebar-nav li a {
-  color: #999999;
-  display: block;
-  text-decoration: none;
+#sidebar > .nav>li>a {
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-.sidebar-nav li a:hover {
-  color: #fff;
-  background: rgba(255,255,255,0.2);
-  text-decoration: none;
+#main {
+    padding: 15px;
+    left: 0;
 }
 
-.sidebar-nav li a:active,
-.sidebar-nav li a:focus {
-  text-decoration: none;
-}
+/*
+ * off canvas sidebar
+ * --------------------------------------------------
+ */
+@media screen and (max-width: 768px) {
+    #sidebar {
+        min-width: 44px;
+    }
+    
+    #main {
+        width: 1%;
+        left: 0;
+    }
+    
+    #sidebar .visible-xs {
+       display:inline !important;
+    }
+    
+    .row-offcanvas {
+       position: relative;
+       -webkit-transition: all 0.4s ease-in-out;
+       -moz-transition: all 0.4s ease-in-out;
+       transition: all 0.4s ease-in-out;
+    }
+    
+    .row-offcanvas-left.active {
+       left: 45%;
+    }
+    
+    .row-offcanvas-left.active .sidebar-offcanvas {
+       left: -45%;
+       position: absolute;
+       top: 0;
+       width: 45%;
+    }
+} 
+ 
+ 
+@media screen and (min-width: 768px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all 0.25s ease-out;
+    -moz-transition: all 0.25s ease-out;
+    transition: all 0.25s ease-out;
+  }
 
-.sidebar-nav > .sidebar-brand {
-  height: 65px;
-  line-height: 60px;
-  font-size: 18px;
-}
+  .row-offcanvas-left.active {
+    left: 3%;
+  }
 
-.sidebar-nav > .sidebar-brand a {
-  color: #999999;
+  .row-offcanvas-left.active .sidebar-offcanvas {
+    left: -3%;
+    position: absolute;
+    top: 0;
+    width: 3%;
+    text-align: center;
+    min-width:42px;
+  }
+  
+  #main {
+    left: 0;
+  }
 }
-
-.sidebar-nav > .sidebar-brand a:hover {
-  color: #fff;
-  background: none;
-}
-
-#main_icon
-{
-    float:right;
-   padding-right: 65px;
-   padding-top:20px;
-}
-.sub_icon
-{
-    float:right;
-   padding-right: 65px;
-   padding-top:10px;
-}
-.content-header {
-  height: 65px;
-  line-height: 65px;
-}
-
-.content-header h1 {
-  margin: 0;
-  margin-left: 20px;
-  line-height: 65px;
-  display: inline-block;
-}
-
-@media (max-width:767px) {
-    #wrapper {
-    padding-left: 70px;
-    transition: all .4s ease 0s;
-}
-#sidebar-wrapper {
-    left: 70px;
-}
-#wrapper.active {
-    padding-left: 150px;
-}
-#wrapper.active #sidebar-wrapper {
-    left: 150px;
-    width: 150px;
-    transition: all .4s ease 0s;
-}
-        }
 
     </style>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
@@ -176,38 +132,51 @@
 </head>
 
 <body>
-<div id="wrapper" class="active">
-      
-      <!-- Sidebar -->
-            <!-- Sidebar -->
-      <div id="sidebar-wrapper">
-      <ul id="sidebar_menu" class="sidebar-nav">
-           <li class="sidebar-brand"><a id="menu-toggle" href="#">Menu<span id="main_icon" class="glyphicon glyphicon-align-justify"></span></a></li>
-      </ul>
-        <ul class="sidebar-nav" id="sidebar">     
-          <li><a>Link1<span class="sub_icon glyphicon glyphicon-link"></span></a></li>
-          <li><a>link2<span class="sub_icon glyphicon glyphicon-link"></span></a></li>
-        </ul>
-      </div>
-          
-      <!-- Page content -->
-      <div id="page-content-wrapper">
-        <!-- Keep all page content within the page-content inset div! -->
-        <div class="page-content inset">
-          <div class="row">
-              <div class="col-md-12">
-              <p class="well lead">An Experiment using the sidebar template from startbootstrap.com which I integrated in my website (<a href="http://animeshmanglik.name">animeshmanglik.name</a>)</p>
-              <p class="well lead">Click on the Menu to Toggle Sidebar . Hope you enjoy it!</p> 
-            </div>
-          </div>
+<div class="wrapper">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <!-- sidebar -->
+        <div class="column col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
+            <ul class="nav" id="menu">
+                <li><a href="#"><i class="fa fa-list-alt"></i> <span class="collapse in hidden-xs">Link 1</span></a></li>
+                <li><a href="#"><i class="fa fa-list"></i> <span class="collapse in hidden-xs">Stories</span></a></li>
+                <li><a href="#"><i class="fa fa-paperclip"></i> <span class="collapse in hidden-xs">Saved</span></a></li>
+                <li><a href="#"><i class="fa fa-refresh"></i> <span class="collapse in hidden-xs">Refresh</span></a></li>
+                <li>
+                    <a href="#" data-target="#item1" data-toggle="collapse"><i class="fa fa-list"></i> <span class="collapse in hidden-xs">Menu <span class="caret"></span></span></a>
+                    <ul class="nav nav-stacked collapse left-submenu" id="item1">
+                        <li><a href="google.com">View One</a></li>
+                        <li><a href="gmail.com">View Two</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" data-target="#item2" data-toggle="collapse"><i class="fa fa-list"></i> <span class="collapse in hidden-xs">Menu <span class="caret"></span></span></a>
+                    <ul class="nav nav-stacked collapse" id="item2">
+                        <li><a href="#">View One</a></li>
+                        <li><a href="#">View Two</a></li>
+                        <li><a href="#">View Three</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><i class="glyphicon glyphicon-list-alt"></i> <span class="collapse in hidden-xs">Link</span></a></li>
+            </ul>
         </div>
-      </div>
-      
+        <!-- /sidebar -->
+
+        <!-- main right col -->
+        <div class="column col-sm-9 col-xs-11" id="main">
+            <p><a href="#" data-toggle="offcanvas"><i class="fa fa-navicon fa-2x"></i></a></p>
+            <p>
+                Main content...
+            </p>
+        </div>
+        <!-- /main -->
     </div>
-    <script type="text/javascript">
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("active");
+</div>
+    
+    <script>
+        /* off-canvas sidebar toggle */
+$('[data-toggle=offcanvas]').click(function() {
+    $('.row-offcanvas').toggleClass('active');
+    $('.collapse').toggleClass('in').toggleClass('hidden-xs').toggleClass('visible-xs');
 });
     </script>
 </body>
