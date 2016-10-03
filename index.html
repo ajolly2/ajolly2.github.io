@@ -9,112 +9,477 @@
 
     <title>sideb</title>
 <style>
-       
-   height: 100%;
-}
+    @import "http://designmodo.github.io/Flat-UI/dist/css/flat-ui.min.css";
+@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css";
+@import "https://daneden.github.io/animate.css/animate.min.css";
+/*-------------------------------*/
+/*           VARIABLES           */
+/*-------------------------------*/
 
-.wrapper, .row {
-   height: 100%;
-   margin-left:0;
-   margin-right:0;
-}
+// BACKGROUND COLOR
+@bg-color: #583e7e;
 
-.wrapper:before, .wrapper:after,
-.column:before, .column:after {
-    content: "";
-    display: table;
-}
+// TEXT COLOR
+@text-color: #fff;
 
-.wrapper:after,
-.column:after {
-    clear: both;
-}
+// SIDEBAR LINK COLOR VARIABLES
+@side-color-1: #1a1a1a;
+@side-color-2: darken(@side-color-3, 5%);
+@side-color-3: darken(@side-color-4, 5%);
+@side-color-4: @bg-color;
+@side-color-5: lighten(@side-color-4, 5%);
+@side-color-6: lighten(@side-color-5, 5%);
+@side-color-7: lighten(@side-color-6, 5%);
+@side-color-8: lighten(@side-color-7, 5%);
+@side-color-9: lighten(@side-color-8, 5%);
 
-#sidebar {
-    background-color: #eee;
-    padding-left: 0;
-    float: left;
-    min-height: 100%;
-}
+// HAMBURGER COLOR
+@hamburger-color-closed: fadeout(@text-color, 30);
+@hamburger-color-open: @text-color;
 
-#sidebar .collapse.in {
-    display: inline;
-}
+// WIDTH VARIABLES
+@width1: 220px;
+@width2: 100px;
+@full-width: 100%;
 
-#sidebar > .nav>li>a {
-    white-space: nowrap;
-    overflow: hidden;
-}
+// HEIGHT VARIABLES
+@full-height: 100%;
 
-#main {
-    padding: 15px;
-    left: 0;
-}
-
-/*
- * off canvas sidebar
- * --------------------------------------------------
- */
-@media screen and (max-width: 768px) {
-    #sidebar {
-        min-width: 44px;
-    }
-    
-    #main {
-        width: 1%;
-        left: 0;
-    }
-    
-    #sidebar .visible-xs {
-       display:inline !important;
-    }
-    
-    .row-offcanvas {
-       position: relative;
-       -webkit-transition: all 0.4s ease-in-out;
-       -moz-transition: all 0.4s ease-in-out;
-       transition: all 0.4s ease-in-out;
-    }
-    
-    .row-offcanvas-left.active {
-       left: 45%;
-    }
-    
-    .row-offcanvas-left.active .sidebar-offcanvas {
-       left: -45%;
-       position: absolute;
-       top: 0;
-       width: 45%;
-    }
-} 
- 
- 
-@media screen and (min-width: 768px) {
-  .row-offcanvas {
+body {
     position: relative;
-    -webkit-transition: all 0.25s ease-out;
-    -moz-transition: all 0.25s ease-out;
-    transition: all 0.25s ease-out;
-  }
+    overflow-x: hidden;
+}
+body,
+html {
+  height: @full-height;
+  background-color: @bg-color;
+}
 
-  .row-offcanvas-left.active {
-    left: 3%;
-  }
 
-  .row-offcanvas-left.active .sidebar-offcanvas {
-    left: -3%;
-    position: absolute;
-    top: 0;
-    width: 3%;
-    text-align: center;
-    min-width:42px;
-  }
-  
-  #main {
-    left: 0;
+
+
+
+
+
+.nav {
+  .open>a {
+    background-color: transparent;
+    &:hover {
+      background-color: transparent;
+    }
+    &:focus {
+      background-color: transparent;
+    }
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+/*-------------------------------*/
+/*           Wrappers            */
+/*-------------------------------*/
+
+#wrapper {
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  -webkit-transition: all 0.5s ease;
+  padding-left: 0;
+  transition: all 0.5s ease;
+}
+#wrapper.toggled {
+  padding-left: 220px;
+  #sidebar-wrapper {
+    width: @width1;
+  }
+  #page-content-wrapper {
+    margin-right: -220px;
+    position: absolute;
+  }
+}
+#sidebar-wrapper {
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  -webkit-transition: all 0.5s ease;
+  background: #1a1a1a;
+  height: @full-height;
+  left: 220px;
+  margin-left: -220px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: all 0.5s ease;
+  width: 0;
+  z-index: 1000;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+#page-content-wrapper {
+  padding-top: 70px;
+  width: @full-width;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*-------------------------------*/
+/*     Sidebar nav styles        */
+/*-------------------------------*/
+
+.sidebar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  width: @width1;
+  li {
+    display: inline-block;
+    line-height: 20px;
+    position: relative;
+    width: @full-width;
+    &:before {
+      background-color: #1c1c1c;
+      content: '';
+      height: @full-height;
+      left: 0;
+      position: absolute;
+      top: 0;
+      transition: width .2s ease-in;
+      width: 3px;
+      z-index: -1;
+    }
+    &:first-child {
+      a {
+        background-color: @side-color-1;
+        color: #ffffff;
+      }
+    }
+    &:nth-child(2) {
+      &:before {
+        background-color: @side-color-2;
+      }
+    }
+    &:nth-child(3) {
+      &:before {
+        background-color: @side-color-3;
+      }
+    }
+    &:nth-child(4) {
+      &:before {
+        background-color: @side-color-4;
+      }
+    }
+    &:nth-child(5) {
+      &:before {
+        background-color: @side-color-5;
+      }
+    }
+    &:nth-child(6) {
+      &:before {
+        background-color: @side-color-6;
+      }
+    }
+    &:nth-child(7) {
+      &:before {
+        background-color: @side-color-7;
+      }
+    }
+    &:nth-child(8) {
+      &:before {
+        background-color: @side-color-8;
+      }
+    }
+    &:nth-child(9) {
+      &:before {
+        background-color: @side-color-9;
+      }
+    }
+    &:hover {
+      &:before {
+        transition: width .2s ease-in;
+        width: @full-width;
+      }
+    }
+    a {
+      color: #dddddd;
+      display: block;
+      padding: 10px 15px 10px 30px;
+      text-decoration: none;
+    }
+  }
+  li.open {
+    &:hover {
+      before {
+        transition: width .2s ease-in;
+        width: @full-width;
+      }
+    }
+  }
+  .dropdown-menu {
+    background-color: #222222;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: @full-width;
+  }
+}
+.sidebar-nav li a:hover, .sidebar-nav li a:active, .sidebar-nav li a:focus, .sidebar-nav li.open a:hover, .sidebar-nav li.open a:active, .sidebar-nav li.open a:focus {
+  background-color: transparent;
+  color: #ffffff;
+  text-decoration: none;
+}
+.sidebar-nav>.sidebar-brand {
+  font-size: 20px;
+  height: 65px;
+  line-height: 44px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*-------------------------------*/
+/*       Hamburger-Cross         */
+/*-------------------------------*/
+
+.hamburger {
+  background: transparent;
+  border: none;
+  display: block;
+  height: 32px;
+  margin-left: 15px;
+  position: fixed;
+  top: 20px;
+  width: 32px;
+  z-index: 999;
+  &:hover {
+    outline: none;
+  }
+  &:focus {
+    outline: none;
+  }
+  &:active {
+    outline: none;
+  }
+}
+.hamburger.is-closed {
+  &:before {
+    -webkit-transform: translate3d(0,0,0);
+    -webkit-transition: all .35s ease-in-out;
+    color: #ffffff;
+    content: '';
+    display: block;
+    font-size: 14px;
+    line-height: 32px;
+    opacity: 0;
+    text-align: center;
+    width: @width2;
+  }
+  &:hover {
+    before {
+      -webkit-transform: translate3d(-100px,0,0);
+      -webkit-transition: all .35s ease-in-out;
+      display: block;
+      opacity: 1;
+    }
+    .hamb-top {
+      -webkit-transition: all .35s ease-in-out;
+      top: 0;
+    }
+    .hamb-bottom {
+      -webkit-transition: all .35s ease-in-out;
+      bottom: 0;
+    }
+  }
+  .hamb-top {
+    -webkit-transition: all .35s ease-in-out;
+    background-color: @hamburger-color-closed;
+    top: 5px;
+  }
+  .hamb-middle {
+    background-color: @hamburger-color-closed;
+    margin-top: -2px;
+    top: 50%;
+  }
+  .hamb-bottom {
+    -webkit-transition: all .35s ease-in-out;
+    background-color: @hamburger-color-closed;
+    bottom: 5px;
+  }
+}
+.hamburger.is-closed .hamb-top, .hamburger.is-closed .hamb-middle, .hamburger.is-closed .hamb-bottom, .hamburger.is-open .hamb-top, .hamburger.is-open .hamb-middle, .hamburger.is-open .hamb-bottom  {
+  height: 4px;
+  left: 0;
+  position: absolute;
+  width: @full-width;
+}
+.hamburger.is-open {
+  .hamb-top {
+    -webkit-transform: rotate(45deg);
+    -webkit-transition: -webkit-transform .2s cubic-bezier(.73,1,.28,.08);
+    background-color: @hamburger-color-open;
+    margin-top: -2px;
+    top: 50%;
+  }
+  .hamb-middle {
+    background-color: @hamburger-color-open;
+    display: none;
+  }
+  .hamb-bottom {
+    -webkit-transform: rotate(-45deg);
+    -webkit-transition: -webkit-transform .2s cubic-bezier(.73,1,.28,.08);
+    // background-color: #1a1a1a;
+    background-color: @hamburger-color-open;
+    margin-top: -2px;
+    top: 50%;
+  }
+  &:before {
+    -webkit-transform: translate3d(0,0,0);
+    -webkit-transition: all .35s ease-in-out;
+    color: #ffffff;
+    content: '';
+    display: block;
+    font-size: 14px;
+    line-height: 32px;
+    opacity: 0;
+    text-align: center;
+    width: @width2;
+  }
+  &:hover {
+    before {
+      -webkit-transform: translate3d(-100px,0,0);
+      -webkit-transition: all .35s ease-in-out;
+      display: block;
+      opacity: 1;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*-------------------------------*/
+/*          Dark Overlay         */
+/*-------------------------------*/
+
+.overlay {
+    position: fixed;
+    display: none;
+    width: @full-width;
+    height: @full-height;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,.4);
+    z-index: 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
     </style>
    
     
@@ -126,61 +491,85 @@
 </head>
 
 <body>
-<div class="wrapper">
-    <div class="row row-offcanvas row-offcanvas-left">
-        <!-- sidebar -->
-        <div class="column col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
-            <ul class="nav" id="menu">
-                <li><a href="#"><i class="fa fa-list-alt"></i> <span class="collapse in hidden-xs">Link 1</span></a></li>
-                <li><a href="#"><i class="fa fa-list"></i> <span class="collapse in hidden-xs">Stories</span></a></li>
-                <li><a href="#"><i class="fa fa-paperclip"></i> <span class="collapse in hidden-xs">Saved</span></a></li>
-                <li><a href="#"><i class="fa fa-refresh"></i> <span class="collapse in hidden-xs">Refresh</span></a></li>
-                <li>
-                    <a href="#" data-target="#item1" data-toggle="collapse"><i class="fa fa-list"></i> <span class="collapse in hidden-xs">Menu <span class="caret"></span></span></a>
-                    <ul class="nav nav-stacked collapse left-submenu" id="item1">
-                        <li><a href="google.com">View One</a></li>
-                        <li><a href="gmail.com">View Two</a></li>
-                    </ul>
+    <div id="wrapper">
+        <div class="overlay"></div>
+    
+        <!-- Sidebar -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+            <ul class="nav sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                       Bootstrap 3
+                    </a>
                 </li>
                 <li>
-                    <a href="#" data-target="#item2" data-toggle="collapse"><i class="fa fa-list"></i> <span class="collapse in hidden-xs">Menu <span class="caret"></span></span></a>
-                    <ul class="nav nav-stacked collapse" id="item2">
-                        <li><a href="#">View One</a></li>
-                        <li><a href="#">View Two</a></li>
-                        <li><a href="#">View Three</a></li>
-                    </ul>
+                    <a href="#"><i class="fa fa-fw fa-home"></i> Home</a>
                 </li>
-                <li><a href="#"><i class="glyphicon glyphicon-list-alt"></i> <span class="collapse in hidden-xs">Link</span></a></li>
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-folder"></i> Page one</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-file-o"></i> Second page</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-cog"></i> Third page</a>
+                </li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-fw fa-plus"></i> Dropdown <span class="caret"></span></a>
+                  <ul class="dropdown-menu" role="menu">
+                    <li class="dropdown-header">Dropdown heading</li>
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li><a href="#">Separated link</a></li>
+                    <li><a href="#">One more separated link</a></li>
+                  </ul>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-bank"></i> Page four</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-dropbox"></i> Page 5</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-twitter"></i> Last page</a>
+                </li>
             </ul>
-        </div>
-        <!-- /sidebar -->
+        </nav>
+        <!-- /#sidebar-wrapper -->
 
-        <!-- main right col -->
-        <div class="column col-sm-9 col-xs-11" id="main">
-            <p><a href="#" data-toggle="offcanvas"><i class="fa fa-navicon fa-4x"></i></a></p>
-            <p>
-                Main content
-            </p>
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+          <button type="button" class="hamburger is-closed animated fadeInLeft" data-toggle="offcanvas">
+            <span class="hamb-top"></span>
+            <span class="hamb-middle"></span>
+            <span class="hamb-bottom"></span>
+          </button>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <h1 class="page-header">Awesome Bootstrap 3 Sidebar Navigation</h1>  
+                        <p class="lead">Originally authored by <a href="http://bootsnipp.com/maridlcrmn">maridlcrmn</a> on Bootsnipp and then converted to Less and customized further by <a href="http://twiter.com/j_holtslander">j_holtslander</a> who is building a <a href="http://codepen.io/collection/nJGkWV" target="_new">collection</a> of great Bootstrap 3 navbars.</p>
+                        <p>Maecenas sed diam eget risus varius blandit sit amet non magna. Sed posuere consectetur est at lobortis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Etiam porta sem malesuada magna mollis euismod. Aenean lacinia bibendum nulla sed consectetur. Nulla vitae elit libero, a pharetra augue.</p>
+                        <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum.</p>
+                        <p>Donec id elit non mi porta gravida at eget metus. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Maecenas faucibus mollis interdum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Aenean lacinia bibendum nulla sed consectetur.</p>
+                        <h3>A heading in the mix.</h3>
+                        <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Etiam porta sem malesuada magna mollis euismod. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras mattis consectetur purus sit amet fermentum. Curabitur blandit tempus porttitor. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+                        <blockquote>Maecenas sed diam eget risus varius blandit sit amet non magna. Sed posuere consectetur est at lobortis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Etiam porta sem malesuada magna mollis euismod. Aenean lacinia bibendum nulla sed consectetur. Nulla vitae elit libero, a pharetra augue.</blockquote>
+                        <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum.</p>
+                        <p>Donec id elit non mi porta gravida at eget metus. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Maecenas faucibus mollis interdum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Aenean lacinia bibendum nulla sed consectetur.</p>
+                        <h3>Another heading for typography's sake.</h3>
+                        <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Etiam porta sem malesuada magna mollis euismod. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras mattis consectetur purus sit amet fermentum. Curabitur blandit tempus porttitor. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+                        <p>Maecenas sed diam eget risus varius blandit sit amet non magna. Sed posuere consectetur est at lobortis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Etiam porta sem malesuada magna mollis euismod. Aenean lacinia bibendum nulla sed consectetur. Nulla vitae elit libero, a pharetra augue.</p>
+                        <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum.</p>
+                        <p>Donec id elit non mi porta gravida at eget metus. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Maecenas faucibus mollis interdum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Aenean lacinia bibendum nulla sed consectetur.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- /main -->
+        <!-- /#page-content-wrapper -->
+
     </div>
-</div>
-    
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    
-    <script>
-        /* off-canvas sidebar toggle */
-$('[data-toggle=offcanvas]').click(function() {
-    $('.row-offcanvas').toggleClass('active');
-    $('.collapse').toggleClass('in').toggleClass('hidden-xs').toggleClass('visible-xs');
-});
-    </script>
+    <!-- /#wrapper -->
 </body>
 </html>
