@@ -8,10 +8,11 @@
     <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-
+	
     <title>Fiverr</title>
 
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+     <script src="https://use.fontawesome.com/1204df7688.js"></script>
 
     <!-- Custom CSS -->
    
@@ -233,7 +234,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-default navbar-fixed-top" style="background-color:#ffffff;bottom-border: 0px #ffffff;" role="navigation">
+   <!-- <nav class="navbar navbar-default navbar-fixed-top" style="background-color:#ffffff;bottom-border: 0px #ffffff;" role="navigation">
         <div>
             <div class="navbar-header">
 
@@ -253,7 +254,7 @@
                     <span id="btn" class="glyphicon glyphicon-home"></span>
                 </a>
 
-			</div>	
+			</div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
 			<li class="#"><a href="#"><strong>Title</strong></a>
@@ -261,26 +262,70 @@
                        
 		    </ul>
 		</div>
+	</nav>
 
-           <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="false"></span></a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="false"></span></a></li>
-        </ul>
+                  <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a></li>
+				<li><a href="#"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Messages </a></li>
+             	<li><a href="#"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Help</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-off" aria-hidden="true"></span> Log Out</a></li>
+            </ul>
+            <form class="navbar-form navbar-right" action="#" method="GET">
+           		<div class="input-group">
+					<input type="text" class="form-control" placeholder="Search..." id="query" name="search" value="">
+                  	<div class="input-group-btn">
+                    	<button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-search"></span></button>
+                  	</div>
+				</div>
+            </form>
         </div>
-            <!--<form class="navbar-form navbar-right" action="#" method="GET">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search..." id="query" name="search" value="">
-                    <div class="input-group-btn">
-                        <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-search"></span></button>
-                    </div>
-                </div>
-            </form>-->
-
-
+    </div>
+</nav>
+-->
+	<nav class="navbar navbar-default navbar-fixed-top" style="background-color:#ffffff;bottom-border: 0px #ffffff;" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+		<a class="navbar-brand"><span class="glyphicon glyphicon-triangle-left" aria-hidden="false"></span></a>
+	    <a class="navbar-brand"><span class="glyphicon glyphicon-triangle-right" aria-hidden="false"></span></a>	    
+       <a class="navbar-brand" href="#menu-toggle1" id="menu-toggle1"><span class="glyphicon glyphicon-th" aria-hidden="false"></span></a>
+	    <a class="navbar-brand" href="#menu-toggle2" id="menu-toggle2"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="false"></span></a>
+		<a class="navbar-brand"><span id="btn" class="glyphicon glyphicon-refresh" aria-hidden="false"></span></a>
 	    </div>
-			</nav>
-
+	    
+	    
+	    <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+			<li class="#"><a href="#"><strong>Title</strong></a>
+                        </li>
+                       
+		    </ul>
+		
+	    
+	    
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><span class="fa fa-thumbs-up" aria-hidden="false"></span></a></li>
+		<li><a href="#"><span class="fa fa-thumbs-down" aria-hidden="false"></span></a></li>
+            </ul>
+            <!--<form class="navbar-form navbar-right" action="#" method="GET">
+           		<div class="input-group">
+					<input type="text" class="form-control" placeholder="Search..." id="query" name="search" value="">
+                  	<div class="input-group-btn">
+                    	<button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-search"></span></button>
+                  	</div>
+				</div>
+            </form>-->
+        </div>
+    </div>
+	    </div>
+</nav>
     <div id="wrapper" class="toggled">
 
         <!-- Sidebar 1 -->
