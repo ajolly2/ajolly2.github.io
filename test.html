@@ -255,6 +255,48 @@ box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
   }
   
 }
+		
+		#test p {
+    margin-top: 25px;
+    font-size: 21px;
+    text-align: center;
+    animation: fadein 2s;
+    -moz-animation: fadein 2s; /* Firefox */
+    -webkit-animation: fadein 2s; /* Safari and Chrome */
+    -o-animation: fadein 2s; /* Opera */
+}
+@keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-moz-keyframes fadein { /* Firefox */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-webkit-keyframes fadein { /* Safari and Chrome */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-o-keyframes fadein { /* Opera */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity: 1;
+    }
+}
 	</style>
 </head>
 	
@@ -268,12 +310,8 @@ box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
     
   </div>
   <div class="container">
-	  <div class="w3-container w3-center w3-animate-opacity">
-    <h2>
- If you want... 
-	  </h2>
-  
-	  </div>
+	<div id="test"><p>If you want
+</p></div>
   </div>
   <div class="container cf">
     <!-- testimonial one -->
