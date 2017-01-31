@@ -1,247 +1,78 @@
 <html>
 <head>
-	<title>
-		Testing
-	</title>
 <style>
-/*                 BODY
------------------------ */
-*, *:after, *:before {
+	section {
+  max-width: 740px;
+  margin: 0 auto;
+  display: flex;
+}
+.column {
+  margin: 10px;
+  flex: 1 1 0;
+}
+.half .column:first-of-type {
+  flex: 2 2 22px;
+}
+.two-thirds .column:nth-of-type(2) {
+  flex: 4 4 66px;
+}
+
+
+/* OTHER STYLES */
+  
+html, body {
+  height: 100%;
   box-sizing: border-box;
 }
-html, body {
-  position: relative;
-  height: 100%;
-}
+
 body {
-  background: #FFF;
-  color: #222;
-  padding: 0;
-  margin: 0;
-  font-family: "Helvetica Neue","Helvetica",Helvetica,Arial,sans-serif;
-  font-weight: normal;
-  font-style: normal;
-  font-size: 100%;
-  line-height: 150%;
-  position: relative;
-  cursor: auto;
+  font-family: 'Raleway', sans-serif;
+  padding: 10px;
+  background: linear-gradient(135deg, #0606d1, #f4426e) fixed;
 }
 
-
-
-.cl{
-  position: relative;
-  margin-bottom:0.2em;
-  padding:.0.1em;
-  float: left;
+.column {
+  padding: 10px 0;
+  background-color: rgba(0, 0, 0, 0);
+  text-align: center;
+  
+  border: 0px solid rgba(255,255,255,0.25);
+  background-color: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.9);
 }
-.cl span{
-  display:block;
-  background:#f55;
-  color:white;
-  text-align:center;
-  padding:0.5em 0;
-  opacity:0;
-}
-
-/*  Row 
-------------------------------*/
-.section {
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 0;
-  margin-bottom: 0;
-  max-width: 70rem;
-}
-.section:before, .row:after {
-  content: " ";
-  display: table;
-}
-.section:after {
-  clear: both;
-}
-/*  Grid 
-------------------------------*/
-.div{width:100%;}
-.div-2{width:calc(100% / 2);}
-.div-3{width:calc(100% / 3);}
-.div-4{width:calc(100% / 4);}
-.div-5{width:calc(100% / 5);}
-.div-6{width:calc(100% / 6);}
-.div-7{width:calc(100% / 7);}
-.div-8{width:calc(100% / 8);}
-.div-9{width:calc(100% / 9);}
-.div-10{width:calc(100% / 10);}
-.div-11{width:calc(100% / 11);}
-.div-12{width:calc(100% / 12);}
-/*  left and right divs 
-------------------------------*/
-.div-r {
-  float: right!important;
-}
-.div-l {
-  float: right!important;
-}
-
-
-	
 </style>
-
-	<script>
-var divs = document.querySelectorAll('span');
-for (var i = 0; i < divs.length; i++) {
-  var time = 100 * i;
-  anim(divs[i],'width','%',0,100,time);
-  anim(divs[i],'opacity',0,0,1,time);
-}
-
-// anim(foo,'opacity',0,0,1,1000)
-function anim(selector, style, unit, from, to, time) {
-    if (!selector) return;
-    var start = new Date().getTime(),
-        timer = setInterval(function() {
-            var step = Math.min(1, (new Date().getTime() - start) / time);
-            selector.style[style] = (from + step * (to - from)) + unit;
-            if (step == 1) clearInterval(timer);
-        }, 25);
-    selector.style[style] = from + unit;
-};
-	</script>
-	
 </head>
 	
+	
 <body>
-	<div class="section">
-  <div class="div cl"><span>
-	  <img src="jolly.png"></span>
-	  </div>
-</div>
-
-
-<div class="section">
-  <div class="div-2 cl"><span>2</span></div>
-  <div class="div-2 cl"><span>2</span></div>
-</div>
-
-
-<div class="section">
-  <div class="div-3 cl"><span>3</span></div>
-  <div class="div-3 cl"><span>3</span></div>
-  <div class="div-3 cl"><span>3</span></div>
-</div>
-
-
-<div class="section">
-  <div class="div-4 cl"><span>4</span></div>
-  <div class="div-4 cl"><span>4</span></div>
-  <div class="div-4 cl"><span>4</span></div>
-  <div class="div-4 cl"><span>4</span></div>
-</div>
-
-<div class="section">
-  <div class="div-5 cl"><span>5</span></div>
-  <div class="div-5 cl"><span>5</span></div>
-  <div class="div-5 cl"><span>5</span></div>
-  <div class="div-5 cl"><span>5</span></div>
-  <div class="div-5 cl"><span>5</span></div>
-</div>
-
-<div class="section">
-  <div class="div-6 cl"><span>6</span></div>
-  <div class="div-6 cl"><span>6</span></div>
-  <div class="div-6 cl"><span>6</span></div>
-  <div class="div-6 cl"><span>6</span></div>
-  <div class="div-6 cl"><span>6</span></div>
-  <div class="div-6 cl"><span>6</span></div>
-</div>
-
-
-<div class="section">
-  <div class="div-7 cl"><span>7</span></div>
-  <div class="div-7 cl"><span>7</span></div>
-  <div class="div-7 cl"><span>7</span></div>
-  <div class="div-7 cl"><span>7</span></div>
-  <div class="div-7 cl"><span>7</span></div>
-  <div class="div-7 cl"><span>7</span></div>
-  <div class="div-7 cl"><span>7</span></div>
-</div>
-
-
-<div class="section">
-  <div class="div-8 cl"><span>8</span></div>
-  <div class="div-8 cl"><span>8</span></div>
-  <div class="div-8 cl"><span>8</span></div>
-  <div class="div-8 cl"><span>8</span></div>
-  <div class="div-8 cl"><span>8</span></div>
-  <div class="div-8 cl"><span>8</span></div>
-  <div class="div-8 cl"><span>8</span></div>
-  <div class="div-8 cl"><span>8</span></div>
-</div>
-
-<div class="section">
-  <div class="div-9 cl"><span>9</span></div>
-  <div class="div-9 cl"><span>9</span></div>
-  <div class="div-9 cl"><span>9</span></div>
-  <div class="div-9 cl"><span>9</span></div>
-  <div class="div-9 cl"><span>9</span></div>
-  <div class="div-9 cl"><span>9</span></div>
-  <div class="div-9 cl"><span>9</span></div>
-  <div class="div-9 cl"><span>9</span></div>
-  <div class="div-9 cl"><span>9</span></div>
-</div>
-
-
-
-<div class="section">
-  <div class="div-10 cl"><span>10</span></div>
-  <div class="div-10 cl"><span>10</span></div>
-  <div class="div-10 cl"><span>10</span></div>
-  <div class="div-10 cl"><span>10</span></div>
-  <div class="div-10 cl"><span>10</span></div>
-  <div class="div-10 cl"><span>10</span></div>
-  <div class="div-10 cl"><span>10</span></div>
-  <div class="div-10 cl"><span>10</span></div>
-  <div class="div-10 cl"><span>10</span></div>
-  <div class="div-10 cl"><span>10</span></div>
-</div>
-
-
-<div class="section">
-  <div class="div-11 cl"><span>11</span></div>
-  <div class="div-11 cl"><span>11</span></div>
-  <div class="div-11 cl"><span>11</span></div>
-  <div class="div-11 cl"><span>11</span></div>
-  <div class="div-11 cl"><span>11</span></div>
-  <div class="div-11 cl"><span>11</span></div>
-  <div class="div-11 cl"><span>11</span></div>
-  <div class="div-11 cl"><span>11</span></div>
-  <div class="div-11 cl"><span>11</span></div>
-  <div class="div-11 cl"><span>11</span></div>
-  <div class="div-11 cl"><span>11</span></div>
-</div>
-
-
-
-<div class="section">
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-  <div class="div-12 cl"><span>12</span></div>
-</div>
-
+<section>
+  <div class="column">Logo</div>
+</section>
+<section>
+  <div class="column">Corporate Wellness</div>
+  <div class="column">Personal Training</div>
+  <div class="column">Contact</div>
+  
+</section>
+<section>
+  <div class="column">One Sixth</div>
+  <div class="column">One Sixth</div>
+  <div class="column">One Sixth</div>
+  <div class="column">One Sixth</div>
+  <div class="column">One Sixth</div>
+  <div class="column">One Sixth</div>
+</section>
+<section class="half">
+  <div class="column">One Half</div>
+  <div class="column">One Fourth</div>
+  <div class="column">One Fourth</div>
+</section>
+<section class="two-thirds">
+  <div class="column">One Sixth</div>
+  <div class="column">Two Thirds</div>
+  <div class="column">One Sixth</div>
+</section>	
 	
-	
-	
-
 	
 </body>	
 </html>
