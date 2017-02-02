@@ -1,7 +1,7 @@
 
 <html lang="en">
 <head>
-  <title>1f</title>
+  <title>22f</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://use.fontawesome.com/0003867fec.js"></script>
 	<!-- Latest compiled and minified CSS -->
@@ -12,7 +12,19 @@
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<style>
+<script>
+	(function($){
+	$(document).ready(function(){
+		$('ul.dropdown-menu [data-toggle=dropdown]').on('click', function(event) {
+			event.preventDefault(); 
+			event.stopPropagation(); 
+			$(this).parent().siblings().removeClass('open');
+			$(this).parent().toggleClass('open');
+		});
+	});
+	})(jQuery);
+</script>
+	<style>
 html, body, .jumbotron, nav {
     font-family: 'Open Sans', sans-serif;   
 }
