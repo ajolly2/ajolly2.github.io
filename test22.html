@@ -1,16 +1,14 @@
 <html>
 <head>
-	<title>a12</title>
+	<title>a22</title>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script>
 		(function() {
 var Images = [
-  'http://i.imgur.com/3qVycxc.jpg',
-  'http://i.imgur.com/aeSngh7.jpg',
-  'http://i.imgur.com/tKJNuon.jpg',
-  'http://i.imgur.com/Uwj4uxl.jpg',
-'http://i.imgur.com/mzQLStz.jpg',
-'http://i.imgur.com/vWwbm0J.jpg'];
+  '../bg1.png',
+  '../j1.png',
+
+];
 
 function getRandomImage(images) {
   var num = Math.floor(Math.random() * images.length);
@@ -23,7 +21,6 @@ $("#picture").append(getRandomImage(Images))
 	</script>
 	</head>
 	<body>
-		<p>Refreshing this page will load one of six images at random!</p>
 <br />
 <div id="picture"></div>
 	</body>
