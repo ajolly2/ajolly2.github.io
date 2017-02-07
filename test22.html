@@ -2,28 +2,34 @@
 <head>
 	<title>as</title>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-	<script>
-		(function() {
-var Images = [
-  'http://i.imgur.com/3qVycxc.jpg',
-  'http://i.imgur.com/aeSngh7.jpg',
-  'http://i.imgur.com/tKJNuon.jpg',
-  'http://i.imgur.com/Uwj4uxl.jpg',
-'http://i.imgur.com/mzQLStz.jpg',
-'http://i.imgur.com/vWwbm0J.jpg'];
+	<script language="JavaScript">
+<!--
 
-function getRandomImage(images) {
-  var num = Math.floor(Math.random() * images.length);
-  var pic = images[num];
-  var imgString = '<img src="' + pic + '" height="200" />';
-  return imgString }
- 
-$("#picture").append(getRandomImage(Images))
-})();
-	</script>
+/*
+Random Image Script- By JavaScript Kit (http://www.javascriptkit.com) 
+Over 400+ free JavaScripts here!
+Keep this notice intact please
+*/
+
+function random_imglink(){
+var myimages=new Array()
+//specify random images below. You can have as many as you wish
+myimages[1]="https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg"
+
+var ry=Math.floor(Math.random()*myimages.length)
+if (ry==0)
+ry=1
+document.write('<img src="'+myimages[ry]+'" border=0>')
+}
+random_imglink()
+//-->
+</script>
+
+
 	</head>
 	<body>
-<br />
-<div id="picture"></div>
+<p align="center">This free script provided by<br />
+<a href="http://javascriptkit.com">JavaScript
+Kit</a></p>
 	</body>
 </html>
