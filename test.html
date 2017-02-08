@@ -16,7 +16,40 @@
 
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
      <script src="https://use.fontawesome.com/1204df7688.js"></script>
+<script src="jquery.js"></script>
+<script src="jquery.simple.timer.js"></script>
+<script>
+  $(function(){
+    $('.timer').startTimer();
+  });
+</script>
+	<style>
+  .timer, .timer-done, .timer-loop {
+    font-size: 30px;
+    color: black;
+    font-weight: bold;
+    padding: 10px;
+  }
 
+  // These are the default CSS classes
+  // used by this plugin. Use these values
+  // for a basic style to get started.
+  .jst-hours {
+    float: left;
+  }
+  .jst-minutes {
+    float: left;
+  }
+  .jst-seconds {
+    float: left;
+  }
+  .jst-clearDiv {
+    clear: both;
+  }
+  .jst-timeout {
+    color: red;
+  }
+</style>
 
     <!-- Custom CSS -->
    
@@ -496,13 +529,7 @@
 
 
         <!-- Page Content -->
-        <div id="page-content-wrapper">
-
-
-                <iframe id="frame" name="myIframe" style="position: absolute; height: 100%; width: 100%;border: none;overflow:hidden;" src=""></iframe>
-
-
-            </div>
+        <div class="timer" data-seconds-left=65></div>
         <!-- /#page-content-wrapper -->
 
 
