@@ -1,49 +1,33 @@
-<html>
+
 <head>
-	<title>2ttt</title>
-<!--Little CSS fade in -->
-<style>
-	
-	body {
-	margin: 0	
-	};
-	
-.fade-in{
-  -webkit-animation: fade-in 2s ease;
-  -moz-animation: fade-in ease-in-out 2s both;
-  -ms-animation: fade-in ease-in-out 2s both;
-  -o-animation: fade-in ease-in-out 2s both;
-  animation: fade-in 2s ease;
-  visibility: visible;
-  -webkit-backface-visibility: hidden;
-	height: 400px;
-	width: 400px;
-}
+	<title>JOLLY</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-@-webkit-keyframes fade-in{0%{opacity:0;} 100%{opacity:1;}}
-@-moz-keyframes fade-in{0%{opacity:0} 100%{opacity:1}}
-@-o-keyframes fade-in{0%{opacity:0} 100%{opacity:1}}
-@keyframes fade-in{0%{opacity:0} 100%{opacity:1}}
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-</style>
-</head>
-<body>
-<!--We appendin' on this div - ps: ids make sense here... punk-->
-<div id="banner-load"></div>
-<!--Don't forget Jquery-->
-<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js'></script>
-
-<!--New images on load -->
-<script>
-//Add your images, we'll set the path in the next step
-    var images = ['../bg1.png', '../bg.jpg'];
-    
-//Build the img, then do a bit of maths to randomize load and append to a div. Add a touch off css to fade them badboys in all sexy like.
-    $('<img class="fade-in" src="images/' + images[Math.floor(Math.random() * images.length)] + '">').appendTo('#banner-load');
-	
-	elem.height = '100%';
-elem.width = '100%';
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script language="JavaScript">
+<!-- Activate cloaking device
+var randnum = Math.random();
+var inum = 4;
+// Change this number to the number of images you are using.
+var rand1 = Math.round(randnum * (inum-1)) + 1;
+images = new Array
+images[1] = "zebra.jpg"
+images[2] = "tiler3.jpg"
+images[3] = "wicker3.jpg"
+images[4] = "aaa4.jpg"
+// Ensure you have an array item for every image you are using.
+var image = images[rand1]
+// Deactivate cloaking device -->
 </script>
 
-</body>
-</html>
+<script language="JavaScript">
+<!-- Activate cloaking device
+document.write('<body background="' + image + '" text="white">')
+// Deactivate cloaking device -->
+</script>
+
