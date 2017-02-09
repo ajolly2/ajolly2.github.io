@@ -1,0 +1,55 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    #clock{
+      font-size: 2000%;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      text-align: center ;
+    }
+    #counter{
+      font-size: 500%;
+    }
+  </style>
+
+  <script src="jquery.min.js"></script>
+  <script>
+    var x = 60;
+    var count = 0;
+    var beep1 = "beep1.mp3";
+    var beep2 = "beep2.mp3";
+
+    $(document).ready(function(){
+      $("#sound").append($("<audio>")
+        .attr('src', beep1)
+        .attr('id', 'beeper1')
+      );
+      
+      setInterval(function () {
+        x--;
+        $("#counter").html(count);
+
+        $("#clock").html(x);
+        if(x<1){
+          x=60;
+          $("#beeper1").attr('src', beep2);
+          var player = $("#beeper1");
+          player[0].play();
+          count++;
+        }else if(x<5){
+          $("#beeper1").attr('src', beep1);
+          var player = $("#beeper1");
+          player[0].play();
+        }
+      }, 1000);
+    });  
+  </script>
+</head>
+<body>
+  <div id="sound"></div>
+  <div id="counter"></div>
+  <div id="clock"></div>
+</body>
+</html>
