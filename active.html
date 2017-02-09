@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 	
-    <title>JOLLY</title>
+    <title>3</title>
 
 
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -30,7 +30,11 @@
          body {
             overflow-x: hidden;
             padding-top: 50px;
-		background-image: url(/images/jumbotron/03.jpg) center center cover no-repeat fixed;
+		 background-image: url('../images/jumbotron/12.jpg');
+		 background-size: cover;
+		 background-repeat: no-repeat;
+		 background-attachment: fixed;
+		 background-position: center center;
          };
 	    a.navbar-brand {
     text-shadow: none;
@@ -353,7 +357,41 @@
     </div>
 	    </div>
 </nav>
-    
+    <div id="wrapper" class="toggled">
+
+
+        <!-- Sidebar 1 -->
+        <div id="sidebar-wrapper" class="sidebar-one">
+            <ul class="sidebar-nav"><br>
+		    <li><a href="#"><h5 style="color: #d7d7d7">PLAYLISTS</h5></a>
+		    </li>
+		    
+		    <br>
+		    <br>
+               <br>
+            </ul>
+        </div>
+        <!-- Sidebar 2 -->
+        <div id="sidebar-wrapper" class="sidebar-two">
+            <ul class="sidebar-nav"><br>
+		    <li><a href="http://www.jolly.fitness/1">&nbsp;<strong>1</strong></a>
+                            	</li>
+		    <li><a href="http://www.jolly.fitness/2">&nbsp;2</a>
+                            	</li><!--
+		    <li><a href="http://www.jolly.fitness/3">&nbsp;&nbsp;3</a>
+                            	</li>
+		    <li><a href="http://www.jolly.fitness/4">&nbsp;&nbsp;4</a>
+                            	</li>
+		    <li><a href="http://www.jolly.fitness/5">&nbsp;&nbsp;5</a>
+                            	</li>
+		    <li><a href="http://www.jolly.fitness/6">&nbsp;&nbsp;6</a>
+                            	</li>-->
+		    <br>
+		    <br>
+               <br>
+		   
+            </ul>
+        </div>
 
 
         <!-- Page Content -->
@@ -378,6 +416,7 @@
         <!-- /#page-content-wrapper -->
 
 
+    </div>
 
 
     <!-- Bootstrap core JavaScript
@@ -386,11 +425,108 @@
        <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 	
- 
+  <script type="text/javascript">
+// cookie value geetter
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+// Knuth array shuffle
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+	randomIndex = Math.floor(Math.random() * currentIndex);
+	currentIndex -= 1;
+	temporaryValue = array[currentIndex];
+	array[currentIndex] = array[randomIndex];
+	array[randomIndex] = temporaryValue;
+    }
+    return array;
+}
+// Open in new Window
+var windowLinks = shuffle([
+
+
+]);
+var windowLinksIndex = 0;
+// iFrame links
+var iframeLinks = shuffle([
+	
+ "http://www.jolly.fitness/1-standinghipflexorstretch",
+"http://www.jolly.fitness/1-handsoverhead",
+	"http://www.jolly.fitness/1-invisiblebandrhomboidpulls",
+	"http://www.jolly.fitness/1-downwardfacingdogatdesk",
+	"http://www.jolly.fitness/1-cervicalflexorsstretch",
+	"http://www.jolly.fitness/1-forearmstretchdown",
+	"http://www.jolly.fitness/1-forearmstretchup",
+	"http://www.jolly.fitness/1-seatedhamstringstretch",
+	"http://www.jolly.fitness/1-standingTFLstretch",
+	"http://www.jolly.fitness/1-standinglaterallegraises",
+	"http://www.jolly.fitness/1-smallhops",
+
+]);
+var iframeLinksIndex = 0;
+if(!!readCookie('windowlinkscookie')&&!!readCookie('windowlinkscookieindex')){
+    windowLinks = readCookie('windowlinkscookie').split(',');
+    windowLinksIndex = parseInt(readCookie('windowlinkscookieindex'));
+}else{
+    document.cookie = 'windowlinkscookie=' + windowLinks.join(',');
+    document.cookie = 'windowlinksindex=' + windowLinksIndex;
+}
+if(!!readCookie('framelinkscookie')&&!!readCookie('framelinkscookieindex')){
+    windowLinks = readCookie('framelinkscookie').split(',');
+    windowLinksIndex = parseInt(readCookie('framelinkscookieindex'));
+}else{
+    document.cookie = 'framelinkscookie=' + windowLinks.join(',');
+    document.cookie = 'framelinkscookieindex=' + windowLinksIndex;
+}
+openStuff = function () {
+    var link = windowLinks[windowLinksIndex];
+    windowLinksIndex++;
+    windowLinksIndex %= windowLinks.length;
+    window.open(link);
+};
+// Open in iFrame
+var myFrame = document.getElementById("frame");
+function getRandomUrl(myFrame) {
+    var url = iframeLinks[iframeLinksIndex];
+    iframeLinksIndex++;
+    iframeLinksIndex %= iframeLinks.length;
+    myFrame.src = url;
+}
+var refreshBtn = document.getElementById("btn");
+refreshBtn.addEventListener("click", function() {
+    getRandomUrl(myFrame); 
+});
+window.onload = function(){
+    getRandomUrl(myFrame);
+};
+</script>
+  
+  <script type="text/javascript">
+	$("#menu-toggle1").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+		$("#wrapper").addClass("sidebar1");
+		$("#wrapper").removeClass("sidebar2");
+    });
+	$("#menu-toggle2").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+        $("#wrapper").addClass("sidebar2");
+        $("#wrapper").removeClass("sidebar1");
+    });
+	</script>	
+
 
 
 
 </body>
 </html>
-
 
