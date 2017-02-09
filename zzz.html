@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>2</title>
+	<title>1</title>
 <!--Little CSS fade in -->
 <style>
 	
@@ -18,6 +18,7 @@
   -webkit-backface-visibility: hidden;
 	height: 400px;
 	width: 400px;
+	background-size: cover;
 }
 
 @-webkit-keyframes fade-in{0%{opacity:0;} 100%{opacity:1;}}
@@ -39,7 +40,7 @@
     var images = ['../bg1.png', '../bg.jpg'];
     
 //Build the img, then do a bit of maths to randomize load and append to a div. Add a touch off css to fade them badboys in all sexy like.
-    $('<img class="fade-in" src="images/' style="background: cover" + images[Math.floor(Math.random() * images.length)] + '">').appendTo('#banner-load');
+    $('<img class="fade-in" src="images/' + images[Math.floor(Math.random() * images.length)] + '">').appendTo('#banner-load');
 	
 	elem.height = '100%';
 elem.width = '100%';
