@@ -1,59 +1,31 @@
+<!DOCTYPE html>
 <html>
 <head>
-  <title>
-    b
-  </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    #clock{
-      font-size: 25px;
-      font: Helvetica;
-      color: #333333;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      text-align: center ;
-    }
-    #counter{
-      font-size: 500%;
-    }
-  </style>
-
-  <script src="jquery.min.js"></script>
-  <script>
-    var x = 10;
-    var count = 0;
-    var beep1 = "beep1.mp3";
-    var beep2 = "beep2.mp3";
-
-    $(document).ready(function(){
-      $("#sound").append($("<audio>")
-        .attr('src', beep1)
-        .attr('id', 'beeper1')
-      );
-      
-      setInterval(function () {
-        x--;
-        $("#counter").html(count);
-
-        $("#clock").html(x);
-        if(x<1){
-          x=60;
-          $("#beeper1").attr('src', beep2);
-          var player = $("#beeper1");
-          player[0].play();
-          count++;
-        }else if(x<5){
-          $("#beeper1").attr('src', beep1);
-          var player = $("#beeper1");
-          player[0].play();
-        }
-      }, 1000);
-    });  
-  </script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
-<body>
-  <div id="sound"></div>
-  <div id="clock"></div>
+<body background="../images/jumbotron/06.jpg" style="background-size: cover; background-repeat: no-repeat; background-attachment: fixed; background-position: center center; max-height: 100%; max-width: 100%">
+	<center>
+<div class="container">
+  <h2>Dropdowns</h2>
+  <p>The .dropdown-header class is used to add headers inside the dropdown menu:</p>
+  <div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Tutorials
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li class="dropdown-header">Dropdown header 1</li>
+      <li><a href="#">HTML</a></li>
+      <li><a href="#">CSS</a></li>
+      <li><a href="#">JavaScript</a></li>
+      <li class="divider"></li>
+      <li class="dropdown-header">Dropdown header 2</li>
+      <li><a href="#">About Us</a></li>
+    </ul>
+  </div>
+</div>
+  </center>
+
 </body>
 </html>
