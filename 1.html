@@ -48,7 +48,7 @@
         document.getElementById("timer-minutes").innerHTML = timeWithZero(loopingMinutes);
         document.getElementById("timer-second").innerHTML = timeWithZero(loopingSecond);
         if (loopingSecond == 59) {
-            loopingMinutes = loopingMinutes + 1;
+            loopingMinutes = loopingMinutes + 29;
             loopingSecond = 0;
         }
         if (loopingMinutes == loopingInterval) {
