@@ -26,38 +26,49 @@
     // which will cnfirm the alert after each looping..
     // You should not anything change in the "setInterval(loopingTimerMethod, 1000);"
     // Because It is doing everthing.
-    window.loopingInterval = 30;
+    window.loopingInterval = 3;
     setInterval(loopingTimerMethod, 1000);
     //////////////////////
+
+
+
+
+
     /*START: Core functionality.. shold not be changed.. Else may not work*/
-    window.loopingMinutes = 0;
-    window.loopingSecond = 0;
+    window.secondStart = 60;
+    window.loopingMinutes = loopingInterval - 1;
+    window.loopingSecond = secondStart;
     function loopingStartTime(tim) {
-        var i = tim + 1;
+        var i = tim - 1;
         return i;
     }
     function loopingTimerMethod()
     {
         loopingSecond = loopingStartTime(loopingSecond);
-        console.log(loopingMinutes);
         document.getElementById("timer-minutes").innerHTML = timeWithZero(loopingMinutes);
         document.getElementById("timer-second").innerHTML = timeWithZero(loopingSecond);
-        if (loopingSecond == 59) {
-            loopingMinutes = loopingMinutes + 1;
-            loopingSecond = 0;
+        if (loopingSecond == 0) {
+            if (loopingMinutes == 0 && loopingSecond == 0) {
+                var x = document.getElementById("myLoopingAudioPlayer");
+                LoopingPlayAudio(x);
+                window.loopingMinutes = loopingInterval;
+            }
+
+
+            loopingMinutes = loopingMinutes - 1;
+            loopingSecond = secondStart;
         }
-        if (loopingMinutes == loopingInterval) {
-            var x = document.getElementById("myLoopingAudioPlayer");
-            LoopingPlayAudio(x);
-            window.loopingMinutes = 0;
-        }
+
     }
+
     function LoopingPlayAudio(x) {
         x.play();
     }
+
     function LoopingPauseAudio(x) {
         x.pause();
     }
+
     function timeWithZero(i) {
         if (i < 10) {
             i = "0" + i
