@@ -26,14 +26,9 @@
     // which will cnfirm the alert after each looping..
     // You should not anything change in the "setInterval(loopingTimerMethod, 1000);"
     // Because It is doing everthing.
-    window.loopingInterval = 2;
+    window.loopingInterval = 30;
     setInterval(loopingTimerMethod, 1000);
     //////////////////////
-
-
-
-
-
     /*START: Core functionality.. shold not be changed.. Else may not work*/
     window.loopingMinutes = 0;
     window.loopingSecond = 0;
@@ -48,7 +43,7 @@
         document.getElementById("timer-minutes").innerHTML = timeWithZero(loopingMinutes);
         document.getElementById("timer-second").innerHTML = timeWithZero(loopingSecond);
         if (loopingSecond == 59) {
-            loopingMinutes = loopingMinutes + 29;
+            loopingMinutes = loopingMinutes + 1;
             loopingSecond = 0;
         }
         if (loopingMinutes == loopingInterval) {
@@ -57,15 +52,12 @@
             window.loopingMinutes = 0;
         }
     }
-
     function LoopingPlayAudio(x) {
         x.play();
     }
-
     function LoopingPauseAudio(x) {
         x.pause();
     }
-
     function timeWithZero(i) {
         if (i < 10) {
             i = "0" + i
