@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<link rel=icon href=/favicon.png>
-  <title>Sample</title>
+  <title>jabzoo 1</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://use.fontawesome.com/0003867fec.js"></script>
 	<!-- Latest compiled and minified CSS -->
@@ -80,6 +80,13 @@
     /*END Timer Looping functionality*/
 </script>
 	<style>
+		
+		body {
+			overflow: hidden;
+		};
+		
+		
+		
 html, body, .jumbotron, nav {
     font-family: 'Open Sans', sans-serif;   
 }
@@ -352,24 +359,25 @@ li.dropdown:hover > .dropdown-menu {
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
+	  <!--
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
 	      <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sessions <b class="caret"></b></a>
           <ul class="dropdown-menu">
 		  <li><a href="/1.html"><strong>1</strong></a></li>
-            <!--<li><a href="/2.html">2</a></li>
+            <li><a href="/2.html">2</a></li>
             <li><a href="/3.html">3</a></li><
 <li><a href="/4.html">4</a></li>
 <li><a href="/5.html">5</a></li>
 <li><a href="/6.html">6</a></li>
--->
+
            
           </ul>
         </li>
       </ul>
 	     
-    </div><!-- /.navbar-collapse -->
+    </div>--><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
 </div><!-- end container -->
@@ -417,14 +425,17 @@ var windowLinks = shuffle([
 var windowLinksIndex = 0;
 // iFrame links
 var iframeLinks = shuffle([
-		"http://www.jolly.fitness/1-forearmstretchup",
-		"http://www.jolly.fitness/1-seatedhamstringstretch",
-		"http://www.jolly.fitness/1-cervicalflexorsstretch",
-		"http://www.jolly.fitness/1-forearmstretchdown",
-		"http://www.jolly.fitness/1-smallhops",
-		"http://www.jolly.fitness/1-standinglaterallegraises",
-	"http://www.jolly.fitness/3-butterfly",
-	
+		"http://www.jolly.fitness/activity/handsoverhead.html",
+	"http://www.jolly.fitness/activity/cervicalflexorsstretch.html",
+	"http://www.jolly.fitness/activity/squat.html",
+	"http://www.jolly.fitness/activity/smallhops.html",
+	"http://www.jolly.fitness/activity/standinglaterallegraises.html",
+	"http://www.jolly.fitness/activity/forearmstretchup.html",
+	"http://www.jolly.fitness/activity/forearmstretchdown.html",
+	"http://www.jolly.fitness/activity/standingtorsotwist.html",
+	"http://www.jolly.fitness/activity/march.html",
+	"http://www.jolly.fitness/activity/smallarmcircles.html",
+	"http://www.jolly.fitness/activity/standinghipflexorstretch.html",
 	]);
 var iframeLinksIndex = 0;
 if(!!readCookie('windowlinkscookie')&&!!readCookie('windowlinkscookieindex')){
@@ -467,3 +478,5 @@ window.onload = function(){
 
 </body>
 </html>
+
+
