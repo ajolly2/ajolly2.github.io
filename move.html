@@ -3,6 +3,14 @@
 <head>
 	<link rel=icon href=/favicon.png>
   <title>JOLLY</title>
+	<script>
+	 function ChangebackgroundImage()
+            {
+                var bgArray = ['01.jpg', '02.jpg', '03.jpg', '04.jpg', '05.jpg', '06.jpg', '07.jpg', '08.jpg', '09.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '16.jpg', '17.jpg', '18.jpg', '19.jpg', '20.jpg', '21.jpg', '22.jpeg', '26.jpeg', '27.jpeg', '28.jpg', '29.jpg', '30.jpg', '31.jpeg', '32.jpg', '33.jpeg', '34.jpeg', '36.jpeg', '35.jpeg', '37.jpg', '38.jpg', '39.jpeg', '40.jpg', '41.jpg', '42.jpeg', '43.jpeg', '44.jpg', '45.jpeg', '46.jpeg', '47.jpeg', '48.jpg', '49.jpg', '50.jpeg', '51.jpg', '52.jpg', '54.jpeg', '55.jpg', '56.jpeg', '57.jpeg', '58.jpeg', '59.jpeg', '60.jpeg', '61.jpg', '62.jpg', '63.jpeg',];
+                var bg = bgArray[Math.floor(Math.random() * bgArray.length)];
+                document.body.background = 'http://ajolly2.github.io/images/jumbotron/' + bg;
+            }
+	</script>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://use.fontawesome.com/0003867fec.js"></script>
 	<!-- Latest compiled and minified CSS -->
@@ -78,11 +86,11 @@ html, body, .jumbotron, nav {
 
 </head>
 	
-<body background="../images/jumbotron/28.jpg" style="background-size: cover; background-repeat: no-repeat; background-attachment: fixed; background-position: center center; max-height: 100%; max-width: 100%">
+<body style="background-size: cover; background-repeat: no-repeat; background-attachment: fixed; background-position: center center; max-height: 100%; max-width: 100%">
 	<div class="container-fluid">
  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
+	  <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
         <span class="sr-only">Toggle navigation</span>
@@ -127,6 +135,8 @@ html, body, .jumbotron, nav {
 </div><!-- end container -->
 	
 	
-
+<script>
+ChangebackgroundImage()
+</script>
 </body>
 </html>
