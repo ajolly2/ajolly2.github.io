@@ -1,21 +1,16 @@
 
 <html lang="en">
 <head>
+  <title>Session 1</title>
 	<link rel=icon href=/favicon.png>
-  <title>JOLLY</title>
-	<script>
-	 function ChangebackgroundImage()
-            {
-                var bgArray = ['01.jpg', '02.jpg', '03.jpg', '04.jpg', '06.jpg', '07.jpg', '08.jpg', '09.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '17.jpg', '18.jpg', '19.jpg', '20.jpg', '21.jpg', '22.jpeg', '26.jpeg', '27.jpeg', '28.jpg', '29.jpg', '30.jpg', '31.jpeg', '32.jpg', '33.jpeg', '36.jpeg', '35.jpeg', '37.jpg', '38.jpg', '39.jpeg', '40.jpeg', '41.jpg', '42.jpeg', '43.jpeg', '44.jpg', '45.jpeg', '46.jpeg', '47.jpeg', '48.jpg', '50.jpeg', '51.jpg', '52.jpg', '54.jpeg', '55.jpg', '56.jpeg', '57.jpeg', '59.jpeg', '60.jpeg', '61.jpg', '62.jpg', '63.jpeg', '64.jpg', '65.jpg', '66.jpg', '67.jpg', '68.jpg', '69.jpg', '70.jpg', '71.jpg', '72.jpg', '73.jpg', '74.jpg', '75.jpg', '76.jpg', '77.jpg', '78.jpg', '79.jpg', '80.jpg',];
-                var bg = bgArray[Math.floor(Math.random() * bgArray.length)];
-                document.body.background = 'http://ajolly2.github.io/images/jumbotron/' + bg;
-            }
-	</script>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://use.fontawesome.com/0003867fec.js"></script>
 	<!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
+<audio style="hidden" id="myLoopingAudioPlayer">
+    <source src="https://jabzoo.github.io/jabzoo/timer_alert.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
 <!-- Optional theme -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
@@ -25,146 +20,70 @@
 	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 	<script src="https://use.fontawesome.com/0003867fec.js"></script>
 	<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-94060462-1', 'auto');
-  ga('send', 'pageview');
-
+    /*You have to set below two line*/
+    // If you want to stop the service, just comment below two lines.
+    // You can set any number of minutes in the "window.loopingInterval" 
+    // which will cnfirm the alert after each looping..
+    // You should not anything change in the "setInterval(loopingTimerMethod, 1000);"
+    // Because It is doing everthing.
+    window.loopingInterval = 20;
+    setInterval(loopingTimerMethod, 1000);
+    //////////////////////
+    /*START: Core functionality.. shold not be changed.. Else may not work*/
+    window.secondStart = 60;
+    window.loopingMinutes = loopingInterval - 1;
+    window.loopingSecond = secondStart;
+    function loopingStartTime(tim) {
+        var i = tim - 1;
+        return i;
+    }
+    function loopingTimerMethod()
+    {
+        loopingSecond = loopingStartTime(loopingSecond);
+        document.getElementById("timer-minutes").innerHTML = timeWithZero(loopingMinutes);
+        document.getElementById("timer-second").innerHTML = timeWithZero(loopingSecond);
+        if (loopingSecond == 0) {
+            if (loopingMinutes == 0 && loopingSecond == 0) {
+                var x = document.getElementById("myLoopingAudioPlayer");
+                LoopingPlayAudio(x);
+                window.loopingMinutes = loopingInterval;
+            }
+            loopingMinutes = loopingMinutes - 1;
+            loopingSecond = secondStart;
+        }
+    }
+    function LoopingPlayAudio(x) {
+        x.play();
+    }
+    function LoopingPauseAudio(x) {
+        x.pause();
+    }
+    function timeWithZero(i) {
+        if (i < 10) {
+            i = "0" + i
+        }
+        ;  // add zero in front of numbers < 10
+        return i;
+    }
+    /*END Timer Looping functionality*/
 </script>
 	<style>
-		@import "compass/css3";
-
-@import "compass";
-@import url("http://fonts.googleapis.com/css?family=Lato");
-
-$background: #e74c3c;
-$select-color: #fff;
-$select-background: #c0392b;
-$select-width: 220px;
-$select-height: 40px; 
-
-body { 
-  font-family: Lato, Arial;
-  color: $select-color;
-  padding: 20px;
-  background-color: $background;
-}
-h1 {
-  font-weight: normal;
-  font-size: 40px;
-  font-weight: normal;
-  text-transform: uppercase;
-  span { 
-    font-size: 13px;
-    display: block;
-    padding-left: 4px;
-  }
-}
-p {
-  margin-top: 200px;
-  a {
-    text-transform: uppercase;
-    text-decoration: none;
-    display: inline-block;
-    color: #fff;
-    padding: 5px 10px;
-    margin: 0 5px;
-    background-color: darken($select-background, 2);
-    @include transition(all 0.2s ease-in);
-    &:hover {
-      background-color: darken($select-background, 5);
-    }
-  }
-}
-.select-hidden {
-  display: none;
-  visibility: hidden;
-  padding-right: 10px;
-}
-.select {
-  cursor: pointer;
-  display: inline-block;
-  position: relative;
-  font-size: 16px;
-  color: $select-color;
-  width: $select-width;
-  height: $select-height;
-}
-.select-styled {
-  position: absolute; 
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: $select-background;
-  padding: 8px 15px;
-  @include transition(all 0.2s ease-in);
-  &:after {
-    content:"";
-    width: 0;
-    height: 0;
-    border: 7px solid transparent;
-    border-color: $select-color transparent transparent transparent;
-    position: absolute;
-    top: 16px;
-    right: 10px;
-  }
-  &:hover {
-    background-color: darken($select-background, 2);
-  }
-  &:active, &.active {
-    background-color: darken($select-background, 5);
-    &:after {
-      top: 9px;
-      border-color: transparent transparent $select-color transparent;
-    }
-  }
-}
-
-.select-options {
-  display: none; 
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 0;
-  z-index: 999;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  background-color: darken($select-background, 5);
-  li {
-    margin: 0;
-    padding: 12px 0;
-    text-indent: 15px;
-    border-top: 1px solid darken($select-background, 10);
-    @include transition(all 0.15s ease-in);
-    &:hover {
-      color: $select-background;
-      background: $select-color;
-    }
-    &[rel="hide"] {
-      display: none;
-    }
-  }
-};
-		.center-div
-{
-  position: absolute;
-  margin: auto;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: 100px;
-  height: 100px;
-  background-color: none;
-  border-radius: 3px;
-};
+		body{
+		overflow: hidden;	
+		};
 html, body, .jumbotron, nav {
     font-family: 'Open Sans', sans-serif;   
+}
+		
+		
+.navbar-default .navbar-nav > li.dropdown:hover > a, 
+.navbar-default .navbar-nav > li.dropdown:hover > a:hover,
+.navbar-default .navbar-nav > li.dropdown:hover > a:focus {
+    background-color: rgb(231, 231, 231);
+    color: rgb(85, 85, 85);
+}
+li.dropdown:hover > .dropdown-menu {
+    display: block;
 }
 .container {
     padding-top: 20px;   
@@ -194,116 +113,355 @@ html, body, .jumbotron, nav {
   text-overflow: ellipsis;
 
 }
-		dropdown {
-    width: 70px !important;
-}
 	</style>
-<script>
-	/*
-Reference: http://jsfiddle.net/BB3JK/47/
-*/
-
-$('select').each(function(){
-    var $this = $(this), numberOfOptions = $(this).children('option').length;
-  
-    $this.addClass('select-hidden'); 
-    $this.wrap('<div class="select"></div>');
-    $this.after('<div class="select-styled"></div>');
-
-    var $styledSelect = $this.next('div.select-styled');
-    $styledSelect.text($this.children('option').eq(0).text());
-  
-    var $list = $('<ul />', {
-        'class': 'select-options'
-    }).insertAfter($styledSelect);
-  
-    for (var i = 0; i < numberOfOptions; i++) {
-        $('<li />', {
-            text: $this.children('option').eq(i).text(),
-            rel: $this.children('option').eq(i).val()
-        }).appendTo($list);
+ <!-- Custom CSS -->
+   
+    <style>
+        
+                /*!
+         * Start Bootstrap - Simple Sidebar (http://startbootstrap.com/)
+         * Copyright 2013-2016 Start Bootstrap
+         * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
+         */
+         body {
+            overflow-x: hidden;
+            padding-top: 50px;
+         };
+	    a.navbar-brand {
+    text-shadow: none;
+    color: #474747;
+    margin-left: 0px;
+    margin-right: 0px;
+		    padding: 0px;
+		    font-size: 10px;
+	    }
+        /* Toggle Styles */
+        #wrapper {
+            padding-left: 0;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+        #wrapper.toggled {
+            padding-left: 250px;
+        }
+        #sidebar-wrapper {
+            z-index: 1000;
+            position: fixed;
+            left: 250px;
+            width: 0;
+            height: 100%;
+            color: #000;
+            margin-left: -250px;
+            overflow-y: auto;
+            background: #fff;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+        #wrapper.toggled #sidebar-wrapper {
+            width: 250px;
+        }
+        #page-content-wrapper {
+            width: 100%;
+            position: absolute;
+            padding: 15px;
+        }
+        #wrapper.toggled #page-content-wrapper {
+            position: absolute;
+            margin-right: -250px;
+        }
+        /* Sidebar Styles */
+        .sidebar-nav {
+            position: absolute;
+            top: 0;
+            width: 250px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .sidebar-nav li {
+            text-indent: 20px;
+            line-height: 40px;
+        }
+        .sidebar-nav li a {
+            display: block;
+            text-decoration: none;
+            color: #777777;
+        }
+        .sidebar-nav li a:hover {
+            text-decoration: none;
+            color: #323232;
+            background: rgba(255,255,255,0.2);
+        }
+        .sidebar-nav li a:active,
+        .sidebar-nav li a:focus {
+            text-decoration: none;
+        }
+        .sidebar-nav > .sidebar-brand {
+            height: 65px;
+            font-size: 18px;
+            line-height: 60px;
+        }
+        .sidebar-nav > .sidebar-brand a {
+            color: #999999;
+        }
+        .sidebar-nav > .sidebar-brand a:hover {
+            color: #fff;
+            background: none;
+        }
+        @media(min-width:768px) {
+            #wrapper {
+                padding-left: 250px;
+            }
+            #wrapper.toggled {
+                padding-left: 0;
+            }
+            #sidebar-wrapper {
+                width: 250px;
+            }
+            #wrapper.toggled #sidebar-wrapper {
+                width: 0;
+            }
+            #page-content-wrapper {
+                padding: 20px;
+                position: relative;
+            }
+            #wrapper.toggled #page-content-wrapper {
+                position: relative;
+                margin-right: 0;
+            }
+        }
+        #page-content-wrapper iframe{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 617px;
+        }
+        @-webkit-keyframes animation-button {
+        0% {
+            color: red;
+        }
+        
+        25% {
+            color: yellow;
+        }
+        
+        50% {
+            color: blue;
+        }
+        
+        75% {
+            color: green;
+        }
+        
+        100% {
+            color: red;
+        }
     }
-  
-    var $listItems = $list.children('li');
-  
-    $styledSelect.click(function(e) {
-        e.stopPropagation();
-        $('div.select-styled.active').not(this).each(function(){
-            $(this).removeClass('active').next('ul.select-options').hide();
-        });
-        $(this).toggleClass('active').next('ul.select-options').toggle();
-    });
-  
-    $listItems.click(function(e) {
-        e.stopPropagation();
-        $styledSelect.text($(this).text()).removeClass('active');
-        $this.val($(this).attr('rel'));
-        $list.hide();
-        //console.log($this.val());
-    });
-  
-    $(document).click(function() {
-        $styledSelect.removeClass('active');
-        $list.hide();
-    });
+    @keyframes animation-button {
+        0% {
+            color: red;
+        }
+        
+        25% {
+            color: yellow;
+        }
+        
+        50% {
+            color: blue;
+        }
+        
+        75% {
+            color: green;
+        }
+        
+        100% {
+            color: red;
+        }
+    }
+	    @import url('http://getbootstrap.com/dist/css/bootstrap.css');
+.glyphicon-refresh {
+    fill: #fff;
+    -webkit-animation: animation-button 20000ms infinite;
+    -moz-animation: animation-button 20000ms infinite;
+    -o-animation: animation-button 20000ms infinite;
+    animation: animation-button 20000ms infinite;
+}
+@-webkit-keyframes animation-button {
+    0%   {color:red; }
+    25%  {color:yellow; }
+    50%  {color:blue; }
+    75%  {color:green; }
+    100% {color:red; }
+}
+@keyframes animation-button {
+    0%   {color:red; }
+    25%  {color:yellow; }
+    50%  {color:blue; }
+    75%  {color:green; }
+    100% {color:red; }
+}
 
-});</script>
+
+.sidebar1 .sidebar-two {
+	display: none;
+}
+.sidebar2 .sidebar-one {
+	display: none;
+}
+    </style>
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 	
-<body style="background-size: cover; background-repeat: no-repeat; background-attachment: fixed; background-position: center center; max-height: 100%; max-width: 100%">
+<body>
 	<div class="container-fluid">
  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container-fluid">
-	  <!-- Brand and toggle get grouped for better mobile display -->
+    <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+     <!-- <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand"><img src="../jollylogo.png" /></a>
-	    <ul class="nav navbar-nav">
-	      <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sessions <b class="caret"></b></a>
-              <ul class="dropdown-menu col-xs-3">
-                <li><a href="/1.html">1</a></li>
-                <li><a href="/2.html">2</a></li>
-<li><a href="/3.html">3</a></li>
-		   
-<li><a href="/4.html">4</a></li>  
-<li><a href="/5.html">5</a></li> <!--
-<li><a href="/6.html">6</a></li>
+      </button>-->
+      <a class="navbar-brand timer-loop"><span id="timer-minutes">20</span>:<span id="timer-second">00</span></a>
+	   <a class="navbar-brand" data-toggle="tooltip" title="Load new activity" href="#"><span id="btn" class="glyphicon glyphicon-refresh"></span></a>
 
--->
-              </ul>
-            </li>
-          </ul>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
-<!-- /.navbar-collapse -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+	      <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sessions <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/1.html"><strong>1</strong></a></li>
+		  <li><a href="/2.html">2</a></li>
+            <li><a href="/3.html">3</a></li>
+		  		 
+
+<li><a href="/4.html">4</a></li> 
+		  
+<li><a href="/5.html">5</a></li>
+		  <!--
+<li><a href="/6.html">6</a></li>
+-->
+           
+          </ul>
+        </li>
+      </ul>
+	     
+    </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
-	<div class="center-div" style="width: 800px; margin: auto; text-align: center;">
-		
-		
-		
-
-		
-		
-		<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw" aria-hidden="true" style="color: white; font-size: 35px;"></i>	
-			
-			<br>
-			<br>
-			<font color="white" size="5"><strong>Activity<br>Reminder</strong></font>
-		</div>
-		
 </div><!-- end container -->
+	 <div id="page-content-wrapper">
+
+
+                <iframe id="frame" name="myIframe" style="position: absolute; height: 100%; width: 100%;border: none;overflow:hidden;" scrolling="no"  src=""></iframe>
+
+
+            </div>
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+       <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 	
-	
-<script>
-ChangebackgroundImage()
+  <script type="text/javascript">
+// cookie value geetter
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+// Knuth array shuffle
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+	randomIndex = Math.floor(Math.random() * currentIndex);
+	currentIndex -= 1;
+	temporaryValue = array[currentIndex];
+	array[currentIndex] = array[randomIndex];
+	array[randomIndex] = temporaryValue;
+    }
+    return array;
+}
+// Open in new Window
+var windowLinks = shuffle([
+
+]);
+var windowLinksIndex = 0;
+// iFrame links
+var iframeLinks = shuffle([
+ "http://www.jolly.fitness/activity/handsoverhead.html",
+	"http://www.jolly.fitness/activity/cervicalflexorsstretch.html",
+	"http://www.jolly.fitness/activity/squat.html",
+	"http://www.jolly.fitness/activity/smallhops.html",
+	"http://www.jolly.fitness/activity/standinglaterallegraises.html",
+	"http://www.jolly.fitness/activity/forearmstretchup.html",
+	"http://www.jolly.fitness/activity/forearmstretchdown.html",
+	"http://www.jolly.fitness/activity/standingtorsotwist.html",
+	"http://www.jolly.fitness/activity/march.html",
+	"http://www.jolly.fitness/activity/smallarmcircles.html",
+	"http://www.jolly.fitness/activity/standinghipflexorstretch.html",
+]);
+var iframeLinksIndex = 0;
+if(!!readCookie('windowlinkscookie')&&!!readCookie('windowlinkscookieindex')){
+    windowLinks = readCookie('windowlinkscookie').split(',');
+    windowLinksIndex = parseInt(readCookie('windowlinkscookieindex'));
+}else{
+    document.cookie = 'windowlinkscookie=' + windowLinks.join(',');
+    document.cookie = 'windowlinksindex=' + windowLinksIndex;
+}
+if(!!readCookie('framelinkscookie')&&!!readCookie('framelinkscookieindex')){
+    windowLinks = readCookie('framelinkscookie').split(',');
+    windowLinksIndex = parseInt(readCookie('framelinkscookieindex'));
+}else{
+    document.cookie = 'framelinkscookie=' + windowLinks.join(',');
+    document.cookie = 'framelinkscookieindex=' + windowLinksIndex;
+}
+openStuff = function () {
+    var link = windowLinks[windowLinksIndex];
+    windowLinksIndex++;
+    windowLinksIndex %= windowLinks.length;
+    window.open(link);
+};
+// Open in iFrame
+var myFrame = document.getElementById("frame");
+function getRandomUrl(myFrame) {
+    var url = iframeLinks[iframeLinksIndex];
+    iframeLinksIndex++;
+    iframeLinksIndex %= iframeLinks.length;
+    myFrame.src = url;
+}
+var refreshBtn = document.getElementById("btn");
+refreshBtn.addEventListener("click", function() {
+    getRandomUrl(myFrame); 
+});
+window.onload = function(){
+    getRandomUrl(myFrame);
+};
 </script>
+	
+
 </body>
 </html>
