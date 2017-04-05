@@ -1,73 +1,140 @@
+
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-<link rel=icon href=/favicon.png>
-    <title>JOLLY</title>
+	<link rel=icon href=/favicon.png>
+  <title>JOLLY</title>
+	<script>
+	 function ChangebackgroundImage()
+            {
+                var bgArray = ['01.jpg', '02.jpg', '03.jpg', '04.jpg', '06.jpg', '07.jpg', '08.jpg', '09.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '17.jpg', '18.jpg', '19.jpg', '20.jpg', '21.jpg', '22.jpeg', '26.jpeg', '27.jpeg', '28.jpg', '29.jpg', '30.jpg', '31.jpeg', '32.jpg', '33.jpeg', '36.jpeg', '35.jpeg', '37.jpg', '38.jpg', '39.jpeg', '40.jpeg', '41.jpg', '42.jpeg', '43.jpeg', '44.jpg', '45.jpeg', '46.jpeg', '47.jpeg', '48.jpg', '50.jpeg', '51.jpg', '52.jpg', '54.jpeg', '55.jpg', '56.jpeg', '57.jpeg', '59.jpeg', '60.jpeg', '61.jpg', '62.jpg', '63.jpeg', '64.jpg', '65.jpg', '66.jpg', '67.jpg', '68.jpg', '69.jpg', '70.jpg', '71.jpg', '72.jpg', '73.jpg', '74.jpg', '75.jpg', '76.jpg', '77.jpg', '78.jpg', '79.jpg', '80.jpg',];
+                var bg = bgArray[Math.floor(Math.random() * bgArray.length)];
+                document.body.background = 'http://ajolly2.github.io/images/jumbotron/' + bg;
+            }
+	</script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://use.fontawesome.com/0003867fec.js"></script>
+	<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://d33wubrfki0l68.cloudfront.net/css/6fb74e35c90ae93762a82f835686b14e5b0feab9/templates/examples/bootstrap/css/bootstrap.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-    <!-- Custom styles for this template -->
-    <link rel="stylesheet" href="https://d33wubrfki0l68.cloudfront.net/css/2c95fa329dac1c7fabf68134817a6c8c27431aa0/templates/examples/cover.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="https://use.fontawesome.com/0003867fec.js"></script>
+	<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+  ga('create', 'UA-94060462-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+	<style>
+		.center-div
+{
+  position: absolute;
+  margin: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+  background-color: none;
+  border-radius: 3px;
+};
+html, body, .jumbotron, nav {
+    font-family: 'Open Sans', sans-serif;   
+}
+.container {
+    padding-top: 20px;   
+}
+	
+	img {
+    -webkit-filter: brightness(200%); /* Safari 6.0 - 9.0 */
+    filter: brightness(200%);
+}
+	
+.jumbotron h2 {
+    text-align: center;
+}
+	.center {
+    margin: auto;
+    width: 50%;
+    border: 0px solid green;
+    padding: 10px;
+}
+	.table-nowrap {
+	table-layout:fixed;
+}
+
+.table-nowrap td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+		dropdown {
+    width: 70px !important;
+}
+	</style>
+
 </head>
-
-<body>
-
-    <div class="site-wrapper">
-
-        <div class="site-wrapper-inner">
-
-            <div class="cover-container">
-
-                <div class="masthead clearfix">
-
-                </div>
-
-                <div class="inner cover">
-                  
-                    <p class="lead">
-                    <img src="loopy.png">
-                    </p>
-                    <p style="font-size: 15px">
-                    <a href="/training.html">Personal Training</a>
-                    &nbsp;
-                    &nbsp;
-                    &nbsp;
-                    &nbsp;
-                    &nbsp;
-                    &nbsp;
-                    <a href="/corporate.html">Corporate Fitness</a>
-                    </p>
-                    <p class="lead">
-                     
-                    </p>
-                </div>
-
-                <div class="mastfoot">
-
-                </div>
-
-            </div>
-
-        </div>
-
+	
+<body style="background-size: cover; background-repeat: no-repeat; background-attachment: fixed; background-position: center center; max-height: 100%; max-width: 100%">
+	<div class="container-fluid">
+ <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+	  <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand"><img src="../jollylogo.png" /></a>
     </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="https://d33wubrfki0l68.cloudfront.net/js/e22b2f53de39b540c35079a7b7fcb51ca9727a7c/templates/examples/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+	      <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sessions <b class="caret"></b></a>
+              <ul class="dropdown-menu col-xs-3">
+                <li><a href="/1.html">1</a></li>
+                <li><a href="/2.html">2</a></li>
+<li><a href="/3.html">3</a></li>
+		   
+<li><a href="/4.html">4</a></li>  
+<li><a href="/5.html">5</a></li> <!--
+<li><a href="/6.html">6</a></li>
 
-
-
+-->
+              </ul>
+            </li>
+          </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+	<div class="center-div" style="width: 800px; margin: auto; text-align: center;">
+		<i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw" aria-hidden="true" style="color: white; font-size: 35px;"></i>	
+			
+			<br>
+			<br>
+			<font color="white" size="5"><strong>Activity<br>Reminder</strong></font>
+		</div>
+		
+</div><!-- end container -->
+	
+	
+<script>
+ChangebackgroundImage()
+</script>
 </body>
+</html>
