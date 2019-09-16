@@ -86,12 +86,9 @@ TREAT YOUR EMPLOYEES LIKE YOU DO YOUR BEST CUSTOMERS. <BR />
 
 
 <div class="menu">
-  <div id="monster">
 <img src="/JW-MBSR.jpg" alt="" width="375" height="175">
   <br /><br />
-  <div class="hideme">
   <img src="/JW-MDM.jpg" alt="" width="375" height="175">
- 
   <br /><br />
   <img src="/JW-BB.jpg" alt="" width="375" height="175">
   <br /><br />
@@ -106,8 +103,7 @@ TREAT YOUR EMPLOYEES LIKE YOU DO YOUR BEST CUSTOMERS. <BR />
   <img src="/JW-Gyro.jpg" alt="" width="375" height="175">
   <br /><br />
   </div>
-  </div>
-  </div>
+ 
 
 <div class="main">
 <img src="/JW-DNL.jpg" alt="" width="375" height="175">
@@ -127,34 +123,6 @@ TREAT YOUR EMPLOYEES LIKE YOU DO YOUR BEST CUSTOMERS. <BR />
 <img src="/JW-NOSOC.jpg" alt="" width="375" height="175">
 </div>
 
-  <script>
-    $(function(){  // $(document).ready shorthand
-  $('.monster').fadeIn('slow');
-});
-
-$(document).ready(function() {
-    
-    /* Every time the window is scrolled ... */
-    $(window).scroll( function(){
-    
-        /* Check the location of each desired element */
-        $('.hideme').each( function(i){
-            
-            var bottom_of_object = $(this).position().top + $(this).outerHeight();
-            var bottom_of_window = $(window).scrollTop() + $(window).height();
-            
-            /* If the object is completely visible in the window, fade it it */
-            if( bottom_of_window > bottom_of_object ){
-                
-                $(this).animate({'opacity':'1'},1500);
-                    
-            }
-            
-        }); 
-    
-    });
-    
-});
-  </script>
+ 
 </body>
 </html>
