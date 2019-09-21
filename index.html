@@ -1,166 +1,301 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-  <title>JOLLY Wellness</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/png" href="fav.png"/>
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed|Titillium+Web:600|Nunito|PT+Sans:700i|Lato:700|Source+Sans+Pro:700|Dosis|Baloo+Bhai" rel="stylesheet">
-  <style>
-    body{
-      margin: 0px 0px 0px 160px; 
-  background-image: url(img/home-bg2.jpg);
-   background-size: ; 
+  <link href="https://fonts.googleapis.com/css?family=Black+Han+Sans|Roboto&display=swap" rel="stylesheet">
+  
+  <!--<link href="https://fonts.googleapis.com/css?family=Roboto+Condensed|Titillium+Web:600|Nunito|PT+Sans:700i|Lato:700|Source+Sans+Pro:700|Dosis|Baloo+Bhai" rel="stylesheet">
+  -->
+  
+<style>
+* {
+  box-sizing: border-box;
+}
+  
+   body{
+      margin: 0px 0px 0px 0px; 
+  
+   background-repeat: no-repeat;
+  background-size: auto;
+     background-attachment: fixed;
    }
+
+.header {
+  background-image: url(img/home-bg2.jpg);
+  border: 0px solid red;
+  padding: 15px;
+   text-align: center;
+
+}
   
-    #main {
-      height:100%;
-      width: 100%;
-      background-color: transparent;
-      background-size: cover;   
-     
-    }
+  .subhead {
+    width: 100%;
+    float: left;
+    padding: 2.5px;
+    background-color: white;
+    text-align: center;
+  }
+  
+
+  .leftspace {
+    width: 10%;
+    float: left;
+  padding: 2.5px;
+    background-color: white;
+  }
+  
+.menu {
+  width: 20%;
+  float: left;
+  padding: 2.5px;
+      border: Opx solid red;
+  background-color: white;
+
+
+  
+}
+  
+  .main {
+  width: 20%;
+  float: left;
+  padding: 2.5px;
+    border: Opx solid red;
+    background-color: white;
+
+}
+
+.main2 {
+  width: 20%;
+  float: left;
+  padding: 2.5px;
+    border: Opx solid red;
+  background-color: white;
+
+}
+  .menu2 {
+  width: 20%;
+  float: left;
+  padding: 2.5px;
+      border: Opx solid red;
+    background-color: white;
+ 
     
-    #navbar{
-      padding: 0px;
-      margin: 20px 20px 20px 40px;
-      font-size: 50px;
-   
-    }
-    
-    #img {
-      width: 150px;
-      height: auto;
-    }
-    
-    #logo-div{
-      width: 100px;
-      height:100px;
-      background-color: none;
-    }
-    
-   
-    }
-    
-    #section1{
-      font-size: 18px;
-      padding-top: 10px;
-      position: absolute;
-      max-height: 100%;
-      max-width: 100%;
-      color: #0000FF;
-    }
-    
-    #text{
-      font-family: "Roboto Condensed";
-     
-      text-align: left;
-      color: white;
-      margin: 20px;
-      padding: 90px 10px 20px 40px;
-      width: 500px;
-    }
-    
-    a{
-      text-decoration: none;
-    }
-    
-    h1{
-      background-color: white;
+}
+   .rightspace {
+    width: 10%;
+    float: left;
+  padding: 2.5px;
+     background-color: white;
+  }
+
+  .strip
+  {
+    width: 100%;
+    float: left;
+    padding: 2.5px;
+    background-image: url(/stripbg.jpg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    text-align: center;
+  
+  }
+  
+  .bottomstrip
+  {
+    width: 100%;
+    float: left;
+    padding: 2.5px;
+    background-color: white;
+    text-align: center;
+  
+  }
+ 
+  
+ 
+  
+   #text{
+      font-family: 'Black Han Sans', sans-serif;
       text-align: center;
-    }
     
-    h2{
-      font-size: 12px;
-      color: #4c4cff;
-    }
-    
-   
-    
-    #box1{
-      float: left;
-      width: 90%;
-    }
-    
-    #box2{
-      float: right;
-      width: 20%;
-      height: 100%;
-      text-align: left;
-      position: relative;
-      background-size: cover;
-    }
-    
-    #submit{
-      border-radius: 0px;
-      background-color: #2c2c6d;
-      box-shadow: 0px 5px 25px ;
-      border: 1px solid #2c2c6d;
-      height: 40px;
-      color: white;
-      font-size: 20px;
-      font-family: Dosis;
-      display: block;
-      width: 400px;
-    }
-    
-    #link{
-      text-decoration: none;
-      color: white;
-    }
-    
-    #email{
-      height: 40px;
-      border: 1px solid white;
-      background-color: white;
-      display: block;
-      width: 400px;
-    }
-  </style>
+  }
   
-  
-
-</head>
-
-<body>
-<div id="main">
-  <div id="header">
-      <nav id="navbar">
-        <div id="logo-div">
-          <br />
-          
-          <img id="img" src="https://vectr.com/ajolly2/b3E59SYMBr.svg?width=180&height=80&select=b3E59SYMBrpage0" alt="logo">
-        </div>
-      </nav>
+     #text2{
+      font-family: 'Black Han Sans', sans-serif;
+      text-align: center;
       
-        <div id="box1">
-          <div id="text">
-         <font size="25px" color="white">
-  <strong>A healthy, happy, <br />high-performing<br />workplace wins<br />in the marketplace.<br />
-            </strong></font>
+  }
+  
+ .shadow {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+  
+  .aline {
+  border-radius: 50%;
+}
+  
+  a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a:active {
+  text-decoration: none;
+}
+  
+</style>
+</head>
+<body>
+
+<div class="header">
+<br />
+<br />
+<br />
+<br />
+  <img id="img" src="https://vectr.com/ajolly2/b3E59SYMBr.svg?width=180&height=80&select=b3E59SYMBrpage0" alt="logo">
+<br />
+<br />
+<br />
+<br />
+  
+<div id="text">
   <br />
+<font size="25px" color="white">
+  <strong>
+    TREAT YOUR EMPLOYEES <br />LIKE YOUR BEST CUSTOMERS
+    <br />
+  </strong>
+  </font>
   <br />
-            <font size="5px" color="#323232"><strong>Let's talk about your company's wellness: <br />(504) 418-6356</strong></font>
-            <!--
- <form action="mailto:ajolly2@gmail.com" method="post">
-   <label for="email" id="email-label"></label>
-   <input type="text" id="email" placeholder="  Enter your email address" size="50";>
- 
- <label for="" id="submit-label"></label>
- <input type="" id="submit" value ="(504) 418-6356">-->
- 
     
-
-
-          </div>
-        </div>
-        <div id="box2">
-          
-        </div>
-     
-  
-  
-  
+    <!--
+TREAT YOUR EMPLOYEES LIKE YOU DO YOUR BEST CUSTOMERS. <BR /> 
+  </strong>
+  A happy, healthy, high-performing workplace wins in the marketplace.
+  </font>-->
 </div>
+  
+  
+  </div>
 
-</body
+  <div class="subhead">
+  
+    <br /><br /> <br /><br />
+    <div id="text">
+      
+    <font size="25px" color="#464646"><strong>BY BRINGING WELLNESS TO WORK:</strong></font>
+    </div>
+  </div>
+  
+  <div class="leftspace"></div>
+
+<div class="menu">
+  <br /><br /> <br /><br />
+  <img src="/PW.jpg" alt="" class="shadow" 
+  <br /><br /> <br /><br /><br /><br /> <br /><br /><br /><br /> <br /><br />
+
+  </div>
+ 
+
+<div class="main"><br /><br /> <br /><br />
+  <img src="/BH.jpg" alt="" class="shadow" 
+  <br /><br /> <br /><br /><br /><br /> <br /><br />
+
+</div>
+  
+  <div class="main2"><br /><br /> <br /><br />
+    <img src="/TB.jpg" alt="" class="shadow" 
+  <br /><br /> <br /><br /><br /><br /> <br /><br />
+  
+  </div>
+  
+  <div class="menu2"><br /><br /> <br /><br />
+    <img src="/CC.jpg" alt="" class="shadow" 
+  <br /><br /> <br /><br /><br /><br /> <br /><br />
+ 
+  </div>
+  
+  <div class="rightspace"></div>
+  
+  <div class="strip">
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <div id="text">
+  <font size="8px" color="#EE4B6A">
+     "I'm super excited to work at a place<br />
+    that does this for us!"
+     </font>
+    <br />
+    <br />
+<br />
+<img class="aline" src="Aline.png" alt="Aline" width="200" height="200">
+    <br />
+    <br />
+    <br />
+    <font size="7px" color="#EF8354"><a href="http://www.alineadams.com" target="_blank" style="text-decoration: none; color: #EF8354">Aline</a></font>
+    <br />
+      <font size="5px" color="#EF8354">Product Marketing Manager</font>
+      <br />
+    <font size="5px" color="#EF8354"><a href="http://www.revelry.co" target="_blank" style="text-decoration: none; color: #EF8354;">Revelry</a></font>
+      </div>
+     <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+     
+  </div>
+
+  
+  <div class="bottomstrip">
+     <br />
+    <br />
+<br />
+    <br />
+    <br />
+<br />
+     <br />
+    <br />
+    <div id="text">
+        <font size="8px" color="black"> 
+    Let's discuss your company's wellness.
+    </font>
+    <br />
+      <br />
+      <br />
+
+  <font size="6px" color="black"> 
+Call or text    </font>
+    <br />
+   
+<font size="6px" color="black"> 
+(504) 418-6356    </font>
+         </div>
+    <br />
+    <br />
+<br />
+    <br />
+    <br />
+<br />
+     <br />
+    <br />
+  </div>
+ 
+</body>
 </html>
