@@ -172,6 +172,19 @@ a:active {
   text-decoration: none;
 }
   
+  #rotating {
+		-webkit-animation: rotation 2s infinite linear;
+}
+
+@-webkit-keyframes rotation {
+		from {
+				-webkit-transform: rotate(0deg);
+		}
+		to {
+				-webkit-transform: rotate(359deg);
+		}
+}
+  
 </style>
 </head>
 <body>
@@ -302,7 +315,7 @@ TREAT YOUR EMPLOYEES LIKE YOU DO YOUR BEST CUSTOMERS. <BR />
     <br />
     <br />
     <div class="container">
-  <img src="Arrow.png" alt="Healthy, happy company">
+  <img src="Arrow.png" id="rotating" alt="Healthy, happy company">
   <div class="centered">
       <font size="5px" color="#330019">HEALTHY EMPLOYEES</font>
     <br />
