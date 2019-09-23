@@ -101,16 +101,38 @@
   
   }
   
-  .bottomstrip
+  .bottomstripT
   {
     width: 100%;
     float: left;
-    padding: 2.5px;
+    padding: 10px;
     background-color: white;
     text-align: center;
   
   }
+  
+  .container {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+  
+  .centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
  
+  .bottomstripB
+  {
+    width: 100%;
+    float: right;
+    padding: 2.5px;
+    background-image: url(/bottombg.jpg);
+    text-align: center;
+  
+  }
   
  
   
@@ -148,6 +170,19 @@ a:hover {
 
 a:active {
   text-decoration: none;
+}
+  
+  #rotating {
+		-webkit-animation: rotation 6s infinite linear;
+}
+
+@-webkit-keyframes rotation {
+		from {
+				-webkit-transform: rotate(0deg);
+		}
+		to {
+				-webkit-transform: rotate(359deg);
+		}
 }
   
 </style>
@@ -198,31 +233,32 @@ TREAT YOUR EMPLOYEES LIKE YOU DO YOUR BEST CUSTOMERS. <BR />
 
 <div class="menu">
   <br /><br /> <br /><br />
-  <img src="/PW.jpg" alt="" class="shadow" 
+  <img src="/PW.jpg" alt="" class="shadow"> 
   <br /><br /> <br /><br /><br /><br /> <br /><br /><br /><br /> <br /><br />
 
   </div>
  
 
 <div class="main"><br /><br /> <br /><br />
-  <img src="/BH.jpg" alt="" class="shadow" 
+  <img src="/BH.jpg" alt="" class="shadow">
   <br /><br /> <br /><br /><br /><br /> <br /><br />
 
 </div>
   
   <div class="main2"><br /><br /> <br /><br />
-    <img src="/TB.jpg" alt="" class="shadow" 
+    <img src="/TB.jpg" alt="" class="shadow">
   <br /><br /> <br /><br /><br /><br /> <br /><br />
   
   </div>
   
   <div class="menu2"><br /><br /> <br /><br />
-    <img src="/CC.jpg" alt="" class="shadow" 
+    <img src="/CC.jpg" alt="" class="shadow"> 
   <br /><br /> <br /><br /><br /><br /> <br /><br />
  
   </div>
   
-  <div class="rightspace"></div>
+  <div class="rightspace">
+  </div>
   
   <div class="strip">
     <br />
@@ -262,8 +298,56 @@ TREAT YOUR EMPLOYEES LIKE YOU DO YOUR BEST CUSTOMERS. <BR />
      
   </div>
 
+  <div class="bottomstripT"
+        <br />
+    <br />
+<br />
+    <br />
+    <br />
+  <br />
+    <br />
+    <br />
+  <div id="text">
+         <font size="7px" color="black">The organization with<br />
+		 a healthy, happy, high-performing workplace 
+		 <br />wins in the marketplace:
+    </font>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="container">
+  <img src="Arrow.png" id="rotating" alt="Healthy, happy company">
+  <div class="centered">
+      <font size="6px" color="#330019">HEALTHY EMPLOYEES</font>
+    <br />
+    <font size="4px" color="#660033">HAPPY, ENERGIZED, PEAK PERFORMING</font>
+    <br /><br /><br />
+      <font size="6px" color="#99004C">HEALTHY TEAMS</font>
+    <br />
+    <font size="4px" color="#CC0066">FRIENDS WHO WORK WELL<br />WITH AND FOR EACH OTHER</font>
+    <br />
+    <br /><br />
+    <font size="6px" color="#FF007F">HEALTHY ORGANIZATION</font>
+    <br />
+    <font size="4px" color="#FF3399">SUSTAINABLE, BOTTOM LINE SUCCESS</font>
+      </div>
+</div>
+    
+  </div>
   
-  <div class="bottomstrip">
+  <br />
+ <br />
+    <br />
+<br />
+    <br />
+    <br />
+  <br />
+    <br />
+    <br />
+       </div>
+  
+  <div class="bottomstripB">
      <br />
     <br />
 <br />
@@ -273,18 +357,18 @@ TREAT YOUR EMPLOYEES LIKE YOU DO YOUR BEST CUSTOMERS. <BR />
      <br />
     <br />
     <div id="text">
-        <font size="8px" color="black"> 
+        <font size="7px" color="white"> 
     Let's discuss your company's wellness.
     </font>
     <br />
       <br />
       <br />
 
-  <font size="6px" color="black"> 
+  <font size="5px" color="white"> 
 Call or text    </font>
     <br />
    
-<font size="6px" color="black"> 
+<font size="5px" color="white"> 
 (504) 418-6356    </font>
          </div>
     <br />
