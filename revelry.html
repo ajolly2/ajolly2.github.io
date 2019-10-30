@@ -1,51 +1,20 @@
-
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta charset="utf-8" />
-<title>1</title>
-<style type="text/css">
-body { font: 14px/1.3 verdana, arial, helvetica, sans-serif; }
-h1 { font-size:1.3em; }
-h2 { font-size:1.2em; }
-a:link { color:#33c; } 
-a:visited { color:#339; }
-p { max-width: 60em; }
+	<title>Random Image</title>
+    <script>
+        window.onload = choosePic;
 
-/* so linked image won't have border */
-a img { border:none; }
-</style>
-<script type="text/javascript">
-// place your images in this array
-var random_images_array = ['1.gif', '2.gif', '3.gif', '4.gif'];
-    
-function getRandomImage(imgAr, path) {
-    path = path || 'http://jollywellness.com/activity/'; // default path here
-    var num = Math.floor( Math.random() * imgAr.length );
-    var img = imgAr[ num ];
-    var imgStr = '<img src="' + path + img + '" alt = "">';
-    document.write(imgStr); document.close();
+var myPix = new Array("activity/2.gif","activity/3.gif","activity/4.gif");
+
+function choosePic() {
+	randomNum = Math.floor((Math.random() * myPix.length));
+	document.getElementById("myPicture").src = myPix[randomNum];
 }
-
-</script>
+    </script>
+	<script language="Javascript" type="text/javascript" src="script10.js"></script>	
 </head>
-<body>
-    
-<h1>Hold stretches for blah blah</h1>
-
-
-<div>
-    <!-- This script segment displays an image from the array -->
-    <script type="text/javascript">getRandomImage(random_images_array, 'images/')</script>
-</div>
-
-<!-- or to have image linked: -->
-<!--<a href="."><script type="text/javascript">getRandomImage(random_images_array)</script></a>-->
-
-
-<p>&nbsp;</p>
-
-
-
+<body bgcolor="#FFFFFF">
+	<img src="activity/1.gif" width="305" height="312" id="myPicture" alt="some image" />
 </body>
 </html>
