@@ -5,7 +5,7 @@
 </head>
 <body>
   <h1>News Headlines</h1>
-  <ul id="headlineList"></ul> 
+  <ul id="headlineList"></ul>
 
   <script>
     // Fetch the JSON file
@@ -19,6 +19,7 @@
           const listItem = document.createElement('li');
           const link = document.createElement('a');
           link.href = item.url;
+          link.target = '_blank'; // Open link in a new tab
           link.textContent = item.title;
 
           listItem.appendChild(link);
