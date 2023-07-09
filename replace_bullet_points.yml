@@ -1,0 +1,31 @@
+name: Replace Bullet Points with Emoji
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Replace Bullet Points
+        run: |
+          sed -i 's/•/⚾️/g' news.json
+          sed -i 's/◦/⚾️/g' news.json
+          sed -i 's/▪/◾️/g' news.json
+          sed -i 's/▫/◽️/g' news.json
+          sed -i 's/■/⬛️/g' news.json
+          sed -i 's/□/⬜️/g' news.json
+
+      - name: Commit Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Replace bullet points with emoji" || echo "No changes to commit"
+          git push
