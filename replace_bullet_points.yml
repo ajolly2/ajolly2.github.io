@@ -13,16 +13,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Install jq
+        run: sudo apt-get install jq -y
+
       - name: Replace Bullet Points
         run: |
-          sed -i 's/•/⚾️/g' news.json
-          sed -i 's/◦/⚾️/g' news.json
-          sed -i 's/▪/◾️/g' news.json
-          sed -i 's/▫/◽️/g' news.json
-          sed -i 's/■/⬛️/g' news.json
-          sed -i 's/□/⬜️/g' news.json
+          jq '.[] | .text |= gsub("•"; "⚾️") | .text |= gsub("◦"; "🔸") | .text |= gsub("▪"; "🔘") | .text |= gsub("▫"; "◽️") | .text |= gsub("■"; "⬛️") | .text |= gsub("□"; "⬜️")' news.json > updated_news.json
+          mv updated_news.json news.json
 
-      - name: Commit Changes
+      - name: Commit and Push Changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
