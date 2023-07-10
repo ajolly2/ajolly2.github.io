@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MLB News</title>
+  <style>
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      text-align: left;
+    }
+    
+    ul li::before {
+      content: "⚾️";
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <ul id="mlb-news"></ul>
+
+  <script>
+    // Fetch the JSON file
+    fetch('mlb.json')
+      .then(response => response.json())
+      .then(data => {
+        const mlbNewsList = document.getElementById('mlb-news');
+
+        // Iterate over the JSON data and generate the HTML code for each list item
+        data.forEach(item => {
+          const listItem = document.createElement('li');
+          listItem.textContent = item.title;
+
+          mlbNewsList.appendChild(listItem);
+        });
+      })
+      .catch(error => console.error(error));
+  </script>
+</body>
+</html>
