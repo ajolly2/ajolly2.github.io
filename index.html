@@ -7,41 +7,46 @@
     ul {
       list-style-type: none;
       margin: 0;
-      padding: 0;
       line-height: 2;
     }
     
     .left-column {
-      width: 10%;
-      padding: 10px;
-      background-color: #f0f0f0;
+      text-align: right;
+      align-items: flex-start;
+      display: flex;
+      justify-content: flex-end;
+      padding-right: 10px;
+      padding-top: 10px;
+      padding-bottom: 10px;
     }
     
-    .left-column ul {
-      padding-left: 0;
+    .left-column strong {
+      display: block;
+      padding: 0;
     }
     
-    .left-column li {
-      margin-bottom: 10px;
+    .sportHeadlines li:before {
+      content: "⚾️";
+      margin-right: 5px;
     }
     
-    .right-column {
-      width: 90%;
-      padding: 10px;
+    .sportHeadlines li {
+      display: flex;
+      padding: 0 10px;
     }
     
-    .right-column table {
+    table {
       width: 100%;
       padding: 0;
       border-collapse: collapse;
     }
     
-    .right-column td:first-child {
+    td:first-child {
       width: 10%;
       vertical-align: top;
     }
     
-    .right-column td:last-child {
+    td:last-child {
       width: 90%;
       text-align: left;
     }
@@ -55,56 +60,21 @@
       text-decoration: none;
       color: black;
     }
-    
-    @media (max-width: 768px) {
-      .left-column,
-      .right-column {
-        width: 100%;
-      }
-      
-      .left-column {
-        text-align: center;
-        padding: 10px 0;
-      }
-    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="left-column">
-      <ul>
-        <li>Item 1</li>
-        <li>Item 2</li>
-        <li>Item 3</li>
-        <li>Item 4</li>
-        <li>Item 5</li>
-        <li>Item 6</li>
-        <li>Item 7</li>
-        <li>Item 8</li>
-        <li>Item 9</li>
-        <li>Item 10</li>
-        <li>Item 11</li>
-        <li>Item 12</li>
-        <li>Item 13</li>
-        <li>Item 14</li>
-        <li>Item 15</li>
-        <li>Item 16</li>
-        <li>Item 17</li>
-        <li>Item 18</li>
-        <li>Item 19</li>
-        <li>Item 20</li>
-      </ul>
-    </div>
-    <div class="right-column">
-      <table>
-        <tr>
-          <td>
-            <ul class="sportHeadlines" id="sportHeadlines"></ul>
-          </td>
-        </tr>
-      </table>
-    </div>
-  </div>
+  <table>
+    <tr>
+      <td>
+        <div class="left-column">
+          <strong>MLB</strong>
+        </div>
+      </td>
+      <td>
+        <ul class="sportHeadlines" id="sportHeadlines"></ul>
+      </td>
+    </tr>
+  </table>
 
   <script>
     // Fetch the JSON file
