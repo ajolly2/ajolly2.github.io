@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <title>thporth</title> 
   <style>
-    
-    .sport ul {
+    ul {
       list-style-type: none;
-      padding-left: 0;
+      margin: 0;
+      line-height: 2;
     }
     
-    .left-column li {
-      font-weight: bold;
+    .left-column {
+      text-align: right;
+      display: flex;
+      align-items: flex-start;
     }
     
     .sportHeadlines li:before {
@@ -55,9 +57,7 @@
     <tr>
       <td>
         <div class="left-column">
-          <ul class="sport">
-            <li><strong>MLB</strong></li>
-          </ul>
+          <strong>MLB</strong>
         </div>
       </td>
       <td>
