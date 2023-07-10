@@ -4,11 +4,6 @@
   <meta charset="UTF-8">
   <title>thporth</title> 
   <style>
-    ul {
-      list-style-type: none;
-      margin: 0;
-      line-height: 2;
-    }
     
     .sport ul {
       list-style-type: none;
@@ -19,9 +14,13 @@
       font-weight: bold;
     }
     
-    .sportHeadlines li::before {
+    .sportHeadlines li:before {
       content: "⚾️";
       margin-right: 5px;
+    }
+    
+    .sportHeadlines li {
+      display: flex;
     }
     
     table {
@@ -62,7 +61,7 @@
         </div>
       </td>
       <td>
-        <ul id="sportHeadlines"></ul>
+        <ul class="sportHeadlines" id="sportHeadlines"></ul>
       </td>
     </tr>
   </table>
@@ -77,6 +76,8 @@
         // Iterate over the JSON data and generate the HTML code for each hyperlink
         data.forEach(item => {
           const listItem = document.createElement('li');
+          listItem.classList.add('flex-item');
+          
           const link = document.createElement('a');
           link.href = item.url;
           link.target = '_blank'; // Open link in a new tab
