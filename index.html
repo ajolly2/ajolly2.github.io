@@ -50,7 +50,7 @@
 
     }
     
-    ul li::before {
+    #mlb li::before {
       content: "⚾️";
       margin-right: 5px;
     }
@@ -62,17 +62,17 @@
       <td class="left-column">Left</td>
       <td class="middle-column">MLB</td>
       <td class="right-column">
-       <ul class="sportHeadlines" id="sportHeadlines"></ul>
+       <ul class="sportHeadlines" id="mlb"></ul>
       </td>
     </tr>
   </table>
 
    <script>
     // Fetch the JSON file
-    fetch('news.json')
+    fetch('mlb.json')
       .then(response => response.json())
       .then(data => {
-        const sportHeadlinesList = document.getElementById('sportHeadlines');
+        const sportHeadlinesList = document.getElementById('mlb');
 
         // Iterate over the JSON data and generate the HTML code for each hyperlink
         data.forEach(item => {
