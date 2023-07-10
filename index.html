@@ -2,124 +2,64 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>thporth</title> 
+  <title>HTML Table</title>
   <style>
-    ul {
-      list-style-type: none;
-      margin: 0;
-      line-height: 2;
-    }
-    
-    .left-column {
-      text-align: right;
-      align-items: flex-start;
-      display: flex;
-      vertical-align: top;
-      justify-content: flex-end;
-      padding-right: 5px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
-
-    .left-left-column {
-      text-align: left;
-      padding-right: 5px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      {
-    
-    .left-column strong {
-      display: block;
-      padding: 0;
-    }
-    
-    .sportHeadlines li:before {
-      content: "⚾️";
-      margin-right: 5px;
-    }
-    
-    .sportHeadlines li {
-      display: flex;
-      padding: 0 10px;
-    }
-    
     table {
       width: 100%;
-      padding: 0;
       border-collapse: collapse;
       font-family: Helvetica, Arial, sans-serif;
-      color: black; font-size: 12;
-      text-decoration: none;
-      color: black;
+      font-size: 12px;
     }
     
-    td:first-child {
-      width: 10%;
+    th, td {
+      padding: 10px;
+      text-align: left;
       vertical-align: top;
     }
     
-    td:last-child {
-      width: 90%;
+    th.left-column, td.left-column {
       text-align: left;
+      width: 10%;
     }
     
-    body {
-      font-family: Helvetica, Arial, sans-serif;
-      color: black; font-size: 12;
+    th.middle-column, td.middle-column {
+      text-align: center;
+      font-weight: bold;
+      width: 10%;
     }
     
-    a {
-      text-decoration: none;
-      color: black;
+    th.right-column, td.right-column {
+      text-align: left;
+      width: 80%;
+    }
+    
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    ul li::before {
+      content: "⚾️";
+      margin-right: 5px;
     }
   </style>
 </head>
 <body>
   <table>
     <tr>
-      <td>
-        <div class="left-left-column">
-<ul>
-  <li>sport 1</li>
-  <li>sport 2</li>
-  <li>sport 3</li>
-  <li>sport 4</li>
-</ul>
-        </div>
-      </td>
-      <td>
-        <div class="left-column">
-          <strong>MLB</strong>
-        </div>
-      </td>
-      <td>
-        <ul class="sportHeadlines" id="sportHeadlines"></ul>
-      </td>
+      <th class="left-column">Left</th>
+      <th class="middle-column">Middle</th>
+      <th class="right-column">
+        <ul>
+          <li>Item 1</li>
+          <li>Item 2</li>
+          <li>Item 3</li>
+          <li>Item 4</li>
+          <li>Item 5</li>
+        </ul>
+      </th>
     </tr>
   </table>
-
-  <script>
-    // Fetch the JSON file
-    fetch('news.json')
-      .then(response => response.json())
-      .then(data => {
-        const sportHeadlinesList = document.getElementById('sportHeadlines');
-
-        // Iterate over the JSON data and generate the HTML code for each hyperlink
-        data.forEach(item => {
-          const listItem = document.createElement('li');
-          listItem.classList.add('flex-item');
-          
-          const link = document.createElement('a');
-          link.href = item.url;
-          link.target = '_blank'; // Open link in a new tab
-          link.textContent = item.title;
-
-          listItem.appendChild(link);
-          sportHeadlinesList.appendChild(listItem);
-        });
-      })
-      .catch(error => console.error(error));
-  </script>
 </body>
 </html>
