@@ -77,4 +77,62 @@
         <ul class="mlb" id="mlb"></ul>
       </td>
     </tr>
-   
+    <tr>
+      <td></td>
+      <td></td>
+      <td class="nba" id="nba">
+        <ul class="nba" id="nba">
+      </td>
+    </tr>
+  </table>
+
+  <script>
+    // Fetch the JSON file
+    fetch('mlb.json')
+      .then(response => response.json())
+      .then(data => {
+        const sportHeadlinesList = document.getElementById('mlb');
+
+        // Iterate over the JSON data and generate the HTML code for each hyperlink
+        data.forEach(item => {
+          const listItem = document.createElement('li');
+          listItem.classList.add('flex-item');
+          
+          const link = document.createElement('a');
+          link.href = item.url;
+          link.target = '_blank'; // Open link in a new tab
+          link.textContent = item.title;
+
+          listItem.appendChild(link);
+          sportHeadlinesList.appendChild(listItem);
+        });
+      })
+      .catch(error => console.error(error));
+  </script>
+
+  <script>
+    // Fetch the JSON file
+    fetch('nba.json')
+      .then(response => response.json())
+      .then(data => {
+        const sportHeadlinesList = document.getElementById('nba');
+
+        // Iterate over the JSON data and generate the HTML code for each hyperlink
+        data.forEach(item => {
+          const listItem = document.createElement('li');
+          listItem.classList.add('flex-item');
+          
+          const link = document.createElement('a');
+          link.href = item.url;
+          link.target = '_blank'; // Open link in a new tab
+          link.textContent = item.title;
+
+          listItem.appendChild(link);
+          sportHeadlinesList.appendChild(listItem);
+        });
+      })
+      .catch(error => console.error(error));
+  </script>
+
+</body>
+</html>
