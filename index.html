@@ -13,7 +13,7 @@
     .left-column {
       text-align: right;
       display: flex;
-      align-items: flex-start;
+      align-items: baseline;
     }
     
     .sportHeadlines li:before {
@@ -69,25 +69,4 @@
   <script>
     // Fetch the JSON file
     fetch('news.json')
-      .then(response => response.json())
-      .then(data => {
-        const sportHeadlinesList = document.getElementById('sportHeadlines');
-
-        // Iterate over the JSON data and generate the HTML code for each hyperlink
-        data.forEach(item => {
-          const listItem = document.createElement('li');
-          listItem.classList.add('flex-item');
-          
-          const link = document.createElement('a');
-          link.href = item.url;
-          link.target = '_blank'; // Open link in a new tab
-          link.textContent = item.title;
-
-          listItem.appendChild(link);
-          sportHeadlinesList.appendChild(listItem);
-        });
-      })
-      .catch(error => console.error(error));
-  </script>
-</body>
-</html>
+      .then
