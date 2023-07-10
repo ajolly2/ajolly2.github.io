@@ -10,18 +10,19 @@
       line-height: 2;
     }
     
-    ul li::before {
-      content: "⚾️";
-      margin-right: 5px;
-    }
-    
-    .left-column {
+    .left-column ol {
       list-style-type: none;
       padding-left: 0;
+      text-align: right;
     }
     
     .left-column li {
       font-weight: bold;
+    }
+    
+    ul li::before {
+      content: "⚾️";
+      margin-right: 5px;
     }
     
     table {
@@ -47,6 +48,7 @@
     
     a {
       text-decoration: none;
+      color: black;
     }
   </style>
 </head>
@@ -54,9 +56,11 @@
   <table>
     <tr>
       <td>
-        <ul class="left-column">
-          <li>MLB</li>
-        </ul>
+        <div class="left-column">
+          <ol>
+            <li><strong>MLB</strong></li>
+          </ol>
+        </div>
       </td>
       <td>
         <ul id="headlineList"></ul>
