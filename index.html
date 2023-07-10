@@ -12,9 +12,9 @@
     }
 
     a {
-  text-decoration: none;
-  color: black;
-}
+      text-decoration: none;
+      color: black;
+    }
     
     td {
       padding: 10px;
@@ -41,28 +41,30 @@
       text-align: left;
       width: 80%;
       font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
-      line-height: 2
+      line-height: 2;
     }
     
     ul {
       list-style-type: none;
       padding: 0;
       margin: 0;
-
     }
     
     #mlb li::before {
       content: "⚾️";
       margin-right: 5px;
-      list-style-type: none;
-      line-height: 2
+      line-height: 2;
     }
 
     #nba li::before {
       content: "🏀";
       margin-right: 5px;
-      list-style-type: none;
-      line-height: 2
+      line-height: 2;
+    }
+    
+    li.flex-item {
+      display: flex;
+      align-items: center;
     }
   </style>
 </head>
@@ -72,63 +74,7 @@
       <td class="left-column">Left</td>
       <td class="middle-column">MLB</td>
       <td class="right-column">
-       <ul class="mlb" id="mlb"></ul>
+        <ul class="mlb" id="mlb"></ul>
       </td>
     </tr>
-    <tr>
-      <td></td>
-      <td></td>
-      <td class="nba" id="nba"></td>
-    </tr>
-  </table>
-
-   <script>
-    // Fetch the JSON file
-    fetch('mlb.json')
-      .then(response => response.json())
-      .then(data => {
-        const sportHeadlinesList = document.getElementById('mlb');
-
-        // Iterate over the JSON data and generate the HTML code for each hyperlink
-        data.forEach(item => {
-          const listItem = document.createElement('li');
-          listItem.classList.add('flex-item');
-          
-          const link = document.createElement('a');
-          link.href = item.url;
-          link.target = '_blank'; // Open link in a new tab
-          link.textContent = item.title;
-
-          listItem.appendChild(link);
-          sportHeadlinesList.appendChild(listItem);
-        });
-      })
-      .catch(error => console.error(error));
-  </script>
-
-  <script>
-    // Fetch the JSON file
-    fetch('nba.json')
-      .then(response => response.json())
-      .then(data => {
-        const sportHeadlinesList = document.getElementById('nba');
-
-        // Iterate over the JSON data and generate the HTML code for each hyperlink
-        data.forEach(item => {
-          const listItem = document.createElement('li');
-          listItem.classList.add('flex-item');
-          
-          const link = document.createElement('a');
-          link.href = item.url;
-          link.target = '_blank'; // Open link in a new tab
-          link.textContent = item.title;
-
-          listItem.appendChild(link);
-          sportHeadlinesList.appendChild(listItem);
-        });
-      })
-      .catch(error => console.error(error));
-  </script>
-
-</body>
-</html>
+   
