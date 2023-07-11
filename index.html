@@ -4,12 +4,70 @@
   <meta charset="UTF-8">
   <title>HTML Table</title>
   <style>
-    @media only screen and (max-width: 480px) {
-      table {
-        display: block;
-        width: 100%;
-      }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
+      font-size: 12px;
+    }
 
+    a {
+      text-decoration: none;
+      color: black;
+    }
+    
+    td {
+      padding: 0px;
+      text-align: left;
+      vertical-align: top;
+    }
+    
+    td.left-column {
+      text-align: left;
+      width: 10%;
+      padding-top: 10px;
+      font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
+      height: 100%;
+    }
+    
+    td.middle-column {
+      text-align: center;
+      font-weight: bold;
+      width: 10%;
+      padding-top: 10px;
+    }
+    
+    td.right-column {
+      text-align: left;
+      width: 80%;
+      font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
+      line-height: 2;
+    }
+    
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    #mlb li::before {
+      content: "⚾️";
+      margin-right: 5px;
+      line-height: 2;
+    }
+
+    #nba li::before {
+      content: "🏀";
+      margin-right: 5px;
+      line-height: 2;
+    }
+    
+    li.flex-item {
+      display: flex;
+      align-items: center;
+    }
+
+    @media only screen and (max-width: 600px) {
       td {
         display: block;
         width: 100%;
@@ -28,9 +86,6 @@
         line-height: 1.5;
       }
     }
-
-    /* Rest of the existing styles */
-
   </style>
 </head>
 <body>
