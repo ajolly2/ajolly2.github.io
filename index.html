@@ -28,8 +28,6 @@
       width: 10%;
       padding-top: 5px;
       font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
-      height: 100%;
-      rowspan: 2;
     }
     
     td.middle-column {
@@ -91,7 +89,20 @@
       td.left-column ul {
         text-align: left;
       }
-    }  
+    }
+    
+    @media only screen and (max-width: 480px) {
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+      
+      .column {
+        width: 100%;
+        padding: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -109,7 +120,7 @@
       </td>
     </tr>
     <tr>
-      <td class="left-column" colspan="2">
+      <td class="right-column" colspan="2">
         <ul>
           <li><a href="https://www.w3schools.com">⛳️ Golf</a></li>
         </ul>
