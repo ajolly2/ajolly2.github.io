@@ -2,10 +2,25 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HTML Table</title>
+  <title>THPORTH News</title>
   <style>
-    table {
+    .container {
+      display: flex;
+    }
+
+    .column {
+      flex: 1;
+      padding: 20px;
+    }
+
+    .column:first-child {
+      flex-basis: 90%;
+    }
+
+    .column:last-child {
+      flex-basis: 10%;
+    }
+	  table {
       width: 100%;
       border-collapse: collapse;
       font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
@@ -48,6 +63,9 @@
       list-style-type: none;
       padding: 0;
       margin: 0;
+      font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
+      text-decoration: none;
+color: black;
     }
     
     #mlb li::before {
@@ -66,51 +84,24 @@
       display: flex;
       align-items: center;
     }
-    
-    @media only screen and (max-width: 480px) {
-      td {
-        display: block;
-        width: 100%;
-        padding: 10px;
-      }
 
-      td.left-column, td.middle-column {
-        text-align: center;
-      }
-
-      td.middle-column {
-        font-weight: normal;
-      }
-
-      td.right-column {
-        line-height: 1.5;
-      }
-
-      td.left-column ul {
-        text-align: left;
-      }
-    }
-    
-    @media only screen and (max-width: 480px) {
+    @media (max-width: 768px) {
       .container {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
+        flex-direction: column;
       }
-      
+
       .column {
-        width: 100%;
-        padding: 10px;
+        flex-basis: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <div class="row">
-  <div class="column">
- 
-
-  <table>
+  <div class="container">
+    <div class="column">
+      <!-- Content for the first column -->
+      <p>
+	       <table>
     <tr>
       <td class="middle-column">MLB</td>
       <td class="right-column">
@@ -126,17 +117,21 @@
    
     
   </table>
-  </div>
-
-     <div class="column">
-         <ul>
+	    
+      </p>
+    </div>
+	  
+    <div class="column">
+      <!-- Content for the second column -->
+      <p>
+	       <ul>
           <li><a href="https://www.w3schools.com">⛳️ Golf</a></li>
         </ul>
-       
-     </div>
-</div>
-  
-  <script>
+      </p>
+    </div>
+  </div>
+
+	  <script>
     // Fetch the JSON file
     fetch('mlb.json')
       .then(response => response.json())
