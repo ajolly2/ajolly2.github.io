@@ -69,14 +69,14 @@
       align-items: center;
     }
     
-@media only screen and (max-width: 480px) {
+    @media only screen and (max-width: 480px) {
       td {
         display: block;
         width: 100%;
         padding: 10px;
       }
 
-      td.left-column, td.middle-column, td.right-column {
+      td.left-column, td.middle-column {
         text-align: center;
       }
 
@@ -87,30 +87,33 @@
       td.right-column {
         line-height: 1.5;
       }
+
+      td.left-column ul {
+        text-align: left;
+      }
     }  
   </style>
 </head>
 <body>
   <table>
     <tr>
-       
       <td class="middle-column">MLB</td>
       <td class="right-column">
         <ul class="mlb" id="mlb"></ul>
       </td>
-     <td class="left-column">
-       <ul>
-         ⛳️&nbsp;<a href="https://www.w3schools.com">Golf</a>
-       </ul>
-       </td>
     </tr>
     <tr>
-      
       <td class="middle-column"><b>NBA</b></td>
       <td class="nba" id="nba">
         <ul class="nba" id="nba"></ul>
       </td>
-      <td></td>
+    </tr>
+    <tr>
+      <td class="left-column" colspan="2">
+        <ul>
+          <li><a href="https://www.w3schools.com">⛳️ Golf</a></li>
+        </ul>
+      </td>
     </tr>
   </table>
 
