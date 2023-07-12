@@ -235,5 +235,53 @@ color: black;
       .catch(error => console.error(error));
   </script>
 
+	<script>
+    // Fetch the JSON file
+    fetch('nhl.json')
+      .then(response => response.json())
+      .then(data => {
+        const sportHeadlinesList = document.getElementById('nhl');
+
+        // Iterate over the JSON data and generate the HTML code for each hyperlink
+        data.forEach(item => {
+          const listItem = document.createElement('li');
+          listItem.classList.add('flex-item');
+          
+          const link = document.createElement('a');
+          link.href = item.url;
+          link.target = '_blank'; // Open link in a new tab
+          link.textContent = item.title;
+
+          listItem.appendChild(link);
+          sportHeadlinesList.appendChild(listItem);
+        });
+      })
+      .catch(error => console.error(error));
+  </script>
+
+	<script>
+    // Fetch the JSON file
+    fetch('f1.json')
+      .then(response => response.json())
+      .then(data => {
+        const sportHeadlinesList = document.getElementById('f1');
+
+        // Iterate over the JSON data and generate the HTML code for each hyperlink
+        data.forEach(item => {
+          const listItem = document.createElement('li');
+          listItem.classList.add('flex-item');
+          
+          const link = document.createElement('a');
+          link.href = item.url;
+          link.target = '_blank'; // Open link in a new tab
+          link.textContent = item.title;
+
+          listItem.appendChild(link);
+          sportHeadlinesList.appendChild(listItem);
+        });
+      })
+      .catch(error => console.error(error));
+  </script>
+
 </body>
 </html>
