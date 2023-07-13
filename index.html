@@ -81,7 +81,7 @@
     fetch('mlb.json')
       .then(response => response.json())
       .then(data => {
-        const ul = document.querySelector('.right-div ul');
+        const ul = document.querySelector('.right-column ul');
 
         data.forEach(item => {
           const li = document.createElement('li');
