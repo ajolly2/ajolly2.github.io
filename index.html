@@ -3,254 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THPORTH News</title>
+  <title>THPORTH/news</title>
   <style>
+    body {
+      padding: 20px;
+      font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
+      color: black;
+    }
+
     .container {
       display: flex;
     }
 
-    .column {
-      flex: 1;
-      padding: 20px;
+    .left-div {
+      flex-basis: 80%;
     }
 
-    .column:first-child {
-      flex-basis: 90%;
-    }
-
-    .column:last-child {
-      flex-basis: 10%;
+    .right-div {
+      flex-basis: 20%;
+      font-size: 12px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
       font-size: 14px;
     }
 
-    a {
-      text-decoration: none;
-      color: black;
-    }
-    
-    td {
-      padding: 0px;
-      text-align: left;
-      vertical-align: top;
-    }
-    
     td.left-column {
-      text-align: left;
-      width: 10%;
-      padding-top: 5px;
-      font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
-    }
-    
-    td.middle-column {
-      text-align: center;
+      text-align: right;
+      width: 20%;
       font-weight: bold;
-      width: 10%;
-      padding-top: 5px;
     }
-    
+
     td.right-column {
       text-align: left;
-      font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
-      line-height: 2;
+      width: 80%;
     }
-    
+
     ul {
-      list-style-type: none;
+      list-style: none;
       padding: 0;
       margin: 0;
-      font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
-      text-decoration: none;
-      color: black;
     }
 
-    body {
-      padding-left: 10px;
-      padding-right: 10px;
-      padding-top: 20px;
-      padding-bottom: 20px;
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        flex-direction: column;
-      }
-
-      .column {
-        flex-basis: 100%;
-      }
+    ul li {
+      line-height: 2;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="column">
-      <!-- Content for the first column -->
-      <p>
-        <table>
-          <tr>
-            <td class="middle-column">MLB</td>
-            <td class="right-column">
-              <ul class="mlb" id="mlb"></ul>
-            </td>
-          </tr>
-          <tr>
-            <td class="middle-column"><b>NBA</b></td>
-            <td class="nba" id="nba">
-              <ul class="nba" id="nba"></ul>
-            </td>
-          </tr>
-          <tr>
-            <td class="middle-column"><b>NHL</b></td>
-            <td class="nhl" id="nhl">
-              <ul class="nhl" id="nhl"></ul>
-            </td>
-          </tr>
-          <tr>
-            <td class="middle-column"><b>F1</b></td>
-            <td class="f1" id="f1">
-              <ul class="f1" id="f1"></ul>
-            </td>
-          </tr>
-        </table>
-      </p>
+    <div class="left-div">
+      <table>
+        <tr>
+          <td class="left-column">Left Column</td>
+          <td class="right-column">
+            <ul>
+              <li>No bullet points</li>
+            </ul>
+          </td>
+        </tr>
+      </table>
     </div>
 
-    <div class="column">
-      <!-- Content for the second column -->
-      <p>
-        <ul style="font-size: 14px;">
-          <li><a href="#golf">⛳️ Golf</a></li>
-          <li><a href="#soccer">⚽️ Soccer</a></li>
-          <li><a href="#nba">🏀 NBA</a></li>
-          <li><a href="#tennis">🎾 Tennis</a></li>
-          <li><a href="#mlb">⚾️ MLB</a></li>
-          <li><a href="#nfl">🏈 NFL</a></li>
-          <li><a href="#cycling">🚴🏾 Tour de France</a></li>
-          <li><a href="#f1">🏁 Formula One</a></li>
-          <li><a href="#boxing">🥊 Boxing</a></li>
-          <li><a href="#nascar">🏁 NASCAR</a></li>
-          <li><a href="#nhl">🏒 NHL</a></li>
-          <li><a href="#mma">🥋 MMA</a></li>
-          <li><a href="#wnba">🏀 WNBA</a></li>
-          <li><a href="#indycar">🏁 IndyCar</a></li>
-          <li><a href="#rugby">🏉 Rugby</a></li>
-          <li><a href="#nwsl">⚽️ NWSL</a></li>
-          <li><a href="#trackandfield">🎽 Track & Field</a></li>
-          <li><a href="#horse">🐎 Horse Racing</a></li>
-          <li><a href="#cricket">🏏 Cricket</a></li>
-          <li><a href="#ligamx">⚽️ Liga MX</a></li>
-          <li><a href="#cfl">🏈 CFL</a></li>
-          <li><a href="#big3">🏀 BIG3</a></li>
-          <li><a href="#ncaaf">⛳️ NCAA Football</a></li>
-          <li><a href="#lacrosse">🥍 Lacrosse</a></li>
-          <li><a href="#motorsports">🏁 Motorsports</a></li>
-          <li><a href="#ncaab">🏀 NCAA Basketball</a></li>
-        </ul>
-      </p>
+    <div class="right-div">
+      <ul>
+        <li>No bullet points</li>
+        <li>No bullet points</li>
+        <li>No bullet points</li>
+      </ul>
     </div>
   </div>
 
   <script>
-    // Fetch the JSON file
+    // Fetch the JSON file and populate the list
     fetch('mlb.json')
       .then(response => response.json())
       .then(data => {
-        const sportHeadlinesList = document.getElementById('mlb');
+        const ul = document.querySelector('.right-div ul');
 
-        // Iterate over the JSON data and generate the HTML code for each hyperlink
         data.forEach(item => {
-          const listItem = document.createElement('li');
-          listItem.classList.add('flex-item');
-
-          const link = document.createElement('a');
-          link.href = item.url;
-          link.target = '_blank'; // Open link in a new tab
-          link.textContent = item.title;
-
-          listItem.appendChild(link);
-          sportHeadlinesList.appendChild(listItem);
+          const li = document.createElement('li');
+          li.textContent = item.title;
+          ul.appendChild(li);
         });
       })
       .catch(error => console.error(error));
   </script>
-
-  <script>
-    // Fetch the JSON file
-    fetch('nba.json')
-      .then(response => response.json())
-      .then(data => {
-        const sportHeadlinesList = document.getElementById('nba');
-
-        // Iterate over the JSON data and generate the HTML code for each hyperlink
-        data.forEach(item => {
-          const listItem = document.createElement('li');
-          listItem.classList.add('flex-item');
-
-          const link = document.createElement('a');
-          link.href = item.url;
-          link.target = '_blank'; // Open link in a new tab
-          link.textContent = item.title;
-
-          listItem.appendChild(link);
-          sportHeadlinesList.appendChild(listItem);
-        });
-      })
-      .catch(error => console.error(error));
-  </script>
-
-  <script>
-    // Fetch the JSON file
-    fetch('nhl.json')
-      .then(response => response.json())
-      .then(data => {
-        const sportHeadlinesList = document.getElementById('nhl');
-
-        // Iterate over the JSON data and generate the HTML code for each hyperlink
-        data.forEach(item => {
-          const listItem = document.createElement('li');
-          listItem.classList.add('flex-item');
-
-          const link = document.createElement('a');
-          link.href = item.url;
-          link.target = '_blank'; // Open link in a new tab
-          link.textContent = item.title;
-
-          listItem.appendChild(link);
-          sportHeadlinesList.appendChild(listItem);
-        });
-      })
-      .catch(error => console.error(error));
-  </script>
-
-  <script>
-    // Fetch the JSON file
-    fetch('f1.json')
-      .then(response => response.json())
-      .then(data => {
-        const sportHeadlinesList = document.getElementById('f1');
-
-        // Iterate over the JSON data and generate the HTML code for each hyperlink
-        data.forEach(item => {
-          const listItem = document.createElement('li');
-          listItem.classList.add('flex-item');
-
-          const link = document.createElement('a');
-          link.href = item.url;
-          link.target = '_blank'; // Open link in a new tab
-          link.textContent = item.title;
-
-          listItem.appendChild(link);
-          sportHeadlinesList.appendChild(listItem);
-        });
-      })
-      .catch(error => console.error(error));
-  </script>
-
 </body>
 </html>
