@@ -2,37 +2,81 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>MLB News</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THPORTH/news</title>
   <style>
-    ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-      text-align: left;
+    body {
+      padding: 20px;
+      font-family: "Helvetica Neue Light", Helvetica, Arial, sans-serif;
+      color: black;
     }
-    
-    ul li::before {
-      content: "⚾️";
-      margin-right: 5px;
+
+    .container {
+      display: flex;
+    }
+
+    .left-div {
+      flex-basis: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      padding: 5;
+    }
+
+
+
+    td.column {
+      text-align: left;
+      width: 100%;
+    }
+
+    ul {
+      list-style: none;
+      padding: 15;
+      margin: 0;
+    }
+
+    a {
+      text-decoration: none;
+      color: black;
+    }
+
+    ul li {
+      line-height: 2;
     }
   </style>
 </head>
 <body>
-  <ul id="mlb-news"></ul>
+  <div class="container">
+    <div class="left-div">
+      <table>
+        <tr>
+
+          <td class="column">
+            <ul>
+            
+            </ul>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+   
 
   <script>
-    // Fetch the JSON file
+    // Fetch the JSON file and populate the list
     fetch('mlb.json')
       .then(response => response.json())
       .then(data => {
-        const mlbNewsList = document.getElementById('mlb-news');
+        const ul = document.querySelector('.column ul');
 
-        // Iterate over the JSON data and generate the HTML code for each list item
         data.forEach(item => {
-          const listItem = document.createElement('li');
-          listItem.textContent = item.title;
-
-          mlbNewsList.appendChild(listItem);
+          const li = document.createElement('li');
+          li.textContent = item.title;
+          ul.appendChild(li);
         });
       })
       .catch(error => console.error(error));
