@@ -47,7 +47,7 @@
     }
 
     a:hover {
-      text-decoration: underline;
+      font-weight: bold;
     }
 
     ul li {
@@ -81,6 +81,7 @@
           const li = document.createElement('li');
           const link = document.createElement('a');
           link.href = item.url;
+          link.target = "_blank"; // Open link in new tab
           link.textContent = item.title;
           li.appendChild(link);
           ul.appendChild(li);
