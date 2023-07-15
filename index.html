@@ -16,12 +16,7 @@
     }
 
     .left-div {
-      flex-basis: 80%;
-    }
-
-    .right-div {
-      flex-basis: 20%;
-      font-size: 12px;
+      flex-basis: 100%;
     }
 
     table {
@@ -31,16 +26,9 @@
       padding: 5;
     }
 
-    td.left-column {
-      text-align: right;
-      width: 20%;
-      font-weight: bold;
-      Vertica-align: top;
-    }
-
-    td.right-column {
+    td.column {
       text-align: left;
-      width: 80%;
+      width: 100%;
     }
 
     ul {
@@ -52,6 +40,13 @@
     a {
       text-decoration: none;
       color: black;
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
 
     ul li {
@@ -64,46 +59,13 @@
     <div class="left-div">
       <table>
         <tr>
-          <td class="left-column" style="vertical-align: top; padding-top: 8px;">⚾️ MLB</td>
-          <td class="right-column">
+          <td class="column">
             <ul>
             
             </ul>
           </td>
         </tr>
       </table>
-    </div>
-
-    <div class="right-div">
-      <ul style="font-size: 12px; color: black; text-decoration: none; list-style-type: none; line-height: 2;">
-         <li><a href="#golf">⛳️ Golf</a></li>
-          <li><a href="#soccer">⚽️ Soccer</a></li>
-          <li><a href="#nba">🏀 NBA</a></li>
-          <li><a href="#tennis">🎾 Tennis</a></li>
-          <li><a href="#mlb">⚾️ MLB</a></li>
-          <li><a href="#nfl">🏈 NFL</a></li>
-          <li><a href="#cycling">🚴🏾 Tour de France</a></li>
-          <li><a href="#f1">🏁 Formula One</a></li>
-          <li><a href="#boxing">🥊 Boxing</a></li>
-          <li><a href="#nascar">🏁 NASCAR</a></li>
-          <li><a href="#nhl">🏒 NHL</a></li>
-          <li><a href="#mma">🥋 MMA</a></li>
-          <li><a href="#wnba">🏀 WNBA</a></li>
-          <li><a href="#indycar">🏁 IndyCar</a></li>
-          <li><a href="#rugby">🏉 Rugby</a></li>
-          <li><a href="#nwsl">⚽️ NWSL</a></li>
-          <li><a href="#trackandfield">🎽 Track & Field</a></li>
-          <li><a href="#horse">🐎 Horse Racing</a></li>
-          <li><a href="#cricket">🏏 Cricket</a></li>
-          <li><a href="#ligamx">⚽️ Liga MX</a></li>
-          <li><a href="#cfl">🏈 CFL</a></li>
-          <li><a href="#big3">🏀 BIG3</a></li>
-          <li><a href="#ncaaf">⛳️ NCAA Football</a></li>
-          <li><a href="#lacrosse">🥍 Lacrosse</a></li>
-          <li><a href="#motorsports">🏁 Motorsports</a></li>
-          <li><a href="#ncaab">🏀 NCAA Basketball</a></li>
-
-      </ul>
     </div>
   </div>
 
@@ -112,11 +74,14 @@
     fetch('mlb.json')
       .then(response => response.json())
       .then(data => {
-        const ul = document.querySelector('.right-column ul');
+        const ul = document.querySelector('.column ul');
 
         data.forEach(item => {
           const li = document.createElement('li');
-          li.textContent = item.title;
+          const link = document.createElement('a');
+          link.href = item.url;
+          link.textContent = item.title;
+          li.appendChild(link);
           ul.appendChild(li);
         });
       })
