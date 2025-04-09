@@ -3,21 +3,23 @@
   <head>
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CBFZXZSG19"></script>
-   <script>
-/* Redirect mobile & small tablets to m.thporth.com */
-(function () {
-  var isSmallScreen = window.innerWidth <= 767;          // width test for mobile/tablets
-  var isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-                   .test(navigator.userAgent);           // mobile user-agent check
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CBFZXZSG19');
+  </script>
 
-  // Ensure it's only redirecting on mobile/tablet devices, and NOT on desktop
-  if ((isSmallScreen || isMobileUA) && 
-      (location.hostname === "thporth.com" || location.hostname === "www.thporth.com")) {
-    var target = "https://m.thporth.com" + location.pathname + location.search + location.hash;
-    window.location.replace(target);
-  }
-})();
-</script>
+  <!-- Mobile redirect -->
+  <script>
+    (function () {
+      var isMobile = /Mobi|Android|iPhone|iPod|iPad/i.test(navigator.userAgent);
+      var onMainDomain = location.hostname === "thporth.com" || location.hostname === "www.thporth.com";
+      if (isMobile && onMainDomain) {
+        window.location.href = "https://m.thporth.com" + location.pathname + location.search + location.hash;
+      }
+    })();
+  </script>
 <link rel="alternate" media="only screen and (max-width: 767px)" href="https://m.thporth.com/" />
 <script>
   window.dataLayer = window.dataLayer || [];
