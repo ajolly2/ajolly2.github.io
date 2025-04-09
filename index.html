@@ -1,8 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-<!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CBFZXZSG19"></script>
+    <script>
+/* Redirect mobile & small tablets to m.thporth.com */
+(function () {
+  var isSmallScreen = window.innerWidth <= 767;          // width test
+  var isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+                   .test(navigator.userAgent);           // user‑agent test
+
+  if ((isSmallScreen || isMobileUA) && 
+      location.hostname === "www.thporth.com" || location.hostname === "thporth.com") {
+    var target = "https://m.thporth.com" + location.pathname + location.search + location.hash;
+    window.location.replace(target);
+  }
+})();
+</script>
+<link rel="alternate" media="only screen and (max-width: 600px)" href="https://m.thporth.com/" />
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -12,14 +27,92 @@
 </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>THPORTH</title>
-    <link
-      rel="icon"
-      type="image/png"
-      href="https://github.com/ajolly2/thporthsite/blob/main/thporth_favicon.png?raw=true"
-    />
+    <meta name="description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place.">
+    <meta name="robots" content="index, follow" />
+    <title>THPORTH | All the latest sports news</title>
+   
+<link rel="icon" type="image/png" href="https://www.thporth.com/thporth_AllSportsNews_logo-black.png" />
+  
+    <link rel="canonical" href="https://www.thporth.com/" />
+    
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.thporth.com/" />
+<meta property="og:title" content="THPORTH | All the latest sports news" />
+<meta property="og:description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place." />
+<meta property="og:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
 
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content="https://www.thporth.com/" />
+<meta name="twitter:title" content="THPORTH | All the latest sports news" />
+<meta name="twitter:description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place." />
+<meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
     <style>
+      /* Owners */
+@font-face {
+  font-family: 'Owners';
+  src: url('https://www.thporth.com/fonts/Owners-XLight.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Owners';
+  src: url('https://www.thporth.com/fonts/Owners-medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* Owners Wide */
+@font-face {
+  font-family: 'Owners Wide';
+  src: url('https://www.thporth.com/fonts/OwnersWide-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Owners Wide';
+  src: url('https://www.thporth.com/fonts/OwnersWide-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Owners XX Wide */
+@font-face {
+  font-family: 'Owners XX Wide';
+  src: url('https://www.thporth.com/fonts/OwnersXXWide-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Owners XX Wide';
+  src: url('https://www.thporth.com/fonts/OwnersXXWide-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Owners XX Wide';
+  src: url('https://www.thporth.com/fonts/OwnersXXWide-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Owners XX Wide';
+  src: url('https://www.thporth.com/fonts/OwnersXXWide-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Owners XX Wide';
+  src: url('https://www.thporth.com/fonts/OwnersXXWide-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Owners XXWideXBlack';
+  src: url('https://www.thporth.com/fonts/OwnersXXWide-XBlack.woff') format('woff');
+  font-weight: 950;
+  font-style: normal;
+}
       html,
       body {
         margin: 0;
@@ -53,7 +146,7 @@
       #topBar,
 #topDivider {
   width: 100%;
-  max-width: 1404px;
+  max-width: 1412px;
   margin: 0 auto;
   box-sizing: border-box;
 }
@@ -76,12 +169,12 @@
         padding: 0;
       }
       .divider {
-        flex: 0 0 2px;
+        flex: 0 0 4px;
         background-color: #151515;
       }
       .news {
         flex: 0 0 380px;
-        background-color: #e5e2e1;
+        background-color: #fafaf9;
         padding: 0;
       }
       .social {
@@ -99,8 +192,13 @@
         top: 0;
         z-index: 2;
       }
+      #menuList-group li > strong {
+  cursor: default;
+  display: inline-block; /* Makes the cursor effect apply properly */
+  color: #ccc; /* Optional: subtle visual cue it's not active like other items */
+}
       #menuTopBox img {
-        height: 14px;
+        height: 18px;
         display: block;
       }
       #menuSearch {
@@ -111,7 +209,7 @@
         margin-bottom: 2px;
         background-color: #000;
         color: #fff;
-        border: 1px solid #c4c4c4;
+        border: 1px solid #3c3c3c;
         padding: 2px 5px 2px 25px;
         font-size: 10px;
         background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjYzRjNGM0IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49ImJldmVsIj48Y2lyY2xlIGN4PSIxMSIgY3k9IjExIiByPSI4Ij48L2NpcmNsZT48bGluZSB4MT0iMjEiIHkxPSIyMSIgeDI9IjE2LjY1IiB5Mj0iMTYuNjUiPjwvbGluZT48L3N2Zz4=') no-repeat 5px center;
@@ -128,21 +226,20 @@
         padding: 1px;
         border: 1px solid #444;
         background-color: #222;
-        font-size: 10px;
+        font-size: 9px;
         font-family: Helvetica, Arial, sans-serif;
-        text-transform: uppercase;
         cursor: pointer;
         color: #fff;
       }
       .menu-filter.active {
-        background-color: #c7d2c3;
-        color: #000;
-        border-color: #c7d2c3;
+        background-color: #3c3c3c;
+        color: white;
+        border-color: #3c3c3c;
       }
       .selected {
         font-weight: bold;
-        background-color: #91b3a2;
-        color: #000;
+        background-color: #3c3c3c;
+        color: white;
       }
       #menuList ul {
         padding-left: 0;
@@ -164,7 +261,7 @@
         top: 0;
         width: 100%;
         z-index: 10;
-        background-color: #f2f2f2;
+        background-color: #3f3f3f;
         font-family: Helvetica, Arial, sans-serif;
         font-size: 10px;
         height: 18px;
@@ -175,9 +272,13 @@
         margin: 0;
       }
       .news-menu-item {
-        cursor: default;
-        padding: 5px 10px;
-      }
+  line-height: 18px;
+  height: 18px;
+  padding: 0 8px; /* Adjust horizontal only */
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
       .news-menu-item.active {
         background-color: black;
         color: white;
@@ -201,6 +302,12 @@
       .rss-feed ul li:last-child {
         border-bottom: none;
       }
+      .rss-feed h4 {
+  color: black;
+}
+      .rss-feed {
+        background-color: #fafaf9;
+      }
       .content-section {
         display: none;
         padding: 10px;
@@ -216,7 +323,7 @@
       <div class="column main-menu">
         <div id="menuTopBox">
           <img
-            src="https://github.com/ajolly2/ajolly2.github.io/blob/master/Thporth%20Logo%20Black.png?raw=true"
+            src="https://www.thporth.com/thporth_AllSportsNews_logo-white.png"
             alt="Logo"
           />
         </div>
@@ -263,7 +370,7 @@
             <li data-section="IndyCar">IndyCar</li>
             <li data-section="NCAAM">NCAAM</li>
             <li data-section="NCAAW">NCAAW</li>
-            <li data-section="UFL">UFL</li>
+           <!-- <li data-section="UFL">UFL</li> -->
             <li data-section="NCAABaseball">NCAA Baseball</li>
             <li data-section="NCAASoftball">NCAA Softball</li>
             <li data-section="MotoGP">MotoGP</li>
@@ -348,7 +455,7 @@
             <li data-section="TrackAndField">Track &amp; Field</li>
             <li data-section="USOpenCup">U.S. Open Cup</li>
             <li data-section="UFC">UFC</li>
-            <li data-section="UFL">UFL</li>
+            <!--<li data-section="UFL">UFL</li>-->
             <li data-section="UEFAChampionsLeague">UEFA Champions League</li>
             <li data-section="UEFAConferenceLeague">UEFA Conference League</li>
             <li data-section="UEFAEuropaLeague">UEFA Europa League</li>
@@ -370,7 +477,7 @@
             <ul style="padding-left: 10px;">
               <li data-section="NFL">NFL</li>
               <li data-section="NCAAF">NCAAF</li>
-              <li data-section="UFL">UFL</li>
+             <!-- <li data-section="UFL">UFL</li>-->
               <li data-section="CFL">CFL</li>
             </ul>
             <li class="spacer-line"></li>
@@ -405,7 +512,7 @@
               <li data-section="Ligue1">Ligue 1</li>
               <li data-section="UEFAEuropaLeague">UEFA Europa League</li>
               <li data-section="UEFAConferenceLeague">UEFA Conference League</li>
-              <li class="soccer-more-toggle" style="cursor: pointer; color: #91b3a2;" onclick="toggleSoccerMore()">More…</li>
+              <li class="soccer-more-toggle" style="cursor: pointer; color: #bebebe;" onclick="toggleSoccerMore()">More…</li>
             </ul>
             <div id="soccer-more" style="display: none;">
               <ul style="padding-left: 10px;">
@@ -529,13 +636,12 @@
         <div
           id="newsHeader"
           style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11;"
-        >
-          News
+        ><strong>News</strong>
         </div>
         <!-- News submenu: this submenu appears only on Home -->
         <div
           id="newsSubMenu"
-          style="position: sticky; top: 18px; width: 100%; z-index: 10; background-color: #f2f2f2; font-family: Helvetica, Arial, sans-serif; font-size: 10px; height: 18px; display: flex; align-items: center; gap: 10px; padding: 0; margin: 0;"
+          style="position: sticky; top: 18px; width: 100%; z-index: 10; background-color: #545454; font-family: Helvetica, Arial, sans-serif; font-size: 10px; height: 18px; display: flex; align-items: center; gap: 10px; padding: 0; margin: 0;"
         >
           <span class="news-menu-item active" data-feed="ESPN">ESPN</span>
           <span class="news-menu-item" data-feed="CBS">CBS</span>
@@ -807,8 +913,7 @@
         <div
           id="socialHeader"
           style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11;"
-        >
-          Social
+        ><strong>Social</strong>
         </div>
         <!-- Single dynamic container for social feeds -->
         <div id="social-feed-container">
@@ -822,14 +927,16 @@
      <div class="column media-center" style="padding: 0; margin: 0; flex: 0 0 250px; background-color: black">
   <div
     id="socialHeader2"
-    style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11;"
+    style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: 'OwnersXXWideXBlack', sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11;"
   >
-    Media Center
+    <strong>Media Center</strong>
   </div>
   <!-- Container for second social content areas -->
   <div id="second-social-panel">
     <div id="social2-Home" class="content-section" style="display: none;"></div>
-    <div id="social2-NFL" class="content-section" style="display: none;"></div>
+    <div id="social2-NFL" class="content-section" style="display: none;">
+      <rssapp-feed id="M9oc5a6c5X6mKiaB"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
+    </div>
     <div id="social2-NBA" class="content-section" style="display: none;">
     <rssapp-feed id="4FRj3PbqYMYOxLiq"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
     </div>
@@ -886,7 +993,7 @@
       <rssapp-feed id="kn6jmA3jysBosngx"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
     </div>
     <div id="social2-UFC" class="content-section" style="display: none;">
-      <rssapp-feed id="P6jq1TZvc8EtrVy6"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
+      <rssapp-feed id="uvXUb7PWcb7AyAuS"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
     </div>
     <div id="social2-Boxing" class="content-section" style="display: none;">
       <rssapp-feed id="_5YtqXnChDUFwAfTB"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
@@ -931,12 +1038,12 @@
       <div class="divider"></div>
 
          <!-- MEDIA CENTER -->
-     <div class="column discussion" style="padding: 0; margin: 0; flex: 0 0 250px; background-color: white">
+     <div class="column discussion" style="padding: 0; margin: 0; flex: 0 0 250px; background-color: #1f1f1f">
   <div
     id="discussionHeader"
     style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11;"
-  >
-    Discussion
+  ><strong>Discussion</strong>
+    
   </div>
 <!-- Container for second social content areas -->
   <div id="discussion-panel">
@@ -1357,7 +1464,9 @@ fetchFeed(
           item.addEventListener("click", e => {
             if (
               item.classList.contains("spacer-line") ||
-              item.classList.contains("soccer-more-toggle")
+              item.classList.contains("soccer-more-toggle")||
+              item.querySelector("strong")
+              
             ) {
               e.stopPropagation();
               return;
@@ -1468,6 +1577,3 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     </script>
   </body>
 </html> 
-
-
-
