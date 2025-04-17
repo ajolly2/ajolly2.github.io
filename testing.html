@@ -297,60 +297,9 @@
         display: none;
         padding: 10px;
       }
-      /* Full‑screen popup overlay */
-#fullscreen-popup-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-/* The popup box */
-#fullscreen-popup {
-  width: 300px;
-  height: 200px;
-  background: #000;
-  border: 1px solid #797a7c;
-  border-radius: 0;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 12px;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-#popup-close {
-  width: 30px;
-  height: 30px;
-  background: #797a7c;
-  color: #000;
-  border: none;
-  border-radius: 0;
-  margin-top: 10px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 12px;
-}
-
     </style>
   </head>
   <body>
-    <div id="fullscreen-popup-overlay">
-  <div id="fullscreen-popup">
-    <div>Go full screen</div>
-    <button id="popup-close" aria-label="Close popup">X</button>
-  </div>
-</div>
-
         <div id="topBar"></div>
     <div id="topDivider"></div>
     <div class="container">
@@ -1621,20 +1570,6 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   });
 });
     </script>
-      <script>
-// only show once per visitor
-document.addEventListener("DOMContentLoaded", function() {
-  if (!localStorage.getItem("fullscreenPopupShown")) {
-    document.getElementById("fullscreen-popup-overlay").style.display = "flex";
-    localStorage.setItem("fullscreenPopupShown", "true");
-  }
-  document.getElementById("popup-close")
-    .addEventListener("click", function() {
-      document.getElementById("fullscreen-popup-overlay").style.display = "none";
-    });
-});
-</script>
-
   </body>
 </html> 
 
