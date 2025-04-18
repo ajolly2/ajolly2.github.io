@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script>
-  // if on a mobile device and still on www.thporth.com, redirect to m.thporth.com
-  if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-      && location.hostname === "www.thporth.com") {
+   <script>
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const host    = location.hostname; // e.g. "thporth.com" or "www.thporth.com"
+  if ( isMobile && !host.startsWith("m.") ) {
+    // build the mobile host dynamically
+    const mobileHost = "m." + host.replace(/^www\./, "");
     location.replace(
-      "https://m.thporth.com" +
+      location.protocol + "//" +
+      mobileHost +
       location.pathname +
       location.search +
       location.hash
     );
   }
 </script>
+
 
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CBFZXZSG19"></script>
