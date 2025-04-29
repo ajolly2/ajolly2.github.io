@@ -361,6 +361,7 @@
               </ul>
             </li>
             <li data-section="FormulaOne">Formula One</li>
+            <li data-section="Cricket">Cricket</li>
             <li data-section="NCAAF">NCAAF</li>
             <li data-section="PGATour">PGA Tour</li>
             <li data-section="UFC">UFC</li>
@@ -403,8 +404,9 @@
             <li data-section="CopaDelRey">Copa del Rey</li>
             <li data-section="CopaLibertadores">Copa Libertadores</li>
             <li data-section="CopaSudamericana">Copa Sudamericana</li>
-            <li data-section="CoppaItalia">Coppa Italia</li>
+            <li data-section="CoppaItalia">Coppa Italia</li> -->
             <li data-section="Cricket">Cricket</li>
+<!--
             <li data-section="Cycling">Cycling</li>
             <li data-section="DFBPokal">DFB-Pokal</li>
             <li data-section="DPWorldTour">DP World Tour</li>
@@ -627,7 +629,8 @@
               <li data-section="Gymnastics">Gymnastics</li>
               <li data-section="HorseRacing">Horse Racing</li>
               <li data-section="Olympics">Olympics</li> -->
-             <li data-section="TrackAndField">Tennis</li>
+              <li data-section="Cricke">Cricket</li>
+             <li data-section="Tennis">Tennis</li>
               <li data-section="TrackAndField">Track &amp; Field</li>
                <!--
               <li data-section="Volleyball">Volleyball</li>
@@ -1050,6 +1053,9 @@
     <div id="discussion-TrackAndField" class="content-section" style="display: none;">
 <rssapp-feed id="1U4SPEWBa1gHT2dg"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script></div>
   </div>
+       <div id="discussion-Cricket" class="content-section" style="display: none;">
+         <rssapp-feed id="tAEL5wbohohtJSea"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
+       </div>
 
     </div>
 
@@ -1168,6 +1174,9 @@
 <div id="social2-TrackAndField" class="content-section" style="display: none;">
     <rssapp-feed id="_UI1wF40sLcM9Jtx9"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
     </div>
+    <div id="social2-Cricket" class="content-section" style="display: none;">
+      <rssapp-feed id="u5FOeED5DdpP1Bsa"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
+    </div>
   </div>
        </div>
         <!-- DIVIDER BETWEEN SOCIAL PANEL AND MEDIA CENTER PANEL 
@@ -1214,7 +1223,8 @@
         FormulaOne: "s7r6yAgtrA3k2dJw",
         NCAAF: "AnA5shmkBJ7gdzCs",
         PGATour: "c2yYJn0ed57eix3y",
-        TrackAndField: "26sFnjxqUEUQ6mkZ"
+        TrackAndField: "26sFnjxqUEUQ6mkZ",
+        Cricket: "RbJuA3Za6YaOCnT0"
       };
 
       let currentFeed = null;
@@ -1460,6 +1470,12 @@ fetchFeed(
   "#feed-TrackAndField .feed-content",
   "https://rss.app/feeds/_rZcwsn3Z2MR5N2Zq.xml"
 );
+        fetchFeed(
+  "#feed-Cricket .feed-content",
+  "https://rss.app/feeds/_ESX8EDEnLnHwxSqf.xml"
+);
+
+        
         
 
         // Existing menu functionality
