@@ -659,12 +659,8 @@
 
 <!-- STANDINGS COLUMN -->
 <div class="column standings" style="flex: 0 0 110px; background-color: #1f1f1f; padding: 0;">
-  <div
-    id="discussionHeader"
-    style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11;"
-  ><strong>Discussion</strong>
-    
-  </div>
+  <div id="standings-PremierLeague" class="content-section" style="display: none; padding: 10px;">
+    <h4 style="color: white; font-size: 14px; margin: 0 0 10px 0;">Standings</h4>
     <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #fafaf9; color: #000;">
       <thead>
         <tr>
@@ -677,7 +673,7 @@
     </table>
     <button class="expand-button" onclick="document.getElementById('fullTableOverlay').style.display = 'block';">Expand</button>
   </div>
-
+</div>
 
 <!-- Divider between standings and news -->
 <div class="divider"></div>
@@ -1003,7 +999,9 @@
     <div id="discussion-NHL" class="content-section" style="display: none;">
       <rssapp-feed id="LlaGrdoWldt4gFyg"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
     </div>
-    <div id="discussion-Soccer" class="content-section" style="display: none;"></div>
+    <div id="discussion-Soccer" class="content-section" style="display: none;">
+      <rssapp-feed id="4TKBeZgqPGK3XQ1g"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
+    </div>
      <div id="discussion-UEFAChampionsLeague" class="content-section" style="display: none;">
        <rssapp-feed id="cJ9fge5WHLX256Dp"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
      </div>
@@ -1120,7 +1118,9 @@
     <div id="social2-NHL" class="content-section" style="display: none;">
       <rssapp-feed id="uQ6KQ0QokYHUZbbS"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
     </div>
-    <div id="social2-Soccer" class="content-section" style="display: none;"></div>
+    <div id="social2-Soccer" class="content-section" style="display: none;">
+      <rssapp-feed id="_9eg0NbT3CNHmj8D7"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
+    </div>
         <div id="social2-UEFAChampionsLeague" class="content-section" style="display: none;">
     <rssapp-feed id="iAcjolit9IZtocN5"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
           </div>
@@ -1229,26 +1229,12 @@
 
 <script>
   const TEAM_ABBREVIATIONS = {
-    "Liverpool": "LFC",
-    "Arsenal": "ARS",
-    "Newcastle United": "NEW",
-    "Manchester City": "MC",
-    "Chelsea": "CHE",
-    "Nottingham Forest": "NF",
-    "Aston Villa": "AV",
-    "Fulham": "FUL",
-    "Brighton & Hove Albion": "BHA",
-    "AFC Bournemouth": "BOU",
-    "Brentford": "BRE",
-    "Crystal Palace": "CP",
-    "Wolverhampton Wanderers": "WOL",
-    "Manchester United": "MU",
-    "Everton": "EVE",
-    "Tottenham Hotspur": "TOT",
-    "West Ham United": "WHU",
-    "Ipswich Town": "IPS",
-    "Leicester City": "LEI",
-    "Southampton": "SOU"
+    "Liverpool": "LFC", "Arsenal": "ARS", "Newcastle United": "NEW", "Manchester City": "MC",
+    "Chelsea": "CHE", "Nottingham Forest": "NF", "Aston Villa": "AV", "Fulham": "FUL",
+    "Brighton & Hove Albion": "BHA", "AFC Bournemouth": "BOU", "Brentford": "BRE",
+    "Crystal Palace": "CP", "Wolverhampton Wanderers": "WOL", "Manchester United": "MU",
+    "Everton": "EVE", "Tottenham Hotspur": "TOT", "West Ham United": "WHU",
+    "Ipswich Town": "IPS", "Leicester City": "LEI", "Southampton": "SOU"
   };
 
   function abbreviateTeam(name) {
@@ -1284,15 +1270,13 @@
     }
   }
 
-  // Only run fetchSheetData when Premier League is selected
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('#menuList li[data-section]').forEach(item => {
-      item.addEventListener('click', () => {
-        const show = item.dataset.section === 'PremierLeague';
-        const standingsPanel = document.getElementById('standings-PremierLeague');
-        if (standingsPanel) standingsPanel.style.display = show ? 'block' : 'none';
-        if (show) fetchSheetData();
-      });
+  fetchSheetData();
+
+  // Show standings only when Premier League is active
+  document.querySelectorAll('#menuList li[data-section]').forEach(item => {
+    item.addEventListener('click', () => {
+      const show = item.dataset.section === 'PremierLeague';
+      document.getElementById('standings-PremierLeague').style.display = show ? 'block' : 'none';
     });
   });
 </script>
@@ -1584,6 +1568,11 @@ fetchFeed(
   "#feed-TrackAndField .feed-content",
   "https://rss.app/feeds/_rZcwsn3Z2MR5N2Zq.xml"
 );
+         fetchFeed(
+  "#feed-Soccer .feed-content",
+  "https://rss.app/feeds/_X9Xovb703UELx2SR.xml"
+);
+        
         
 
         // Existing menu functionality
