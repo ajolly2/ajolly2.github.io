@@ -175,10 +175,10 @@
         background-color: #151515;
       }
       .news {
-        flex: 0 0 380px;
-        background-color: #fafaf9;
-        padding: 0;
-      }
+  flex: 0 0 270px; /* reduced to accommodate 110px Standings panel */
+  background-color: #fafaf9;
+  padding: 0;
+}
       .social {
         flex: 0 0 350px;
         background-color: #fff;
@@ -314,6 +314,19 @@
         display: none;
         padding: 10px;
       }
+      .expand-button {
+  background-color: #3c3c3c;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.expand-button:hover {
+  background-color: #555;
+}
+
     </style>
   </head>
   <body>
@@ -361,7 +374,6 @@
               </ul>
             </li>
             <li data-section="FormulaOne">Formula One</li>
-            <li data-section="Cricket">Cricket</li>
             <li data-section="NCAAF">NCAAF</li>
             <li data-section="PGATour">PGA Tour</li>
             <li data-section="UFC">UFC</li>
@@ -404,9 +416,8 @@
             <li data-section="CopaDelRey">Copa del Rey</li>
             <li data-section="CopaLibertadores">Copa Libertadores</li>
             <li data-section="CopaSudamericana">Copa Sudamericana</li>
-            <li data-section="CoppaItalia">Coppa Italia</li> -->
+            <li data-section="CoppaItalia">Coppa Italia</li>
             <li data-section="Cricket">Cricket</li>
-<!--
             <li data-section="Cycling">Cycling</li>
             <li data-section="DFBPokal">DFB-Pokal</li>
             <li data-section="DPWorldTour">DP World Tour</li>
@@ -629,8 +640,7 @@
               <li data-section="Gymnastics">Gymnastics</li>
               <li data-section="HorseRacing">Horse Racing</li>
               <li data-section="Olympics">Olympics</li> -->
-              <li data-section="Cricke">Cricket</li>
-             <li data-section="Tennis">Tennis</li>
+             <li data-section="TrackAndField">Tennis</li>
               <li data-section="TrackAndField">Track &amp; Field</li>
                <!--
               <li data-section="Volleyball">Volleyball</li>
@@ -644,8 +654,30 @@
       </div>
 
 
-      <!-- DIVIDER BETWEEN MAIN MENU AND NEWS PANEL -->
-      <div class="divider"></div>
+      <!-- Divider between main menu and standings -->
+<div class="divider"></div>
+
+<!-- STANDINGS COLUMN -->
+<div class="column standings" style="flex: 0 0 110px; background-color: #1f1f1f; padding: 0;">
+  <div id="standings-PremierLeague" class="content-section" style="display: none; padding: 10px;">
+    <h4 style="color: white; font-size: 14px; margin: 0 0 10px 0;">Standings</h4>
+    <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #fafaf9; color: #000;">
+      <thead>
+        <tr>
+          <th style="width: 20px;">Pos</th>
+          <th style="width: 50px;">Team</th>
+          <th style="width: 20px;">Pts</th>
+        </tr>
+      </thead>
+      <tbody id="compactBody"></tbody>
+    </table>
+    <button class="expand-button" onclick="document.getElementById('fullTableOverlay').style.display = 'block';">Expand</button>
+  </div>
+</div>
+
+<!-- Divider between standings and news -->
+<div class="divider"></div>
+
 
       <!-- NEWS PANEL -->
       <div class="column news">
@@ -1053,9 +1085,6 @@
     <div id="discussion-TrackAndField" class="content-section" style="display: none;">
 <rssapp-feed id="1U4SPEWBa1gHT2dg"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script></div>
   </div>
-       <div id="discussion-Cricket" class="content-section" style="display: none;">
-         <rssapp-feed id="tAEL5wbohohtJSea"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
-       </div>
 
     </div>
 
@@ -1174,13 +1203,79 @@
 <div id="social2-TrackAndField" class="content-section" style="display: none;">
     <rssapp-feed id="_UI1wF40sLcM9Jtx9"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
     </div>
-    <div id="social2-Cricket" class="content-section" style="display: none;">
-      <rssapp-feed id="u5FOeED5DdpP1Bsa"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
-    </div>
   </div>
        </div>
         <!-- DIVIDER BETWEEN SOCIAL PANEL AND MEDIA CENTER PANEL 
       <div class="divider"></div> -->
+<!-- Overlay -->
+<div id="fullTableOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 1000; overflow: auto;">
+  <div style="max-width: 1000px; margin: 40px auto; background-color: #fff; padding: 20px; color: black; border-radius: 10px;">
+    <button style="float: right; margin-top: -10px; margin-right: -10px; background: none; border: none; font-size: 20px; cursor: pointer; color: #000;" onclick="document.getElementById('fullTableOverlay').style.display = 'none';">&times;</button>
+    <h2 style="text-align: center;">Full Premier League Table</h2>
+    <table id="fullTable" style="width: 100%; border-collapse: collapse; font-size: 12px; background-color: #fafaf9; color: #000;">
+      <thead>
+        <tr>
+          <th>Pos</th><th>Team</th><th>Played</th><th>Won</th><th>Drawn</th><th>Lost</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+        </tr>
+      </thead>
+      <tbody id="fullBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const TEAM_ABBREVIATIONS = {
+    "Liverpool": "LFC", "Arsenal": "ARS", "Newcastle United": "NEW", "Manchester City": "MC",
+    "Chelsea": "CHE", "Nottingham Forest": "NF", "Aston Villa": "AV", "Fulham": "FUL",
+    "Brighton & Hove Albion": "BHA", "AFC Bournemouth": "BOU", "Brentford": "BRE",
+    "Crystal Palace": "CP", "Wolverhampton Wanderers": "WOL", "Manchester United": "MU",
+    "Everton": "EVE", "Tottenham Hotspur": "TOT", "West Ham United": "WHU",
+    "Ipswich Town": "IPS", "Leicester City": "LEI", "Southampton": "SOU"
+  };
+
+  function abbreviateTeam(name) {
+    name = name.replace(/ FC$/, "");
+    return TEAM_ABBREVIATIONS[name] || name;
+  }
+
+  function fullTeamName(name) {
+    return name.replace(/ FC$/, "");
+  }
+
+  async function fetchSheetData() {
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTCeBR8FZHP269ZaMlL4ORWlt0Dzw63lYkdKHSqPy7V707renjbeWSPnACRzcVKcqlUtSyi84VNnD_f/pub?output=csv&gid=782375540';
+    const res = await fetch(url);
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(row => row.split(','));
+
+    const compactBody = document.getElementById('compactBody');
+    const fullBody = document.getElementById('fullBody');
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      const fullName = fullTeamName(row[1]);
+      const abbr = abbreviateTeam(row[1]);
+
+      const trCompact = document.createElement('tr');
+      trCompact.innerHTML = `<td>${row[0]}</td><td>${abbr}</td><td>${row[9]}</td>`;
+      compactBody.appendChild(trCompact);
+
+      const trFull = document.createElement('tr');
+      row[1] = fullName;
+      trFull.innerHTML = row.map(col => `<td>${col}</td>`).join('');
+      fullBody.appendChild(trFull);
+    }
+  }
+
+  fetchSheetData();
+
+  // Show standings only when Premier League is active
+  document.querySelectorAll('#menuList li[data-section]').forEach(item => {
+    item.addEventListener('click', () => {
+      const show = item.dataset.section === 'PremierLeague';
+      document.getElementById('standings-PremierLeague').style.display = show ? 'block' : 'none';
+    });
+  });
+</script>
 
     <!-- SINGLE RSS.app script load (only once) -->
     <script src="https://widget.rss.app/v1/feed.js" async></script>
@@ -1223,8 +1318,7 @@
         FormulaOne: "s7r6yAgtrA3k2dJw",
         NCAAF: "AnA5shmkBJ7gdzCs",
         PGATour: "c2yYJn0ed57eix3y",
-        TrackAndField: "26sFnjxqUEUQ6mkZ",
-        Cricket: "RbJuA3Za6YaOCnT0"
+        TrackAndField: "26sFnjxqUEUQ6mkZ"
       };
 
       let currentFeed = null;
@@ -1470,12 +1564,6 @@ fetchFeed(
   "#feed-TrackAndField .feed-content",
   "https://rss.app/feeds/_rZcwsn3Z2MR5N2Zq.xml"
 );
-        fetchFeed(
-  "#feed-Cricket .feed-content",
-  "https://rss.app/feeds/_ESX8EDEnLnHwxSqf.xml"
-);
-
-        
         
 
         // Existing menu functionality
