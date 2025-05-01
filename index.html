@@ -148,7 +148,7 @@
       #topBar,
 #topDivider {
   width: 100%;
-  max-width: 1412px;
+  max-width: 1415px;
   margin: 0 auto;
   box-sizing: border-box;
 }
@@ -190,7 +190,7 @@
         padding-left: 2px;
         display: flex;
         align-items: center;
-        position: sticky;
+        ition: sticky;
         top: 0;
         z-index: 2;
       }
@@ -259,7 +259,7 @@
         margin-left: 10px;
       }
       #newsSubMenu {
-        position: sticky;
+        ition: sticky;
         top: 0;
         width: 100%;
         z-index: 10;
@@ -468,7 +468,7 @@
             <li data-section="SaudiProLeague">Saudi Pro League</li>
             <li data-section="ScottishPremiership">Scottish Premiership</li> -->
       <li data-section="SerieA">Serie A</li>
-         <!--       <li data-section="Soccer">Soccer</li> -->
+              <li data-section="Soccer">Soccer</li>
             <li data-section="Tennis">Tennis</li>
          <!--   <li data-section="TGL">TGL</li> -->
             <li data-section="TrackAndField">Track &amp; Field</li>
@@ -518,7 +518,7 @@
              <!--  <li data-section="EuroLeague">EuroLeague</li> -->
             </ul>
             <li class="spacer-line"></li>
-            <li><strong>SOCCER</strong></li>
+            <li data-section="Soccer"><span style="font-weight: bold;">SOCCER</span></li>
             <ul style="padding-left: 10px;">
               <li data-section="UEFAChampionsLeague">UEFA Champions League</li>
               <li data-section="PremierLeague">Premier League</li>
@@ -660,13 +660,18 @@
 <!-- STANDINGS COLUMN -->
 <div class="column standings" style="flex: 0 0 110px; background-color: #1f1f1f; padding: 0;">
   <div id="standings-PremierLeague" class="content-section" style="display: none; padding: 10px;">
-    <h4 style="color: white; font-size: 14px; margin: 0 0 10px 0;">Standings</h4>
+     <div
+    id="standingsHeader"
+    style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: 'OwnersXXWideXBlack', sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11;"
+  >
+    <strong>Standings</strong>
+  </div>
     <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #fafaf9; color: #000;">
       <thead>
         <tr>
-          <th style="width: 20px;">Pos</th>
-          <th style="width: 50px;">Team</th>
-          <th style="width: 20px;">Pts</th>
+          <th style="width: 20px;"></th>
+          <th style="width: 50px; text-align: left;">Team</th>
+          <th style="width: 20px; text-align: left;">Pts</th>
         </tr>
       </thead>
       <tbody id="compactBody"></tbody>
@@ -999,7 +1004,9 @@
     <div id="discussion-NHL" class="content-section" style="display: none;">
       <rssapp-feed id="LlaGrdoWldt4gFyg"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
     </div>
-    <div id="discussion-Soccer" class="content-section" style="display: none;"></div>
+    <div id="discussion-Soccer" class="content-section" style="display: none;">
+      <rssapp-feed id="4TKBeZgqPGK3XQ1g"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
+    </div>
      <div id="discussion-UEFAChampionsLeague" class="content-section" style="display: none;">
        <rssapp-feed id="cJ9fge5WHLX256Dp"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
      </div>
@@ -1116,7 +1123,9 @@
     <div id="social2-NHL" class="content-section" style="display: none;">
       <rssapp-feed id="uQ6KQ0QokYHUZbbS"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
     </div>
-    <div id="social2-Soccer" class="content-section" style="display: none;"></div>
+    <div id="social2-Soccer" class="content-section" style="display: none;">
+      <rssapp-feed id="_9eg0NbT3CNHmj8D7"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
+    </div>
         <div id="social2-UEFAChampionsLeague" class="content-section" style="display: none;">
     <rssapp-feed id="iAcjolit9IZtocN5"></rssapp-feed><script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
           </div>
@@ -1564,6 +1573,11 @@ fetchFeed(
   "#feed-TrackAndField .feed-content",
   "https://rss.app/feeds/_rZcwsn3Z2MR5N2Zq.xml"
 );
+         fetchFeed(
+  "#feed-Soccer .feed-content",
+  "https://rss.app/feeds/_X9Xovb703UELx2SR.xml"
+);
+        
         
 
         // Existing menu functionality
@@ -1713,5 +1727,3 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     </script>
   </body>
 </html> 
-
-
