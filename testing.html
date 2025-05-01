@@ -1229,12 +1229,26 @@
 
 <script>
   const TEAM_ABBREVIATIONS = {
-    "Liverpool": "LFC", "Arsenal": "ARS", "Newcastle United": "NEW", "Manchester City": "MC",
-    "Chelsea": "CHE", "Nottingham Forest": "NF", "Aston Villa": "AV", "Fulham": "FUL",
-    "Brighton & Hove Albion": "BHA", "AFC Bournemouth": "BOU", "Brentford": "BRE",
-    "Crystal Palace": "CP", "Wolverhampton Wanderers": "WOL", "Manchester United": "MU",
-    "Everton": "EVE", "Tottenham Hotspur": "TOT", "West Ham United": "WHU",
-    "Ipswich Town": "IPS", "Leicester City": "LEI", "Southampton": "SOU"
+    "Liverpool": "LFC",
+    "Arsenal": "ARS",
+    "Newcastle United": "NEW",
+    "Manchester City": "MC",
+    "Chelsea": "CHE",
+    "Nottingham Forest": "NF",
+    "Aston Villa": "AV",
+    "Fulham": "FUL",
+    "Brighton & Hove Albion": "BHA",
+    "AFC Bournemouth": "BOU",
+    "Brentford": "BRE",
+    "Crystal Palace": "CP",
+    "Wolverhampton Wanderers": "WOL",
+    "Manchester United": "MU",
+    "Everton": "EVE",
+    "Tottenham Hotspur": "TOT",
+    "West Ham United": "WHU",
+    "Ipswich Town": "IPS",
+    "Leicester City": "LEI",
+    "Southampton": "SOU"
   };
 
   function abbreviateTeam(name) {
@@ -1270,13 +1284,15 @@
     }
   }
 
-  fetchSheetData();
-
-  // Show standings only when Premier League is active
-  document.querySelectorAll('#menuList li[data-section]').forEach(item => {
-    item.addEventListener('click', () => {
-      const show = item.dataset.section === 'PremierLeague';
-      document.getElementById('standings-PremierLeague').style.display = show ? 'block' : 'none';
+  // Only run fetchSheetData when Premier League is selected
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#menuList li[data-section]').forEach(item => {
+      item.addEventListener('click', () => {
+        const show = item.dataset.section === 'PremierLeague';
+        const standingsPanel = document.getElementById('standings-PremierLeague');
+        if (standingsPanel) standingsPanel.style.display = show ? 'block' : 'none';
+        if (show) fetchSheetData();
+      });
     });
   });
 </script>
