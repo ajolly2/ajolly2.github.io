@@ -326,6 +326,9 @@
 .expand-button:hover {
   background-color: #555;
 }
+      .expand-button {
+    display: none;
+  }
 
     </style>
   </head>
@@ -659,42 +662,58 @@
 
 <!-- STANDINGS COLUMN -->
 <div class="column standings" style="flex: 0 0 110px; background-color: #1f1f1f; padding: 0px;">
-<div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
-  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 10px; z-index: 11;">
+<div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 110px;">
+  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 11;">
     <strong>Standings</strong>
-<span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 11px; line-height: 18px; margin-right: 5px; color: #818181; font-family: 'Segoe UI Symbol', sans-serif;">&#x25B6;</span>
+    <span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
   </div>
-
-    <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #1f1f1f; color: #D3D3D3;">
-      <thead>
-          <tr style="border-bottom: 2px solid #1f1f1f;">
-          <th style="width: 20px;"></th>
-          <th style="width: 50px; text-align: left;">Team</th>
-          <th style="width: 20px; text-align: left;">Pts</th>
-        </tr>
-      </thead>
-      <tbody id="compactBody"></tbody>
-    </table>
-  </div>
-  <!-- Top Scorers Compact -->
-<div id="scorers-PremierLeague">
-  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 10;">
-    <strong>Top Scorers</strong>
-    <span onclick="document.getElementById('fullScorersOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
-  </div>
-  <table id="scorersTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
+  <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
     <thead>
       <tr>
-        <th style="text-align: left; padding-bottom: 2px;">Player</th>
-        <th style="padding-bottom: 2px;">Team</th>
-        <th style="padding-bottom: 2px;">Goals</th>
+        <th style="width: 50px; text-align: left; padding-bottom: 2px;">Team</th>
+        <th style="width: 20px; padding-bottom: 2px;">Pts</th>
       </tr>
     </thead>
-    <tbody id="scorersBody"></tbody>
+    <tbody id="compactBody"></tbody>
   </table>
+  
+  <!-- TOP SCORERS SECTION -->
+  <div style="margin-top: 8px;"></div>
+  <div id="scorers-PremierLeague">
+    <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 10;">
+      <strong>Top Scorers</strong>
+      <span onclick="document.getElementById('fullScorersOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
+    </div>
+    <table id="scorersTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
+      <thead>
+        <tr>
+          <th style="text-align: left; padding-bottom: 2px;">Player</th>
+          <th style="padding-bottom: 2px;">Team</th>
+          <th style="padding-bottom: 2px;">Goals</th>
+        </tr>
+      </thead>
+      <tbody id="scorersBody"></tbody>
+    </table>
+  </div>
 </div>
 
-<!-- Overlay version -->
+<!-- Full screen overlay for standings -->
+<div id="fullTableOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 1000; overflow: auto;">
+  <div style="max-width: 1000px; margin: 40px auto; background-color: #fff; padding: 20px; color: black; border-radius: 10px;">
+    <button style="float: right; margin-top: -10px; margin-right: -10px; background: none; border: none; font-size: 20px; cursor: pointer; color: #000;" onclick="document.getElementById('fullTableOverlay').style.display = 'none';">&times;</button>
+    <h2 style="text-align: center;">Full Premier League Table</h2>
+    <table id="fullTable" style="width: 100%; border-collapse: collapse; font-size: 12px; background-color: #fafaf9; color: #000;">
+      <thead>
+        <tr>
+          <th>Pos</th><th>Team</th><th>Played</th><th>Won</th><th>Drawn</th><th>Lost</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+        </tr>
+      </thead>
+      <tbody id="fullBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Full screen overlay for top scorers -->
 <div id="fullScorersOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); z-index: 1000; overflow: auto;">
   <div style="max-width: 600px; margin: 40px auto; background-color: #fff; padding: 20px; color: black; border-radius: 10px;">
     <button style="float: right; margin-top: -10px; margin-right: -10px; background: none; border: none; font-size: 20px; cursor: pointer; color: #000;" onclick="document.getElementById('fullScorersOverlay').style.display = 'none';">&times;</button>
@@ -709,7 +728,6 @@
     </table>
   </div>
 </div>
-
 </div>
 
 <!-- Divider between standings and news -->
@@ -1360,6 +1378,17 @@ async function fetchTopScorers() {
 }
 
 fetchTopScorers();
+</script>
+      <script>
+  document.querySelectorAll("#menuList li[data-section]").forEach(item => {
+    item.addEventListener("click", () => {
+      const section = item.dataset.section;
+      const show = section === "PremierLeague";
+      document.getElementById("standings-PremierLeague").style.display = show ? "block" : "none";
+      document.getElementById("fullTableOverlay").style.display = "none";
+      document.getElementById("fullScorersOverlay").style.display = "none";
+    });
+  });
 </script>
 
 
