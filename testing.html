@@ -190,7 +190,7 @@
         padding-left: 2px;
         display: flex;
         align-items: center;
-        ition: sticky;
+        position: sticky;
         top: 0;
         z-index: 2;
       }
@@ -259,7 +259,7 @@
         margin-left: 10px;
       }
       #newsSubMenu {
-        ition: sticky;
+        position: sticky;
         top: 0;
         width: 100%;
         z-index: 10;
@@ -659,16 +659,16 @@
 <div class="divider"></div>
 
 <!-- STANDINGS COLUMN -->
+<!-- STANDINGS COLUMN -->
 <div class="column standings" style="flex: 0 0 110px; background-color: #1f1f1f; padding: 0px;">
-<div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
-  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 10px; z-index: 11;">
-    <strong>Standings</strong>
-<span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 11px; line-height: 18px; margin-right: 5px; color: #818181; font-family: 'Segoe UI Symbol', sans-serif;">&#x25B6;</span>
-  </div>
-
+  <div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100%;">
+    <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 10px; z-index: 11;">
+      <strong>Standings</strong>
+      <span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 11px; line-height: 18px; margin-right: 5px; color: #818181; font-family: 'Segoe UI Symbol', sans-serif;">&#x25B6;</span>
+    </div>
     <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #1f1f1f; color: #D3D3D3;">
       <thead>
-          <tr style="border-bottom: 2px solid #1f1f1f;">
+        <tr style="border-bottom: 2px solid #1f1f1f;">
           <th style="width: 20px;"></th>
           <th style="width: 50px; text-align: left;">Team</th>
           <th style="width: 20px; text-align: left;">Pts</th>
@@ -676,30 +676,28 @@
       </thead>
       <tbody id="compactBody"></tbody>
     </table>
-  
-  </div>
-</div>
-  <!-- TOP SCORERS SECTION -->
-  <div style="margin-top: 8px;"></div>
-  <div id="scorers-PremierLeague">
-    <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 10;">
-      <strong>Top Scorers</strong>
-      <span onclick="document.getElementById('fullScorersOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
+
+    <!-- TOP SCORERS SECTION -->
+    <div style="margin-top: 8px;"></div>
+    <div id="scorers-PremierLeague">
+      <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 10;">
+        <strong>Top Scorers</strong>
+        <span onclick="document.getElementById('fullScorersOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
+      </div>
+      <table id="scorersTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
+        <thead>
+          <tr>
+            <th style="text-align: left; padding-bottom: 2px;">Player</th>
+            <th style="padding-bottom: 2px;">Team</th>
+            <th style="padding-bottom: 2px;">Goals</th>
+          </tr>
+        </thead>
+        <tbody id="scorersBody"></tbody>
+      </table>
     </div>
-    <table id="scorersTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
-      <thead>
-        <tr>
-          <th style="text-align: left; padding-bottom: 2px;">Player</th>
-          <th style="padding-bottom: 2px;">Team</th>
-          <th style="padding-bottom: 2px;">Goals</th>
-        </tr>
-      </thead>
-      <tbody id="scorersBody"></tbody>
-    </table>
   </div>
 </div>
-  </div>
-</div>
+
 
 <!-- Divider between standings and news -->
 <div class="divider"></div>
