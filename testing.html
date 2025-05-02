@@ -659,40 +659,41 @@
 
 <!-- STANDINGS COLUMN -->
 <div class="column standings" style="flex: 0 0 110px; background-color: #1f1f1f; padding: 0px;">
-<div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
-  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 10px; z-index: 11;">
+<div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 110px;">
+  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 11;">
     <strong>Standings</strong>
-<span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 11px; line-height: 18px; margin-right: 5px; color: #818181; font-family: 'Segoe UI Symbol', sans-serif;">&#x25B6;</span>
+    <span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
   </div>
-
-    <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #1f1f1f; color: #D3D3D3;">
-      <thead>
-          <tr style="border-bottom: 2px solid #1f1f1f;">
-          <th style="width: 20px;"></th>
-          <th style="width: 50px; text-align: left;">Team</th>
-          <th style="width: 20px; text-align: left;">Pts</th>
-        </tr>
-      </thead>
-      <tbody id="compactBody"></tbody>
-    </table>
-  </div>
- <div style="margin-top: 8px;"></div>
-<div id="scorers-PremierLeague" style="display: none;">
-  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 10;">
-    <strong>Top Scorers</strong>
-    <span onclick="document.getElementById('fullScorersOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
-  </div>
-  <table id="scorersTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
+  <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
     <thead>
       <tr>
-        <th style="text-align: left; padding-bottom: 2px;">Player</th>
-        <th style="padding-bottom: 2px;">Team</th>
-        <th style="padding-bottom: 2px;">Goals</th>
+        <th style="width: 50px; text-align: left; padding-bottom: 2px;">Team</th>
+        <th style="width: 20px; padding-bottom: 2px;">Pts</th>
       </tr>
     </thead>
-    <tbody id="scorersBody"></tbody>
+    <tbody id="compactBody"></tbody>
   </table>
+
+  <div style="margin-top: 8px;"></div>
+
+  <div id="scorers-PremierLeague" style="display: none;">
+    <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 10;">
+      <strong>Top Scorers</strong>
+      <span onclick="document.getElementById('fullScorersOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
+    </div>
+    <table id="scorersTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
+      <thead>
+        <tr>
+          <th style="text-align: left; padding-bottom: 2px;">Player</th>
+          <th style="padding-bottom: 2px;">Team</th>
+          <th style="padding-bottom: 2px;">Goals</th>
+        </tr>
+      </thead>
+      <tbody id="scorersBody"></tbody>
+    </table>
+  </div>
 </div>
+
 </div>
 
 <!-- Divider between standings and news -->
@@ -1815,36 +1816,17 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     });
   });
 
- <script>
+<script>
   const TEAM_ABBREVIATIONS = {
-    "Liverpool": "LIV",
-    "Manchester City": "MC",
-    "Arsenal": "ARS",
-    "Tottenham Hotspur": "TOT",
-    "Aston Villa": "AVL",
-    "Manchester United": "MUN",
-    "Newcastle United": "NEW",
-    "Brighton & Hove Albion": "BHA",
-    "Chelsea": "CHE",
-    "Wolverhampton Wanderers": "WOL",
-    "West Ham United": "WHU",
-    "Crystal Palace": "CRY",
-    "Fulham": "FUL",
-    "Everton": "EVE",
-    "AFC Bournemouth": "BOU",
-    "Brentford": "BRE",
-    "Nottingham Forest": "NFO",
-    "Luton Town": "LUT",
-    "Burnley": "BUR",
-    "Sheffield United": "SHU"
+    "Liverpool": "LIV", "Manchester City": "MC", "Arsenal": "ARS", "Tottenham Hotspur": "TOT",
+    "Aston Villa": "AVL", "Manchester United": "MUN", "Newcastle United": "NEW", "Brighton & Hove Albion": "BHA",
+    "Chelsea": "CHE", "Wolverhampton Wanderers": "WOL", "West Ham United": "WHU", "Crystal Palace": "CRY",
+    "Fulham": "FUL", "Everton": "EVE", "AFC Bournemouth": "BOU", "Brentford": "BRE",
+    "Nottingham Forest": "NFO", "Luton Town": "LUT", "Burnley": "BUR", "Sheffield United": "SHU"
   };
 
   function abbreviateTeam(name) {
     return TEAM_ABBREVIATIONS[name.trim()] || name.trim();
-  }
-
-  function fullTeamName(name) {
-    return name.trim();
   }
 
   async function fetchSheetData() {
@@ -1854,33 +1836,14 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     const rows = text.trim().split('\n').map(row => row.split(','));
 
     const compactBody = document.getElementById('compactBody');
-    const fullBody = document.getElementById('fullBody');
     compactBody.innerHTML = '';
-    fullBody.innerHTML = '';
 
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
       const abbr = abbreviateTeam(row[1]);
-      const full = fullTeamName(row[1]);
-
-      const trCompact = document.createElement('tr');
-      trCompact.innerHTML = `<td>${abbr}</td><td style="text-align:center">${row[9]}</td>`;
-      compactBody.appendChild(trCompact);
-
-      const trFull = document.createElement('tr');
-      trFull.innerHTML = `
-        <td>${row[0]}</td>
-        <td>${full}</td>
-        <td>${row[2]}</td>
-        <td>${row[3]}</td>
-        <td>${row[4]}</td>
-        <td>${row[5]}</td>
-        <td>${row[6]}</td>
-        <td>${row[7]}</td>
-        <td>${row[8]}</td>
-        <td>${row[9]}</td>
-      `;
-      fullBody.appendChild(trFull);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${abbr}</td><td style="text-align:center">${row[9]}</td>`;
+      compactBody.appendChild(tr);
     }
   }
 
@@ -1897,37 +1860,25 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
       const [player, team, goals] = rows[i];
       const abbr = abbreviateTeam(team);
       const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td style="text-align:left">${player}</td>
-        <td style="text-align:center">${abbr}</td>
-        <td style="text-align:center">${goals}</td>
-      `;
+      tr.innerHTML = `<td style="text-align:left">${player}</td><td style="text-align:center">${abbr}</td><td style="text-align:center">${goals}</td>`;
       tbody.appendChild(tr);
     }
   }
 
-  // Menu item click logic to toggle visibility
   document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     item.addEventListener("click", () => {
       const section = item.dataset.section;
       const show = section === "PremierLeague";
-
-      const standingsPanel = document.getElementById("standings-PremierLeague");
-      const scorersPanel = document.getElementById("scorers-PremierLeague");
-
-      if (standingsPanel) standingsPanel.style.display = show ? "block" : "none";
-      if (scorersPanel) scorersPanel.style.display = show ? "block" : "none";
-
+      document.getElementById("standings-PremierLeague").style.display = show ? "block" : "none";
+      document.getElementById("scorers-PremierLeague").style.display = show ? "block" : "none";
       if (show) {
         fetchSheetData();
         fetchTopScorers();
       }
     });
   });
-
-  // Initial load (optional)
-  fetchSheetData();
 </script>
+
 
 
   </body>
