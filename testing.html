@@ -676,23 +676,22 @@
       <tbody id="compactBody"></tbody>
     </table>
   </div>
-  <!-- TOP SCORERS SECTION -->
-  <div style="margin-top: 8px;"></div>
-  <div id="scorers-PremierLeague">
-    <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 10;">
-      <strong>Top Scorers</strong>
-      <span onclick="document.getElementById('fullScorersOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
-    </div>
-    <table id="scorersTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
-      <thead>
-        <tr>
-          <th style="text-align: left; padding-bottom: 2px;">Player</th>
-          <th style="padding-bottom: 2px;">Team</th>
-          <th style="padding-bottom: 2px;">Goals</th>
-        </tr>
-      </thead>
-      <tbody id="scorersBody"></tbody>
-    </table>
+ <div style="margin-top: 8px;"></div>
+<div id="scorers-PremierLeague" style="display: none;">
+  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 10;">
+    <strong>Top Scorers</strong>
+    <span onclick="document.getElementById('fullScorersOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
+  </div>
+  <table id="scorersTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
+    <thead>
+      <tr>
+        <th style="text-align: left; padding-bottom: 2px;">Player</th>
+        <th style="padding-bottom: 2px;">Team</th>
+        <th style="padding-bottom: 2px;">Goals</th>
+      </tr>
+    </thead>
+    <tbody id="scorersBody"></tbody>
+  </table>
 </div>
 </div>
 
@@ -1867,6 +1866,39 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     }
   }
 </script> 
+      <script>
+// Show/hide Top Scorers section based on Premier League menu click
+document.querySelectorAll("#menuList li[data-section]").forEach(item => {
+  item.addEventListener("click", () => {
+    const section = item.dataset.section;
+    const show = section === "PremierLeague";
+    const scorersPanel = document.getElementById("scorers-PremierLeague");
+    if (scorersPanel) {
+      scorersPanel.style.display = show ? "block" : "none";
+      if (show) fetchTopScorers(); // Load data only when shown
+    }
+  });
+});
+
+// Fetch Premier League top scorers from Google Sheets
+async function fetchTopScorers() {
+  const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv';
+  const res = await fetch(url);
+  const text = await res.text();
+  const rows = text.trim().split('\n').map(row => row.split(','));
+
+  const tbody = document.getElementById('scorersBody');
+  tbody.innerHTML = '';
+
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td style="text-align:left">${row[0]}</td><td style="text-align:center">${row[1]}</td><td style="text-align:center">${row[2]}</td>`;
+    tbody.appendChild(tr);
+  }
+}
+</script>
+
   </body>
 </html> 
 
