@@ -676,6 +676,25 @@
       <tbody id="compactBody"></tbody>
     </table>
   </div>
+  <!-- TOP SCORERS SECTION -->
+  <div style="margin-top: 8px;"></div>
+  <div id="scorers-PremierLeague">
+    <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 10;">
+      <strong>Top Scorers</strong>
+      <span onclick="document.getElementById('fullScorersOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
+    </div>
+    <table id="scorersTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
+      <thead>
+        <tr>
+          <th style="text-align: left; padding-bottom: 2px;">Player</th>
+          <th style="padding-bottom: 2px;">Team</th>
+          <th style="padding-bottom: 2px;">Goals</th>
+        </tr>
+      </thead>
+      <tbody id="scorersBody"></tbody>
+    </table>
+  </div>
+</div>
 </div>
 
 <!-- Divider between standings and news -->
@@ -1755,6 +1774,100 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   });
 });
     </script>
+      <script>
+  document.querySelectorAll("#menuList li[data-section]").forEach(item => {
+    item.addEventListener("click", () => {
+      const section = item.dataset.section;
+      const show = section === "PremierLeague";
+      document.getElementById("standings-PremierLeague").style.display = show ? "block" : "none";
+      document.getElementById("fullTableOverlay").style.display = "none";
+      document.getElementById("fullScorersOverlay").style.display = "none";
+      if (show) {
+        fetchStandingsData();
+        fetchScorersData();
+      }
+    });
+  });
+
+  const SCORERS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTCeBR8FZHP269ZaMlL4ORWlt0Dzw63lYkdKHSqPy7V707renjbeWSPnACRzcVKcqlUtSyi84VNnD_f/pub?output=csv&gid=1633903366";
+  const STANDINGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTCeBR8FZHP269ZaMlL4ORWlt0Dzw63lYkdKHSqPy7V707renjbeWSPnACRzcVKcqlUtSyi84VNnD_f/pub?output=csv&gid=782375540";
+
+  function abbreviateTeam(name) {
+    const TEAM_ABBREVIATIONS = {
+      "Liverpool": "LFC", "Arsenal": "ARS", "Newcastle United": "NEW", "Manchester City": "MC",
+      "Chelsea": "CHE", "Nottingham Forest": "NF", "Aston Villa": "AV", "Fulham": "FUL",
+      "Brighton & Hove Albion": "BHA", "AFC Bournemouth": "BOU", "Brentford": "BRE",
+      "Crystal Palace": "CP", "Wolverhampton Wanderers": "WOL", "Manchester United": "MU",
+      "Everton": "EVE", "Tottenham Hotspur": "TOT", "West Ham United": "WHU",
+      "Ipswich Town": "IPS", "Leicester City": "LEI", "Southampton": "SOU"
+    };
+    return TEAM_ABBREVIATIONS[name] || name;
+  }
+
+  function formatName(name) {
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) return name;
+    return parts[0][0] + ". " + parts.slice(1).join(" ");
+  }
+
+  async function fetchScorersData() {
+    try {
+      const res = await fetch(SCORERS_CSV_URL);
+      const text = await res.text();
+      const rows = text.trim().split("\n").map(r => r.split(",")).slice(1);
+
+      const scorersBody = document.getElementById("scorersBody");
+      const fullScorersBody = document.getElementById("fullScorersBody");
+
+      scorersBody.innerHTML = "";
+      fullScorersBody.innerHTML = "";
+
+      for (const row of rows) {
+        const player = formatName(row[0]);
+        const team = row[1];
+        const goals = row[2];
+
+        const miniRow = document.createElement("tr");
+        miniRow.innerHTML = `<td>${player}</td><td>${abbreviateTeam(team)}</td><td>${goals}</td>`;
+        scorersBody.appendChild(miniRow);
+
+        const fullRow = document.createElement("tr");
+        fullRow.innerHTML = `<td>${row[0]}</td><td>${team}</td><td>${goals}</td>`;
+        fullScorersBody.appendChild(fullRow);
+      }
+    } catch (err) {
+      console.error("Error loading scorers:", err);
+    }
+  }
+
+  async function fetchStandingsData() {
+    try {
+      const res = await fetch(STANDINGS_CSV_URL);
+      const text = await res.text();
+      const rows = text.trim().split("\n").map(r => r.split(",")).slice(1);
+
+      const compactBody = document.getElementById("compactBody");
+      const fullBody = document.getElementById("fullBody");
+
+      compactBody.innerHTML = "";
+      fullBody.innerHTML = "";
+
+      for (const row of rows) {
+        const abbrTeam = abbreviateTeam(row[1]);
+
+        const miniRow = document.createElement("tr");
+        miniRow.innerHTML = `<td>${abbrTeam}</td><td>${row[9]}</td>`;
+        compactBody.appendChild(miniRow);
+
+        const fullRow = document.createElement("tr");
+        fullRow.innerHTML = row.map(cell => `<td>${cell}</td>`).join("");
+        fullBody.appendChild(fullRow);
+      }
+    } catch (err) {
+      console.error("Error loading standings:", err);
+    }
+  }
+</script>
   </body>
 </html> 
 
