@@ -1304,21 +1304,30 @@
 
       <script>
   async function fetchTopScorers() {
-    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv'; // <-- use your published CSV link here
-    const res = await fetch(url);
-    const text = await res.text();
-    const rows = text.trim().split('\n').map(row => row.split(','));
+  const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv'; // <-- use your published CSV link here
+  const res = await fetch(url);
+  const text = await res.text();
+  const rows = text.trim().split('\n').map(row => row.split(','));
 
-    const tbody = document.getElementById('scorersBody');
-    tbody.innerHTML = '';
+  const tbody = document.getElementById('scorersBody');
+  tbody.innerHTML = '';
 
-    for (let i = 1; i < rows.length; i++) {
-      const row = rows[i];
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td style="text-align:left">${row[0]}</td><td style="text-align:center">${row[2]}</td>`;
-      tbody.appendChild(tr);
-    }
+  for (let i = 1; i < Math.min(rows.length, 11); i++) {
+    const row = rows[i];
+    const fullName = row[0].trim();
+    const goals = row[2].trim();
+
+    // Convert to "F. Lastname"
+    const nameParts = fullName.split(' ');
+    const formattedName = nameParts.length > 1
+      ? `${nameParts[0][0]}. ${nameParts.slice(1).join(' ')}`
+      : fullName;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td style="text-align:left">${formattedName}</td><td style="text-align:center">${goals}</td>`;
+    tbody.appendChild(tr);
   }
+}
 
   // Only show Top Scorers when PremierLeague is active
   document.addEventListener('DOMContentLoaded', () => {
