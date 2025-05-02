@@ -1815,117 +1815,120 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     });
   });
 
-  const SCORERS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTCeBR8FZHP269ZaMlL4ORWlt0Dzw63lYkdKHSqPy7V707renjbeWSPnACRzcVKcqlUtSyi84VNnD_f/pub?output=csv&gid=1633903366";
-  const STANDINGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTCeBR8FZHP269ZaMlL4ORWlt0Dzw63lYkdKHSqPy7V707renjbeWSPnACRzcVKcqlUtSyi84VNnD_f/pub?output=csv&gid=782375540";
+ <script>
+  const TEAM_ABBREVIATIONS = {
+    "Liverpool": "LIV",
+    "Manchester City": "MC",
+    "Arsenal": "ARS",
+    "Tottenham Hotspur": "TOT",
+    "Aston Villa": "AVL",
+    "Manchester United": "MUN",
+    "Newcastle United": "NEW",
+    "Brighton & Hove Albion": "BHA",
+    "Chelsea": "CHE",
+    "Wolverhampton Wanderers": "WOL",
+    "West Ham United": "WHU",
+    "Crystal Palace": "CRY",
+    "Fulham": "FUL",
+    "Everton": "EVE",
+    "AFC Bournemouth": "BOU",
+    "Brentford": "BRE",
+    "Nottingham Forest": "NFO",
+    "Luton Town": "LUT",
+    "Burnley": "BUR",
+    "Sheffield United": "SHU"
+  };
 
   function abbreviateTeam(name) {
-    const TEAM_ABBREVIATIONS = {
-      "Liverpool": "LFC", "Arsenal": "ARS", "Newcastle United": "NEW", "Manchester City": "MC",
-      "Chelsea": "CHE", "Nottingham Forest": "NF", "Aston Villa": "AV", "Fulham": "FUL",
-      "Brighton & Hove Albion": "BHA", "AFC Bournemouth": "BOU", "Brentford": "BRE",
-      "Crystal Palace": "CP", "Wolverhampton Wanderers": "WOL", "Manchester United": "MU",
-      "Everton": "EVE", "Tottenham Hotspur": "TOT", "West Ham United": "WHU",
-      "Ipswich Town": "IPS", "Leicester City": "LEI", "Southampton": "SOU"
-    };
-    return TEAM_ABBREVIATIONS[name] || name;
+    return TEAM_ABBREVIATIONS[name.trim()] || name.trim();
   }
 
-  function formatName(name) {
-    const parts = name.trim().split(" ");
-    if (parts.length === 1) return name;
-    return parts[0][0] + ". " + parts.slice(1).join(" ");
+  function fullTeamName(name) {
+    return name.trim();
   }
 
-  async function fetchScorersData() {
-    try {
-      const res = await fetch(SCORERS_CSV_URL);
-      const text = await res.text();
-      const rows = text.trim().split("\n").map(r => r.split(",")).slice(1);
+  async function fetchSheetData() {
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTCeBR8FZHP269ZaMlL4ORWlt0Dzw63lYkdKHSqPy7V707renjbeWSPnACRzcVKcqlUtSyi84VNnD_f/pub?output=csv&gid=782375540';
+    const res = await fetch(url);
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(row => row.split(','));
 
-      const scorersBody = document.getElementById("scorersBody");
-      const fullScorersBody = document.getElementById("fullScorersBody");
+    const compactBody = document.getElementById('compactBody');
+    const fullBody = document.getElementById('fullBody');
+    compactBody.innerHTML = '';
+    fullBody.innerHTML = '';
 
-      scorersBody.innerHTML = "";
-      fullScorersBody.innerHTML = "";
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      const abbr = abbreviateTeam(row[1]);
+      const full = fullTeamName(row[1]);
 
-      for (const row of rows) {
-        const player = formatName(row[0]);
-        const team = row[1];
-        const goals = row[2];
+      const trCompact = document.createElement('tr');
+      trCompact.innerHTML = `<td>${abbr}</td><td style="text-align:center">${row[9]}</td>`;
+      compactBody.appendChild(trCompact);
 
-        const miniRow = document.createElement("tr");
-        miniRow.innerHTML = `<td>${player}</td><td>${abbreviateTeam(team)}</td><td>${goals}</td>`;
-        scorersBody.appendChild(miniRow);
+      const trFull = document.createElement('tr');
+      trFull.innerHTML = `
+        <td>${row[0]}</td>
+        <td>${full}</td>
+        <td>${row[2]}</td>
+        <td>${row[3]}</td>
+        <td>${row[4]}</td>
+        <td>${row[5]}</td>
+        <td>${row[6]}</td>
+        <td>${row[7]}</td>
+        <td>${row[8]}</td>
+        <td>${row[9]}</td>
+      `;
+      fullBody.appendChild(trFull);
+    }
+  }
 
-        const fullRow = document.createElement("tr");
-        fullRow.innerHTML = `<td>${row[0]}</td><td>${team}</td><td>${goals}</td>`;
-        fullScorersBody.appendChild(fullRow);
+  async function fetchTopScorers() {
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv';
+    const res = await fetch(url);
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(row => row.split(','));
+
+    const tbody = document.getElementById('scorersBody');
+    tbody.innerHTML = '';
+
+    for (let i = 1; i < rows.length; i++) {
+      const [player, team, goals] = rows[i];
+      const abbr = abbreviateTeam(team);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="text-align:left">${player}</td>
+        <td style="text-align:center">${abbr}</td>
+        <td style="text-align:center">${goals}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  // Menu item click logic to toggle visibility
+  document.querySelectorAll("#menuList li[data-section]").forEach(item => {
+    item.addEventListener("click", () => {
+      const section = item.dataset.section;
+      const show = section === "PremierLeague";
+
+      const standingsPanel = document.getElementById("standings-PremierLeague");
+      const scorersPanel = document.getElementById("scorers-PremierLeague");
+
+      if (standingsPanel) standingsPanel.style.display = show ? "block" : "none";
+      if (scorersPanel) scorersPanel.style.display = show ? "block" : "none";
+
+      if (show) {
+        fetchSheetData();
+        fetchTopScorers();
       }
-    } catch (err) {
-      console.error("Error loading scorers:", err);
-    }
-  }
-
-  async function fetchStandingsData() {
-    try {
-      const res = await fetch(STANDINGS_CSV_URL);
-      const text = await res.text();
-      const rows = text.trim().split("\n").map(r => r.split(",")).slice(1);
-
-      const compactBody = document.getElementById("compactBody");
-      const fullBody = document.getElementById("fullBody");
-
-      compactBody.innerHTML = "";
-      fullBody.innerHTML = "";
-
-      for (const row of rows) {
-        const abbrTeam = abbreviateTeam(row[1]);
-
-        const miniRow = document.createElement("tr");
-        miniRow.innerHTML = `<td>${abbrTeam}</td><td>${row[9]}</td>`;
-        compactBody.appendChild(miniRow);
-
-        const fullRow = document.createElement("tr");
-        fullRow.innerHTML = row.map(cell => `<td>${cell}</td>`).join("");
-        fullBody.appendChild(fullRow);
-      }
-    } catch (err) {
-      console.error("Error loading standings:", err);
-    }
-  }
-</script> 
-      <script>
-// Show/hide Top Scorers section based on Premier League menu click
-document.querySelectorAll("#menuList li[data-section]").forEach(item => {
-  item.addEventListener("click", () => {
-    const section = item.dataset.section;
-    const show = section === "PremierLeague";
-    const scorersPanel = document.getElementById("scorers-PremierLeague");
-    if (scorersPanel) {
-      scorersPanel.style.display = show ? "block" : "none";
-      if (show) fetchTopScorers(); // Load data only when shown
-    }
+    });
   });
-});
 
-// Fetch Premier League top scorers from Google Sheets
-async function fetchTopScorers() {
-  const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv';
-  const res = await fetch(url);
-  const text = await res.text();
-  const rows = text.trim().split('\n').map(row => row.split(','));
-
-  const tbody = document.getElementById('scorersBody');
-  tbody.innerHTML = '';
-
-  for (let i = 1; i < rows.length; i++) {
-    const row = rows[i];
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td style="text-align:left">${row[0]}</td><td style="text-align:center">${row[1]}</td><td style="text-align:center">${row[2]}</td>`;
-    tbody.appendChild(tr);
-  }
-}
+  // Initial load (optional)
+  fetchSheetData();
 </script>
+
 
   </body>
 </html> 
