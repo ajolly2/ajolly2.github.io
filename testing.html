@@ -659,41 +659,40 @@
 
 <!-- STANDINGS COLUMN -->
 <div class="column standings" style="flex: 0 0 110px; background-color: #1f1f1f; padding: 0px;">
-<div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 110px;">
-  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 11;">
+<div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
+  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 10px; z-index: 11;">
     <strong>Standings</strong>
-    <span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
+<span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 11px; line-height: 18px; margin-right: 5px; color: #818181; font-family: 'Segoe UI Symbol', sans-serif;">&#x25B6;</span>
   </div>
-  <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
-    <thead>
-      <tr>
-        <th style="width: 50px; text-align: left; padding-bottom: 2px;">Team</th>
-        <th style="width: 20px; padding-bottom: 2px;">Pts</th>
-      </tr>
-    </thead>
-    <tbody id="compactBody"></tbody>
-  </table>
 
-  <div style="margin-top: 8px;"></div>
-
-  <div id="scorers-PremierLeague" style="display: none;">
-    <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 6px; z-index: 10;">
-      <strong>Top Scorers</strong>
-      <span onclick="document.getElementById('fullScorersOverlay').style.display = 'block';" style="cursor: pointer; font-size: 12px; color: #5f6368;">&#x25B6;</span>
-    </div>
-    <table id="scorersTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #f1f1f1; color: lightgray;">
+    <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #1f1f1f; color: #D3D3D3;">
       <thead>
-        <tr>
-          <th style="text-align: left; padding-bottom: 2px;">Player</th>
-          <th style="padding-bottom: 2px;">Team</th>
-          <th style="padding-bottom: 2px;">Goals</th>
+          <tr style="border-bottom: 2px solid #1f1f1f;">
+          <th style="width: 20px;"></th>
+          <th style="width: 50px; text-align: left;">Team</th>
+          <th style="width: 20px; text-align: left;">Pts</th>
         </tr>
       </thead>
-      <tbody id="scorersBody"></tbody>
+      <tbody id="compactBody"></tbody>
     </table>
   </div>
-</div>
+  <div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
+  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 10px; z-index: 11;">
+    <strong>Standings</strong>
+<span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 11px; line-height: 18px; margin-right: 5px; color: #818181; font-family: 'Segoe UI Symbol', sans-serif;">&#x25B6;</span>
+  </div>
 
+    <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #1f1f1f; color: #D3D3D3;">
+      <thead>
+          <tr style="border-bottom: 2px solid #1f1f1f;">
+          <th style="width: 20px;"></th>
+          <th style="width: 50px; text-align: left;">Team</th>
+          <th style="width: 20px; text-align: left;">Pts</th>
+        </tr>
+      </thead>
+      <tbody id="compactBody"></tbody>
+    </table>
+  </div>
 </div>
 
 <!-- Divider between standings and news -->
@@ -1250,30 +1249,21 @@
 
 <script>
   const TEAM_ABBREVIATIONS = {
-    "Liverpool FC": "LIV",
-    "Manchester City FC": "MC",
-    "Arsenal FC": "ARS",
-    "Tottenham Hotspur": "TOT",
-    "Aston Villa": "AVL",
-    "Manchester United": "MUN",
-    "Newcastle United": "NEW",
-    "Brighton & Hove Albion": "BHA",
-    "Chelsea": "CHE",
-    "Wolverhampton Wanderers": "WOL",
-    "West Ham United": "WHU",
-    "Crystal Palace": "CRY",
-    "Fulham": "FUL",
-    "Everton": "EVE",
-    "AFC Bournemouth": "BOU",
-    "Brentford": "BRE",
-    "Nottingham Forest": "NFO",
-    "Luton Town": "LUT",
-    "Burnley": "BUR",
-    "Sheffield United": "SHU"
+    "Liverpool": "LFC", "Arsenal": "ARS", "Newcastle United": "NEW", "Manchester City": "MC",
+    "Chelsea": "CHE", "Nottingham Forest": "NF", "Aston Villa": "AV", "Fulham": "FUL",
+    "Brighton & Hove Albion": "BHA", "AFC Bournemouth": "BOU", "Brentford": "BRE",
+    "Crystal Palace": "CP", "Wolverhampton Wanderers": "WOL", "Manchester United": "MU",
+    "Everton": "EVE", "Tottenham Hotspur": "TOT", "West Ham United": "WHU",
+    "Ipswich Town": "IPS", "Leicester City": "LEI", "Southampton": "SOU"
   };
 
   function abbreviateTeam(name) {
+    name = name.replace(/ FC$/, "");
     return TEAM_ABBREVIATIONS[name] || name;
+  }
+
+  function fullTeamName(name) {
+    return name.replace(/ FC$/, "");
   }
 
   async function fetchSheetData() {
@@ -1283,63 +1273,37 @@
     const rows = text.trim().split('\n').map(row => row.split(','));
 
     const compactBody = document.getElementById('compactBody');
-    compactBody.innerHTML = '';
+    const fullBody = document.getElementById('fullBody');
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
-      const teamName = row[1];
-      const points = row[9];
-      const abbr = abbreviateTeam(teamName);
+      const fullName = fullTeamName(row[1]);
+      const abbr = abbreviateTeam(row[1]);
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td style="text-align:left">${abbr}</td><td style="text-align:center">${points}</td>`;
-      compactBody.appendChild(tr);
+      const trCompact = document.createElement('tr');
+      trCompact.innerHTML = `<td>${row[0]}</td><td>${abbr}</td><td>${row[9]}</td>`;
+      compactBody.appendChild(trCompact);
+
+      const trFull = document.createElement('tr');
+      row[1] = fullName;
+      trFull.innerHTML = row.map(col => `<td>${col}</td>`).join('');
+      fullBody.appendChild(trFull);
     }
   }
 
   fetchSheetData();
-</script>
 
-
-     <script>
-  // Team abbreviation map
-  const TEAM_ABBREVIATIONS = {
-    "Liverpool": "LIV",
-    "Manchester City": "MC",
-    "Arsenal": "ARS",
-    "Tottenham Hotspur": "TOT",
-    "Aston Villa": "AVL",
-    "Manchester United": "MUN",
-    "Newcastle United": "NEW",
-    "Brighton & Hove Albion": "BHA",
-    "Chelsea": "CHE",
-    "Wolverhampton Wanderers": "WOL",
-    "West Ham United": "WHU",
-    "Crystal Palace": "CRY",
-    "Fulham": "FUL",
-    "Everton": "EVE",
-    "AFC Bournemouth": "BOU",
-    "Brentford": "BRE",
-    "Nottingham Forest": "NFO",
-    "Luton Town": "LUT",
-    "Burnley": "BUR",
-    "Sheffield United": "SHU"
-  };
-
-  // Show/hide and load Top Scorers on Premier League click
-  document.querySelectorAll("#menuList li[data-section]").forEach(item => {
-    item.addEventListener("click", () => {
-      const section = item.dataset.section;
-      const show = section === "PremierLeague";
-      const scorersPanel = document.getElementById("scorers-PremierLeague");
-      if (scorersPanel) {
-        scorersPanel.style.display = show ? "block" : "none";
-        if (show) fetchTopScorers();
-      }
+  // Show standings only when Premier League is active
+  document.querySelectorAll('#menuList li[data-section]').forEach(item => {
+    item.addEventListener('click', () => {
+      const show = item.dataset.section === 'PremierLeague';
+      document.getElementById('standings-PremierLeague').style.display = show ? 'block' : 'none';
     });
   });
+</script>
 
+      <script>
   async function fetchTopScorers() {
-    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv';
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv'; // <-- use your published CSV link here
     const res = await fetch(url);
     const text = await res.text();
     const rows = text.trim().split('\n').map(row => row.split(','));
@@ -1349,16 +1313,23 @@
 
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
-      const player = row[0];
-      const teamName = row[1];
-      const goals = row[2];
-      const abbr = TEAM_ABBREVIATIONS[teamName] || teamName;
-
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td style="text-align:left">${player}</td><td style="text-align:center">${abbr}</td><td style="text-align:center">${goals}</td>`;
+      tr.innerHTML = `<td style="text-align:left">${row[0]}</td><td style="text-align:center">${row[2]}</td>`;
       tbody.appendChild(tr);
     }
   }
+
+  // Only show Top Scorers when PremierLeague is active
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#menuList li[data-section]').forEach(item => {
+      item.addEventListener('click', () => {
+        const show = item.dataset.section === 'PremierLeague';
+        const scorersPanel = document.getElementById('scorers-PremierLeague');
+        if (scorersPanel) scorersPanel.style.display = show ? 'block' : 'none';
+        if (show) fetchTopScorers();
+      });
+    });
+  });
 </script>
 
 
@@ -1801,86 +1772,6 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   });
 });
     </script>
-      <script>
-  document.querySelectorAll("#menuList li[data-section]").forEach(item => {
-    item.addEventListener("click", () => {
-      const section = item.dataset.section;
-      const show = section === "PremierLeague";
-      document.getElementById("standings-PremierLeague").style.display = show ? "block" : "none";
-      document.getElementById("fullTableOverlay").style.display = "none";
-      document.getElementById("fullScorersOverlay").style.display = "none";
-      if (show) {
-        fetchStandingsData();
-        fetchScorersData();
-      }
-    });
-  });
-
-<script>
-  const TEAM_ABBREVIATIONS = {
-    "Liverpool": "LIV", "Manchester City": "MC", "Arsenal": "ARS", "Tottenham Hotspur": "TOT",
-    "Aston Villa": "AVL", "Manchester United": "MUN", "Newcastle United": "NEW", "Brighton & Hove Albion": "BHA",
-    "Chelsea": "CHE", "Wolverhampton Wanderers": "WOL", "West Ham United": "WHU", "Crystal Palace": "CRY",
-    "Fulham": "FUL", "Everton": "EVE", "AFC Bournemouth": "BOU", "Brentford": "BRE",
-    "Nottingham Forest": "NFO", "Luton Town": "LUT", "Burnley": "BUR", "Sheffield United": "SHU"
-  };
-
-  function abbreviateTeam(name) {
-    return TEAM_ABBREVIATIONS[name.trim()] || name.trim();
-  }
-
-  async function fetchSheetData() {
-    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTCeBR8FZHP269ZaMlL4ORWlt0Dzw63lYkdKHSqPy7V707renjbeWSPnACRzcVKcqlUtSyi84VNnD_f/pub?output=csv&gid=782375540';
-    const res = await fetch(url);
-    const text = await res.text();
-    const rows = text.trim().split('\n').map(row => row.split(','));
-
-    const compactBody = document.getElementById('compactBody');
-    compactBody.innerHTML = '';
-
-    for (let i = 1; i < rows.length; i++) {
-      const row = rows[i];
-      const abbr = abbreviateTeam(row[1]);
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${abbr}</td><td style="text-align:center">${row[9]}</td>`;
-      compactBody.appendChild(tr);
-    }
-  }
-
-  async function fetchTopScorers() {
-    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv';
-    const res = await fetch(url);
-    const text = await res.text();
-    const rows = text.trim().split('\n').map(row => row.split(','));
-
-    const tbody = document.getElementById('scorersBody');
-    tbody.innerHTML = '';
-
-    for (let i = 1; i < rows.length; i++) {
-      const [player, team, goals] = rows[i];
-      const abbr = abbreviateTeam(team);
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td style="text-align:left">${player}</td><td style="text-align:center">${abbr}</td><td style="text-align:center">${goals}</td>`;
-      tbody.appendChild(tr);
-    }
-  }
-
-  document.querySelectorAll("#menuList li[data-section]").forEach(item => {
-    item.addEventListener("click", () => {
-      const section = item.dataset.section;
-      const show = section === "PremierLeague";
-      document.getElementById("standings-PremierLeague").style.display = show ? "block" : "none";
-      document.getElementById("scorers-PremierLeague").style.display = show ? "block" : "none";
-      if (show) {
-        fetchSheetData();
-        fetchTopScorers();
-      }
-    });
-  });
-</script>
-
-
-
   </body>
 </html> 
 
