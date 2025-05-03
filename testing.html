@@ -1352,7 +1352,7 @@ const teamName = row[1].replace(/ FC$/, '').trim();
       const teamSpan = `<span style="font-size: 9px; color: blue; margin-left: 5px;">${teamAbbrev}</span>`;
 
       const tr = document.createElement('tr');
-tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-size:8px; color:#818181;">${teamAbbr}</span></td><td style="text-align:center">${goals}</td>`;
+tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-size:8px; color:#818181;">${teamAbbrev}</span></td><td style="text-align:center">${goals}</td>`;
       tbody.appendChild(tr);
     }
   }
