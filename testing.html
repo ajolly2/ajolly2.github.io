@@ -1305,30 +1305,45 @@
 
       <script>
   async function fetchTopScorers() {
-  const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv'; // <-- use your published CSV link here
-  const res = await fetch(url);
-  const text = await res.text();
-  const rows = text.trim().split('\n').map(row => row.split(','));
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv';
+    const res = await fetch(url);
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(row => row.split(','));
 
-  const tbody = document.getElementById('scorersBody');
-  tbody.innerHTML = '';
+    const teamAbbreviations = {
+      "Arsenal": "ARS", "Aston Villa": "AVL", "Bournemouth": "BOU", "Brentford": "BRE",
+      "Brighton": "BHA", "Burnley": "BUR", "Chelsea": "CHE", "Crystal Palace": "CRY",
+      "Everton": "EVE", "Fulham": "FUL", "Liverpool": "LFC", "Luton Town": "LUT",
+      "Man City": "MC", "Man Utd": "MU", "Newcastle": "NEW", "Nott'm Forest": "NFO",
+      "Sheffield Utd": "SHU", "Spurs": "TOT", "West Ham": "WHU", "Wolves": "WOL"
+    };
 
-  for (let i = 1; i < Math.min(rows.length, 11); i++) {
-    const row = rows[i];
-    const fullName = row[0].trim();
-    const goals = row[2].trim();
+    const tbody = document.getElementById('scorersBody');
+    tbody.innerHTML = '';
 
-    // Convert to "F. Lastname"
-    const nameParts = fullName.split(' ');
-    const formattedName = nameParts.length > 1
-      ? `${nameParts[0][0]}. ${nameParts.slice(1).join(' ')}`
-      : fullName;
+    for (let i = 1; i < Math.min(rows.length, 11); i++) {
+      const row = rows[i];
+      const fullName = row[0].trim();
+      const teamName = row[1].trim();
+      const goals = row[2].trim();
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td style="text-align:left">${formattedName}</td><td style="text-align:center">${goals}</td>`;
-    tbody.appendChild(tr);
+      const teamAbbrev = teamAbbreviations[teamName] || "";
+
+      // Format name as "F. Lastname"
+      const nameParts = fullName.split(' ');
+      const firstInitial = nameParts[0]?.[0] + '.';
+      const lastName = nameParts.slice(1).join(' ');
+      const formattedName = `${firstInitial} ${lastName}`;
+
+      const teamSpan = `<span style="font-size: 9px; color: blue; margin-left: 5px;">${teamAbbrev}</span>`;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td style="text-align:left">${formattedName} ${teamSpan}</td><td style="text-align:center">${goals}</td>`;
+      tbody.appendChild(tr);
+    }
   }
-}
+</script>
+
 
   // Only show Top Scorers when PremierLeague is active
   document.addEventListener('DOMContentLoaded', () => {
