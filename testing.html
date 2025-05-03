@@ -1345,19 +1345,6 @@
 </script>
 
 
-  // Only show Top Scorers when PremierLeague is active
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('#menuList li[data-section]').forEach(item => {
-      item.addEventListener('click', () => {
-        const show = item.dataset.section === 'PremierLeague';
-        const scorersPanel = document.getElementById('scorers-PremierLeague');
-        if (scorersPanel) scorersPanel.style.display = show ? 'block' : 'none';
-        if (show) fetchTopScorers();
-      });
-    });
-  });
-</script>
-
 
     <!-- SINGLE RSS.app script load (only once) -->
     <script src="https://widget.rss.app/v1/feed.js" async></script>
@@ -1800,5 +1787,4 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     </script>
   </body>
 </html> 
-
 
