@@ -1324,7 +1324,7 @@
     for (let i = 1; i < Math.min(rows.length, 11); i++) {
       const row = rows[i];
       const fullName = row[0].trim();
-      const teamName = row[1].trim();
+const teamName = row[1].replace(/ FC$/, '').trim();
       const goals = row[2].trim();
 
       const nameParts = fullName.split(' ');
