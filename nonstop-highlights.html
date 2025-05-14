@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>YouTube Playlist Autoplay (Muted)</title>
+  <title>YouTube Playlist Autoplay (Muted, Random Start)</title>
   <style>
     html, body {
       margin: 0;
@@ -24,10 +24,18 @@
 <body>
   <div id="yt-container">
     <iframe id="yt-player"
-      src="https://www.youtube.com/embed/videoseries?list=PLa-ay5I2YHZscVOwu9uHXe8sJMe--UQMz&autoplay=1&mute=1"
       allow="autoplay; encrypted-media"
       allowfullscreen>
     </iframe>
   </div>
+
+  <script>
+    const playlistId = "PLa-ay5I2YHZscVOwu9uHXe8sJMe--UQMz";
+    const maxVideos = 50; // YouTube supports index=0 to 49 for embedded playlists
+    const randomIndex = Math.floor(Math.random() * maxVideos);
+    const embedUrl = `https://www.youtube.com/embed/videoseries?list=${playlistId}&index=${randomIndex}&autoplay=1&mute=1`;
+
+    document.getElementById("yt-player").src = embedUrl;
+  </script>
 </body>
 </html>
