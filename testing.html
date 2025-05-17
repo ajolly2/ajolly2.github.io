@@ -1,3 +1,4 @@
+<!-- HTML FILE (index.html) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,8 +22,8 @@
       margin-bottom: 8px;
     }
     a {
-      color: black;
       text-decoration: none;
+      color: black;
     }
     a:hover {
       text-decoration: underline;
@@ -37,28 +38,27 @@
       const url = 'https://script.google.com/macros/s/AKfycbwmhW9Blrgjns90aOJ1IgeKlBueXrw65DP28iD2J50WKjRmZIeR6OUvc7pcox8S1ncVzA/exec';
       try {
         const response = await fetch(url);
-        const items = await response.json();
+        const data = await response.json();
 
         const ul = document.getElementById('headlineList');
         ul.innerHTML = '';
 
-        items.forEach(item => {
+        data.reverse().forEach(item => {
           const li = document.createElement('li');
           const a = document.createElement('a');
           a.href = item.url;
-          a.textContent = item.headline;
+          a.textContent = item.title;
           a.target = '_blank';
           li.appendChild(a);
           ul.appendChild(li);
         });
-      } catch (err) {
-        document.getElementById('headlineList').textContent = 'Error loading headlines.';
-        console.error(err);
+      } catch (error) {
+        document.getElementById('headlineList').innerText = 'Failed to load.';
       }
     }
 
     fetchHeadlines();
-    setInterval(fetchHeadlines, 60 * 1000); // Refresh every 1 minute
+    setInterval(fetchHeadlines, 60 * 1000); // Update every minute
   </script>
 </body>
 </html>
