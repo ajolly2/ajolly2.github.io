@@ -30,37 +30,35 @@
   </style>
 </head>
 <body>
-  <ul id="sheetList">Loading...</ul>
+  <ul id="headlineList">Loading...</ul>
 
   <script>
-    async function fetchSheetData() {
-      const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTFt1MYpcQXwNmD9Q7ntmO_0tngSMdt1Oh5PeLPm7qjCpW_vGkMxNu-QIT1387c3AyfMQkH1XBP71pi/pub?output=csv';
-      const response = await fetch(url);
-      const data = await response.text();
-      const rows = data.trim().split('\n').reverse(); // bottom-up
+    async function fetchHeadlines() {
+      const url = 'https://script.google.com/macros/s/AKfycbwmhW9Blrgjns90aOJ1IgeKlBueXrw65DP28iD2J50WKjRmZIeR6OUvc7pcox8S1ncVzA/exec';
+      try {
+        const response = await fetch(url);
+        const items = await response.json();
 
-      const ul = document.getElementById('sheetList');
-      ul.innerHTML = '';
-      rows.forEach(row => {
-        const columns = row.split(',');
-        const url = columns[0]?.trim();
-        const headline = columns[1]?.trim();
+        const ul = document.getElementById('headlineList');
+        ul.innerHTML = '';
 
-        if (url && headline) {
+        items.forEach(item => {
           const li = document.createElement('li');
           const a = document.createElement('a');
-          a.href = url;
-          a.textContent = headline;
+          a.href = item.url;
+          a.textContent = item.headline;
           a.target = '_blank';
-          a.rel = 'noopener noreferrer';
           li.appendChild(a);
           ul.appendChild(li);
-        }
-      });
+        });
+      } catch (err) {
+        document.getElementById('headlineList').textContent = 'Error loading headlines.';
+        console.error(err);
+      }
     }
 
-    fetchSheetData();
-    setInterval(fetchSheetData, 60 * 1000); // refresh every 1 minute
+    fetchHeadlines();
+    setInterval(fetchHeadlines, 60 * 1000); // Refresh every 1 minute
   </script>
 </body>
 </html>
