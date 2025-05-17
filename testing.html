@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Live List</title>
+  <title>Live Headlines</title>
   <style>
     body {
       margin: 0;
@@ -20,6 +20,13 @@
     li {
       margin-bottom: 8px;
     }
+    a {
+      color: black;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -30,22 +37,30 @@
       const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTFt1MYpcQXwNmD9Q7ntmO_0tngSMdt1Oh5PeLPm7qjCpW_vGkMxNu-QIT1387c3AyfMQkH1XBP71pi/pub?output=csv';
       const response = await fetch(url);
       const data = await response.text();
-      const rows = data.trim().split('\n').reverse(); // Show bottom-up
+      const rows = data.trim().split('\n').reverse(); // bottom-up
 
       const ul = document.getElementById('sheetList');
       ul.innerHTML = '';
       rows.forEach(row => {
-        const text = row.trim();
-        if (text) {
+        const columns = row.split(',');
+        const url = columns[0]?.trim();
+        const headline = columns[1]?.trim();
+
+        if (url && headline) {
           const li = document.createElement('li');
-          li.textContent = text;
+          const a = document.createElement('a');
+          a.href = url;
+          a.textContent = headline;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          li.appendChild(a);
           ul.appendChild(li);
         }
       });
     }
 
     fetchSheetData();
-    setInterval(fetchSheetData, 60 * 1000); // Refresh every 15 min
+    setInterval(fetchSheetData, 60 * 1000); // refresh every 1 minute
   </script>
 </body>
 </html>
