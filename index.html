@@ -1817,14 +1817,16 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     newsPanels.forEach(panel => {
       panel.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function (e) {
-          if (window.electronAPI) {
-            e.preventDefault();
-            window.electronAPI.openArticle(this.href);
-          }
+          e.preventDefault();
+          window.parent.postMessage({
+            type: 'open-article',
+            url: this.href
+          }, '*');
         });
       });
     });
   });
 </script>
+
   </body>
 </html> 
