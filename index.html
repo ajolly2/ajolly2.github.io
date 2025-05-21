@@ -1827,5 +1827,37 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   });
 </script>
 
+      <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const viewer = document.createElement('div');
+    viewer.id = 'article-viewer';
+    viewer.style.position = 'fixed';
+    viewer.style.top = '0';
+    viewer.style.right = '0';
+    viewer.style.height = '100%';
+    viewer.style.width = '60%';
+    viewer.style.background = 'white';
+    viewer.style.boxShadow = '-2px 0 5px rgba(0,0,0,0.3)';
+    viewer.style.display = 'none';
+    viewer.style.zIndex = '9999';
+    document.body.appendChild(viewer);
+
+    window.electronAPI.onLoadArticle(url => {
+      viewer.innerHTML = `<webview src=\"${url}\" style=\"width:100%; height:100%; border:none;\"></webview>`;
+      viewer.style.display = 'block';
+    });
+
+    document.addEventListener('click', function(e) {
+      if (e.target.tagName === 'A' && e.target.closest('.rss-feed')) {
+        e.preventDefault();
+        document.querySelectorAll('.rss-feed a').forEach(a => a.classList.remove('clicked'));
+        e.target.classList.add('clicked');
+        window.electronAPI.openArticle(e.target.href);
+      }
+    });
+  });
+</script>
+
+
   </body>
 </html> 
