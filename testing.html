@@ -658,25 +658,14 @@
 <div class="divider"></div>
 
 <!-- STANDINGS COLUMN -->
-<div class="column standings" style="flex: 0 0 250px; background-color: #1f1f1f; padding: 0px;">
-<div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
-  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 10px; z-index: 11; border-bottom: 5px solid #1f1f1f;">
-    <strong>Standings</strong>
-<span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 11px; line-height: 18px; margin-right: 5px; color: #818181; font-family: 'Segoe UI Symbol', sans-serif;">&#x25B6;</span>
-  </div>
-
-    <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #1f1f1f; color: #D3D3D3;">
-      <thead>
-          <tr style="border-bottom: 3px solid #1f1f1f;">
-          <th style="width: 20px;"></th>
-          <th style="width: 50px; text-align: left;">Team</th>
-          <th style="width: 20px; text-align: left;">Pts</th>
-        </tr>
-      </thead>
-      <tbody id="compactBody"></tbody>
-    </table>
-  <br>
-  </div>
+      <div class="column standings" style="flex: 0 0 250px; background-color: #1f1f1f; padding: 0;">
+        <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11; border-bottom: 5px solid #1f1f1f;">
+          <strong>Live & Upcoming Games</strong>
+        </div>
+        <div id="live-espn-games" style="padding: 10px; color: #D3D3D3; font-size: 11px;">
+          Loading games...
+        </div>
+      </div>
 
   <!-- Top Scorers panel for Premier League -->
 <div id="topScorers-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
@@ -1011,7 +1000,47 @@
     </table>
   </div>
 </div>
+ <!-- ESPN GAMES FETCH SCRIPT -->
+      <script>
+        async function loadESPNGames() {
+          const container = document.getElementById("live-espn-games");
+          container.innerHTML = "Loading games...";
 
+          try {
+            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
+            const res = await fetch(url);
+            const text = await res.text();
+            const rows = text.trim().split("\n").map(row => row.split(","));
+            const games = rows.slice(1);
+
+            if (games.length === 0) {
+              container.innerHTML = "<div style='padding: 10px;'>No games today.</div>";
+              return;
+            }
+
+            const lines = games.map(row => {
+              const [sport, league, matchup, status, score, startTime, streamInfo] = row;
+              const displayScore = (status.includes("Live") || status.includes("Final")) ? score : startTime;
+              const statusColor = status.includes("Live") ? "lime" : status.includes("Final") ? "#aaa" : "#ccc";
+              return `
+                <div style="margin-bottom: 6px;">
+                  <div style="color: #bbb;"><strong>${league}</strong></div>
+                  <div>${matchup}</div>
+                  <div style="color: ${statusColor}; font-size: 10px;">${status} — ${displayScore}</div>
+                </div>
+              `;
+            });
+
+            container.innerHTML = lines.join("");
+          } catch (err) {
+            console.error("Failed to load ESPN games:", err);
+            container.innerHTML = "<div style='padding: 10px;'>Error loading games.</div>";
+          }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadESPNGames);
+        setInterval(loadESPNGames, 5 * 60 * 1000);
+      </script>
 <script>
   const TEAM_ABBREVIATIONS = {
     "Liverpool": "LFC", "Arsenal": "ARS", "Newcastle United": "NEW", "Manchester City": "MC",
