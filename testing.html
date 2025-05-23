@@ -1033,32 +1033,52 @@
   function fullTeamName(name) {
     return name.replace(/ FC$/, "");
   }
+<script>
+async function loadTodayGames() {
+  const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQyrV7gKCdOMuNH7NKZQtllk1l3mKReY5Pz19I8MzblBtdjXXQasUWWX64Z8uJDYPZBUO7FS5wEAdTR/pub?gid=1741134473&single=true&output=csv';
 
-  async function fetchSheetData() {
-    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pubhtml';
-    const res = await fetch(url);
-    const text = await res.text();
-    const rows = text.trim().split('\n').map(row => row.split(','));
+  const res = await fetch(url);
+  const text = await res.text();
+  const rows = text.trim().split('\n').map(row => row.split(','));
 
-    const compactBody = document.getElementById('compactBody');
-    const fullBody = document.getElementById('fullBody');
-    for (let i = 1; i < rows.length; i++) {
-      const row = rows[i];
-      const fullName = fullTeamName(row[1]);
-      const abbr = abbreviateTeam(row[1]);
+  const now = new Date();
+  const today = now.toLocaleDateString('en-US', { timeZone: 'America/Chicago' });
 
-      const trCompact = document.createElement('tr');
-      trCompact.innerHTML = `<td>${row[0]}</td><td>${abbr}</td><td>${row[9]}</td>`;
-      compactBody.appendChild(trCompact);
+  const tbody = document.getElementById('compactBody');
+  tbody.innerHTML = '';
 
-      const trFull = document.createElement('tr');
-      row[1] = fullName;
-      trFull.innerHTML = row.map(col => `<td>${col}</td>`).join('');
-      fullBody.appendChild(trFull);
+  const headers = rows[0];
+  const dataRows = rows.slice(1);
+
+  dataRows.forEach(row => {
+    const league = row[1];
+    const matchup = row[2];
+    const status = row[3];
+    const score = row[4];
+    const startTime = row[5];
+    const stream = row[6];
+
+    const isLive = status.toLowerCase().includes('progress');
+    const isToday = true; // sheet already filters to today
+
+    if (isToday) {
+      const display = isLive
+        ? `${matchup}<br><strong>${score}</strong> (${status})`
+        : `${matchup}<br><span style="color:#999;">${startTime}</span>`;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="3" style="font-size:11px; padding:5px;">${display}</td>`;
+      tbody.appendChild(tr);
     }
-  }
+  });
+}
 
-  fetchSheetData();
+document.addEventListener('DOMContentLoaded', () => {
+  loadTodayGames();
+  setInterval(loadTodayGames, 5 * 60 * 1000);
+});
+</script>
+
 
   // Show standings only when Premier League is active
   document.querySelectorAll('#menuList li[data-section]').forEach(item => {
