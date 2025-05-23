@@ -1000,47 +1000,7 @@
     </table>
   </div>
 </div>
- <!-- ESPN GAMES FETCH SCRIPT -->
-      <script>
-        async function loadESPNGames() {
-          const container = document.getElementById("live-espn-games");
-          container.innerHTML = "Loading games...";
 
-          try {
-            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
-            const res = await fetch(url);
-            const text = await res.text();
-            const rows = text.trim().split("\n").map(row => row.split(","));
-            const games = rows.slice(1);
-
-            if (games.length === 0) {
-              container.innerHTML = "<div style='padding: 10px;'>No games today.</div>";
-              return;
-            }
-
-            const lines = games.map(row => {
-              const [sport, league, matchup, status, score, startTime, streamInfo] = row;
-              const displayScore = (status.includes("Live") || status.includes("Final")) ? score : startTime;
-              const statusColor = status.includes("Live") ? "lime" : status.includes("Final") ? "#aaa" : "#ccc";
-              return `
-                <div style="margin-bottom: 6px;">
-                  <div style="color: #bbb;"><strong>${league}</strong></div>
-                  <div>${matchup}</div>
-                  <div style="color: ${statusColor}; font-size: 10px;">${status} — ${displayScore}</div>
-                </div>
-              `;
-            });
-
-            container.innerHTML = lines.join("");
-          } catch (err) {
-            console.error("Failed to load ESPN games:", err);
-            container.innerHTML = "<div style='padding: 10px;'>Error loading games.</div>";
-          }
-        }
-
-        document.addEventListener("DOMContentLoaded", loadESPNGames);
-        setInterval(loadESPNGames, 5 * 60 * 1000);
-      </script>
 <script>
   const TEAM_ABBREVIATIONS = {
     "Liverpool": "LFC", "Arsenal": "ARS", "Newcastle United": "NEW", "Manchester City": "MC",
@@ -1603,5 +1563,56 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   });
 });
     </script>
+
+    <script>
+  async function loadESPNGames() {
+    const container = document.getElementById("live-espn-games");
+    container.innerHTML = "Loading games...";
+
+    try {
+      const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
+      const res = await fetch(url);
+      const text = await res.text();
+      const rows = text.trim().split("\n").map(row => row.split(","));
+      const games = rows.slice(1).filter(row => row.length >= 7); // Only keep valid rows
+
+      if (games.length === 0) {
+        container.innerHTML = "<div style='padding: 10px;'>No games today.</div>";
+        return;
+      }
+
+      const lines = games.map(row => {
+        const sport      = row[0] || '';
+        const league     = row[1] || '';
+        const matchup    = row[2] || '';
+        const status     = row[3] || '';
+        const score      = row[4] || '';
+        const startTime  = row[5] || '';
+        const streamInfo = row[6] || '';
+
+        const displayScore = (status.includes("Live") || status.includes("Final")) ? score : startTime;
+        const statusColor = status.includes("Live") ? "lime" :
+                            status.includes("Final") ? "#aaa" : "#ccc";
+
+        return `
+          <div style="margin-bottom: 6px;">
+            <div style="color: #bbb;"><strong>${league}</strong></div>
+            <div>${matchup}</div>
+            <div style="color: ${statusColor}; font-size: 10px;">${status} — ${displayScore}</div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = lines.join("");
+    } catch (err) {
+      console.error("Failed to load ESPN games:", err);
+      container.innerHTML = "<div style='padding: 10px;'>Error loading games.</div>";
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", loadESPNGames);
+  setInterval(loadESPNGames, 5 * 60 * 1000); // Refresh every 5 minutes
+</script>
+
   </body>
 </html> 
