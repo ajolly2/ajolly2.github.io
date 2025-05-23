@@ -659,6 +659,9 @@
 
 <!-- STANDINGS COLUMN -->
 <div class="column standings" style="flex: 0 0 250px; background-color: #1f1f1f; padding: 0px;">
+  <div id="liveGamesList" style="font-family: Helvetica, Arial, sans-serif; font-size: 11px; color: #D3D3D3; padding: 10px;">
+  Loading games...
+</div>
 <div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
   <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 10px; z-index: 11; border-bottom: 5px solid #1f1f1f;">
     <strong>Standings</strong>
@@ -1573,6 +1576,54 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     showDiscussionSection(section);
   });
 });
+      <script>
+async function fetchGamesFromSheet() {
+  const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vXXXXXXXXXXXXXX/pub?output=csv'; // Replace with YOUR published Sheet URL
+  const res = await fetch(url);
+  const text = await res.text();
+  const rows = text.trim().split('\n').map(row => row.split(','));
+
+  const now = new Date();
+  const todayStr = now.toLocaleDateString('en-US', { timeZone: 'America/Chicago' });
+  const liveGames = [];
+  const upcomingGames = [];
+
+  for (let i = 1; i < rows.length; i++) {
+    const [sport, league, matchup, status, score, time, stream] = rows[i];
+
+    const isLive = /in progress|live/i.test(status);
+    const displayLine = isLive
+      ? `<strong>${matchup}</strong><br><span style="color:lime;">${score}</span> – <em>${status}</em> <span style="color:#999;">(${league})</span>`
+      : `${matchup} – <span style="color:#999;">${time} (${league})</span>`;
+
+    if (isLive) {
+      liveGames.push(displayLine);
+    } else if (!/final|postponed/i.test(status)) {
+      upcomingGames.push(displayLine);
+    }
+  }
+
+  const container = document.getElementById('liveGamesList');
+  container.innerHTML = '';
+
+  if (liveGames.length > 0) {
+    container.innerHTML += `<div style="margin-bottom: 8px;"><strong style="color: white;">LIVE NOW</strong><ul style="padding-left: 14px;">${liveGames.map(g => `<li>${g}</li>`).join('')}</ul></div>`;
+  }
+
+  if (upcomingGames.length > 0) {
+    container.innerHTML += `<div><strong style="color: white;">TODAY'S GAMES</strong><ul style="padding-left: 14px;">${upcomingGames.map(g => `<li>${g}</li>`).join('')}</ul></div>`;
+  }
+
+  if (liveGames.length === 0 && upcomingGames.length === 0) {
+    container.innerHTML = 'No games today.';
+  }
+}
+
+// Initial load + refresh every 5 mins
+fetchGamesFromSheet();
+setInterval(fetchGamesFromSheet, 5 * 60 * 1000);
+</script>
+
     </script>
   </body>
 </html> 
