@@ -659,10 +659,11 @@
 
 <!-- STANDINGS COLUMN -->
 <div class="column standings" style="flex: 0 0 250px; background-color: #1f1f1f; padding: 0px;">
-  <!-- LIVE ESPN GAMES CONTAINER -->
   <div id="live-espn-games" style="padding: 10px; color: #D3D3D3; font-size: 11px;">
     Loading games...
   </div>
+</div>
+
 
   <!-- PREMIER LEAGUE STANDINGS -->
   <div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
@@ -1630,6 +1631,69 @@ function fetchAndRenderESPNGames() {
 fetchAndRenderESPNGames();
 // Refresh every 5 minutes
 setInterval(fetchAndRenderESPNGames, 5 * 60 * 1000);
+</script>
+<script>
+const today = new Date().toLocaleDateString("en-US", {
+  timeZone: "America/Chicago",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+}).replace(/[^0-9]/g, "");
+
+async function loadESPNGames() {
+  const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
+  const container = document.getElementById("live-espn-games");
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    const rows = text.trim().split("\n").map(r => r.split(","));
+    const headers = rows[0];
+    const data = rows.slice(1).filter(r => r.length >= 6);
+
+    const todayGames = data.filter(row => {
+      const timeStr = row[5]; // "Start Time"
+      return timeStr !== ""; // Include all games with a valid time
+    });
+
+    if (todayGames.length === 0) {
+      container.innerHTML = "<div>No games today.</div>";
+      return;
+    }
+
+    const html = todayGames.map(row => {
+      const sport = row[0];
+      const league = row[1];
+      const matchup = row[2];
+      const status = row[3];
+      const score = row[4];
+      const start = row[5];
+      const stream = row[6];
+
+      let statusText = "";
+      if (status.includes("In Progress")) {
+        statusText = `<span style="color:#7dfc9b;">LIVE</span> ${score}`;
+      } else if (status.includes("Final")) {
+        statusText = `Final ${score}`;
+      } else {
+        statusText = `${start}`;
+      }
+
+      return `<div style="margin-bottom:6px;">
+        <div style="font-weight:bold;">${matchup}</div>
+        <div>${statusText}</div>
+        <div style="font-size:10px; color:#999;">${league}${stream !== "N/A" ? " • " + stream : ""}</div>
+      </div>`;
+    }).join("");
+
+    container.innerHTML = html;
+  } catch (e) {
+    container.innerHTML = "<div style='color: red;'>Failed to load games.</div>";
+    console.error("Error loading ESPN games:", e);
+  }
+}
+
+loadESPNGames();
+setInterval(loadESPNGames, 5 * 60 * 1000); // refresh every 5 minutes
 </script>
 
   </body>
