@@ -1003,7 +1003,7 @@
   }
 
   async function fetchSheetData() {
-    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTCeBR8FZHP269ZaMlL4ORWlt0Dzw63lYkdKHSqPy7V707renjbeWSPnACRzcVKcqlUtSyi84VNnD_f/pub?output=csv&gid=782375540';
+const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
     const res = await fetch(url);
     const text = await res.text();
     const rows = text.trim().split('\n').map(row => row.split(','));
