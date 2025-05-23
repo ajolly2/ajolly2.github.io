@@ -1552,7 +1552,7 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
           container.innerHTML = "Loading games...";
 
           try {
-            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
+            const url = "const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
             const res = await fetch(url);
             const text = await res.text();
             const rows = text.trim().split("\n").map(row => row.split(","));
