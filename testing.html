@@ -662,10 +662,15 @@
   <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11; border-bottom: 5px solid #1f1f1f;">
     <strong>Live & Upcoming Games</strong>
   </div>
-  <div id="live-espn-games" style="padding: 10px; color: #D3D3D3; font-size: 11px;">
-    Loading games...
+
+  <!-- Show this only on Home -->
+  <div id="standings-Home" class="content-section" style="display: block;">
+    <div id="live-espn-games" style="padding: 10px; color: #D3D3D3; font-size: 11px;">
+      Loading games...
+    </div>
   </div>
 </div>
+
 
 
 <!-- Divider between standings and news -->
@@ -1547,46 +1552,63 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 });
     </script>
 
-    <script>
-        async function loadESPNGames() {
-          const container = document.getElementById("live-espn-games");
-          container.innerHTML = "Loading games...";
+   <script>
+  async function loadESPNGames() {
+    const container = document.getElementById("live-espn-games");
+    if (!container) return;
 
-          try {
-            const url = "const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
-            const res = await fetch(url);
-            const text = await res.text();
-            const rows = text.trim().split("\n").map(row => row.split(","));
-            const games = rows.slice(1).filter(row => row.length >= 7);
+    container.innerHTML = "Loading games...";
 
-            if (games.length === 0) {
-              container.innerHTML = "<div style='padding: 10px;'>No games today.</div>";
-              return;
-            }
+    try {
+      const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
+      const res = await fetch(url);
+      const text = await res.text();
+      const rows = text.trim().split("\n").map(row => row.split(","));
+      const games = rows.slice(1).filter(row => row.length >= 7);
 
-            const lines = games.map(row => {
-              const [sport, league, matchup, status, score, startTime, streamInfo] = row;
-              const displayScore = (status.includes("Live") || status.includes("Final")) ? score : startTime;
-              const statusColor = status.includes("Live") ? "lime" : status.includes("Final") ? "#aaa" : "#ccc";
-              return `
-                <div style="margin-bottom: 6px;">
-                  <div style="color: #bbb;"><strong>${league}</strong></div>
-                  <div>${matchup}</div>
-                  <div style="color: ${statusColor}; font-size: 10px;">${status} — ${displayScore}</div>
-                </div>
-              `;
-            });
+      if (games.length === 0) {
+        container.innerHTML = "<div style='padding: 10px;'>No games today.</div>";
+        return;
+      }
 
-            container.innerHTML = lines.join("");
-          } catch (err) {
-            console.error("Failed to load ESPN games:", err);
-            container.innerHTML = "<div style='padding: 10px;'>Error loading games.</div>";
-          }
+      const lines = games.map(row => {
+        const [sport, league, matchup, status, score, startTime, streamInfo] = row;
+        const displayScore = (status.includes("Live") || status.includes("Final")) ? score : startTime;
+        const statusColor = status.includes("Live") ? "lime" : status.includes("Final") ? "#aaa" : "#ccc";
+
+        return `
+          <div style="margin-bottom: 8px;">
+            <div style="color: #bbb; font-weight: bold;">${league}</div>
+            <div>${matchup}</div>
+            <div style="color: ${statusColor}; font-size: 10px;">${status} — ${displayScore}</div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = lines.join("");
+    } catch (err) {
+      console.error("Failed to load ESPN games:", err);
+      container.innerHTML = "<div style='padding: 10px;'>Error loading games.</div>";
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadESPNGames();
+    setInterval(loadESPNGames, 5 * 60 * 1000); // Refresh every 5 minutes
+
+    // Hide/show ESPN games container depending on menu selection
+    const espnGamesContainer = document.getElementById("standings-Home");
+    document.querySelectorAll("#menuList li[data-section]").forEach(item => {
+      item.addEventListener("click", () => {
+        const section = item.dataset.section;
+        if (espnGamesContainer) {
+          espnGamesContainer.style.display = section === "Home" ? "block" : "none";
         }
+      });
+    });
+  });
+</script>
 
-        document.addEventListener("DOMContentLoaded", loadESPNGames);
-        setInterval(loadESPNGames, 5 * 60 * 1000);
-      </script>
 <script>
   async function loadESPNGames() {
     const container = document.getElementById("live-espn-games");
