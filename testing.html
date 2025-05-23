@@ -659,15 +659,20 @@
 
 <!-- STANDINGS COLUMN -->
 <div class="column standings" style="flex: 0 0 250px; background-color: #1f1f1f; padding: 0px;">
-<div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
-  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 10px; z-index: 11; border-bottom: 5px solid #1f1f1f;">
-    <strong>Standings</strong>
-<span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 11px; line-height: 18px; margin-right: 5px; color: #818181; font-family: 'Segoe UI Symbol', sans-serif;">&#x25B6;</span>
+  <!-- LIVE ESPN GAMES CONTAINER -->
+  <div id="live-espn-games" style="padding: 10px; color: #D3D3D3; font-size: 11px;">
+    Loading games...
   </div>
 
+  <!-- PREMIER LEAGUE STANDINGS -->
+  <div id="standings-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
+    <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 10px; z-index: 11; border-bottom: 5px solid #1f1f1f;">
+      <strong>Standings</strong>
+      <span onclick="document.getElementById('fullTableOverlay').style.display = 'block';" style="cursor: pointer; font-size: 11px; line-height: 18px; margin-right: 5px; color: #818181; font-family: 'Segoe UI Symbol', sans-serif;">&#x25B6;</span>
+    </div>
     <table id="compactTable" style="width: 100%; border-collapse: collapse; font-size: 11px; background-color: #1f1f1f; color: #D3D3D3;">
       <thead>
-          <tr style="border-bottom: 3px solid #1f1f1f;">
+        <tr style="border-bottom: 3px solid #1f1f1f;">
           <th style="width: 20px;"></th>
           <th style="width: 50px; text-align: left;">Team</th>
           <th style="width: 20px; text-align: left;">Pts</th>
@@ -675,8 +680,10 @@
       </thead>
       <tbody id="compactBody"></tbody>
     </table>
-  <br>
+    <br>
   </div>
+</div>
+
 
   <!-- Top Scorers panel for Premier League -->
 <div id="topScorers-PremierLeague" class="content-section" style="display: none; padding: 0; background-color: #1f1f1f; width: 100px;">
@@ -1574,5 +1581,56 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   });
 });
     </script>
+    <script>
+const csvUrl = "https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
+
+function fetchAndRenderESPNGames() {
+  fetch(csvUrl)
+    .then(response => response.text())
+    .then(csv => {
+      const lines = csv.trim().split("\n").map(row => row.split(","));
+      const headers = lines[0];
+      const games = lines.slice(1);
+
+      const container = document.getElementById("live-espn-games");
+      container.innerHTML = ""; // Clear previous content
+
+      const today = new Date().toDateString();
+      let foundGames = false;
+
+      games.forEach(row => {
+        const [sport, league, matchup, status, score, time, stream] = row;
+
+        if (status.includes("In Progress") || status.includes("Scheduled")) {
+          foundGames = true;
+          const gameLine = document.createElement("div");
+          gameLine.innerHTML = `
+            <div style="margin-bottom: 5px;">
+              <strong>${league}</strong><br>
+              ${matchup} - <span style="color:${status.includes('In Progress') ? 'lime' : '#aaa'}">${status}</span><br>
+              <span>${status.includes("In Progress") ? `Score: ${score}` : `Start: ${time}`}</span><br>
+              <span style="font-size: 10px; color: #888;">${stream}</span>
+            </div>
+          `;
+          container.appendChild(gameLine);
+        }
+      });
+
+      if (!foundGames) {
+        container.innerHTML = "<div>No games today.</div>";
+      }
+    })
+    .catch(err => {
+      console.error("Failed to fetch games:", err);
+      document.getElementById("live-espn-games").innerText = "Error loading games.";
+    });
+}
+
+// Load initially
+fetchAndRenderESPNGames();
+// Refresh every 5 minutes
+setInterval(fetchAndRenderESPNGames, 5 * 60 * 1000);
+</script>
+
   </body>
 </html> 
