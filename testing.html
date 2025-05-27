@@ -1620,20 +1620,16 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     </script>
 
 <!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
-<!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
 <script>
-  // 1️⃣ your “priority” sheet order
   const leagueOrderURL =
     'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
 
-  // 2️⃣ the CSV URL for each league tab
   const sheetURLs = {
     NFL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
     NHL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
     NBA:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
     MLB:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
     WNBA: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv'
-    // …add more leagues here
   };
 
   let leagueOrder = [];
@@ -1648,11 +1644,10 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     }
   }
 
-  // parse an “H:MM AM/PM” string as today in Eastern, then convert to your browser’s local
   function parseTimeToLocal(timeStr) {
     const ny = new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'});
     let dt = new Date(`${ny} ${timeStr} EDT`);
-    if (isNaN(dt)) dt = new Date(`${ny} ${timeStr}`);  // fallback
+    if (isNaN(dt)) dt = new Date(`${ny} ${timeStr}`);
     return dt;
   }
 
@@ -1683,12 +1678,13 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
       let prevTime = null;
       (byLeague[league]||[]).forEach(cols=>{
-        const [, , matchup,, , startRaw] = cols;
-        // only keep mascot (last word) from each side
-        const [homeRaw,awayRaw] = matchup.split(' vs. ');
+        const [date, status, matchup,, , startRaw] = cols;
+        if (!['LIVE', 'SCHEDULED'].includes(status)) return;
+
+        const [homeRaw, awayRaw] = matchup.split(' vs. ');
         const home = homeRaw.trim().split(' ').pop();
         const away = awayRaw.trim().split(' ').pop();
-        // convert Eastern startRaw to local
+
         const dt = parseTimeToLocal(startRaw);
         const displayTime = dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
         const showTime = displayTime !== prevTime;
@@ -1696,20 +1692,25 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
         const row = document.createElement('div');
         row.className = 'game-row';
-        // time cell
+
+        if (status === 'LIVE') {
+          row.style.backgroundColor = '#2a2a2a';
+          row.style.fontWeight = 'bold';
+        }
+
         const t = document.createElement('div');
         t.className = 'game-time';
         t.textContent = showTime ? displayTime : '';
-        // matchup cell
+
         const m = document.createElement('div');
         m.className = 'game-matchup';
         m.textContent = `${home} vs. ${away}`;
-        // channel placeholder
+
         const c = document.createElement('div');
         c.className = 'game-channel';
         c.textContent = '[Channel]';
 
-        row.append(t,m,c);
+        row.append(t, m, c);
         list.appendChild(row);
       });
 
@@ -1725,7 +1726,7 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   document.addEventListener('DOMContentLoaded', async () => {
     await loadLeagueOrder();
     await loadAndRender();
-    setInterval(loadAndRender, 5*60*1000);
+    setInterval(loadAndRender, 5 * 60 * 1000); // refresh every 5 minutes
   });
 </script>
 
