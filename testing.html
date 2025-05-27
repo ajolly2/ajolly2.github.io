@@ -1632,6 +1632,12 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     WNBA: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv'
   };
 
+  const TEAM_ABBR = {
+    "Los Angeles Dodgers": "LAD",
+    "Cleveland Guardians": "CLE",
+    // add all teams as needed here...
+  };
+
   let leagueOrder = [];
 
   async function loadLeagueOrder() {
@@ -1651,16 +1657,28 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     return dt;
   }
 
+  function convertStatus(raw) {
+    if (/final/i.test(raw)) return 'F';
+    if (/halftime/i.test(raw)) return 'HT';
+    if (/top\s*(\d)/i.test(raw)) return `Top ${RegExp.$1}`;
+    if (/bottom\s*(\d)/i.test(raw)) return `Bot ${RegExp.$1}`;
+    if (/top/i.test(raw)) return 'Top';
+    if (/bottom/i.test(raw)) return 'Bot';
+    return raw;
+  }
+
   async function fetchAllGames() {
     const byLeague = {};
     await Promise.all(
-      Object.entries(sheetURLs).map(async ([league,url])=>{
+      Object.entries(sheetURLs).map(async ([league,url]) => {
         try {
           const rows = (await (await fetch(url)).text())
             .trim().split(/\r?\n/).slice(1)
-            .map(r=>r.split(','));
-          if (rows.length) byLeague[league]=rows;
-        } catch(e){ console.warn(`failed ${league}`,e) }
+            .map(r => r.split(','));
+          if (rows.length) byLeague[league] = rows;
+        } catch (e) {
+          console.warn(`failed ${league}`, e);
+        }
       })
     );
     return byLeague;
@@ -1669,7 +1687,7 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   function renderGames(byLeague) {
     const container = document.getElementById('live-games-container');
     container.innerHTML = '';
-    leagueOrder.forEach(league=>{
+    leagueOrder.forEach(league => {
       const section = document.createElement('div');
       section.className = 'league-section';
       section.innerHTML = `<div class="league-header">${league}</div>`;
@@ -1677,16 +1695,18 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
       section.appendChild(list);
 
       let prevTime = null;
-      (byLeague[league]||[]).forEach(cols=>{
-        const [, , matchup, status, score, startRaw] = cols;
-        if (!matchup || !status || status.toLowerCase().includes('final')) return;
+      (byLeague[league] || []).forEach(cols => {
+        const [, , matchup, statusRaw, score, startRaw] = cols;
+        if (!matchup || !statusRaw) return;
 
-        const [homeRaw, awayRaw] = matchup.split(' vs. ');
-        const home = homeRaw?.trim().split(' ').pop();
-        const away = awayRaw?.trim().split(' ').pop();
+        const [homeTeam, awayTeam] = matchup.split(' vs. ').map(t => t.trim());
+        const homeAbbr = TEAM_ABBR[homeTeam] || homeTeam;
+        const awayAbbr = TEAM_ABBR[awayTeam] || awayTeam;
 
+        const status = convertStatus(statusRaw.trim());
+        const isLive = /top|bot|half|inning|\d+['’]/i.test(statusRaw);
         const dt = parseTimeToLocal(startRaw);
-        const displayTime = dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+        const displayTime = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         const showTime = displayTime !== prevTime;
         prevTime = displayTime;
 
@@ -1695,15 +1715,21 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
         const t = document.createElement('div');
         t.className = 'game-time';
-        t.textContent = showTime ? displayTime : '';
+        t.style.color = isLive ? 'red' : '#ccc';
+        t.textContent = isLive ? status : (showTime ? displayTime : '');
 
         const m = document.createElement('div');
         m.className = 'game-matchup';
-        m.textContent = `${home} vs. ${away} ${score ? `(${score})` : ''}`;
+        if (score && score.includes('-')) {
+          const [homeScore, awayScore] = score.split('-').map(s => s.trim());
+          m.innerHTML = `${homeAbbr} ${homeScore}-${awayScore} ${awayAbbr}`;
+        } else {
+          m.textContent = `${homeAbbr} vs. ${awayAbbr}`;
+        }
 
         const c = document.createElement('div');
         c.className = 'game-channel';
-        c.textContent = '[Channel]';
+        c.textContent = '';
 
         row.append(t, m, c);
         list.appendChild(row);
@@ -1721,7 +1747,7 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   document.addEventListener('DOMContentLoaded', async () => {
     await loadLeagueOrder();
     await loadAndRender();
-    setInterval(loadAndRender, 5 * 60 * 1000); // refresh every 5 mins
+    setInterval(loadAndRender, 5 * 60 * 1000);
   });
 </script>
 
