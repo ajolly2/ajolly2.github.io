@@ -1560,25 +1560,24 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
 <!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
 <script>
-  // 1) URL of your published "LeaguesPriority" sheet (one league name per row, top → bottom)
+  // 1) Your “LeaguesPriority” CSV (one league name per row, top→bottom)
   const leagueOrderURL =
     'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
 
-  // 2) CSV URLs for each league tab you’ve published
+  // 2) Full CSV URLs for each sheet/tab
   const sheetURLs = {
-    NFL:            'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
-    NHL:            'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
-    NBA:            'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
-    MLB:            'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
-    WNBA:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv',
-    NCAABaseball:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=748675011&single=true&output=csv',
-    NCAASoftball:   'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1365095373&single=true&output=csv'
+    NFL:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
+    NHL:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
+    NBA:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
+    MLB:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
+    WNBA:          'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv',
+    NCAABaseball:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=748675011&single=true&output=csv',
+    NCAASoftball:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1365095373&single=true&output=csv'
   };
 
-  // will hold the order you listed in LeaguesPriority
   let leagueOrder = [];
 
-  // 1️⃣ Load your priority list from Sheets
+  // 1️⃣ Load and trim your league priority list
   async function loadLeagueOrder() {
     try {
       const res  = await fetch(leagueOrderURL);
@@ -1586,67 +1585,69 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
       leagueOrder = text
         .trim()
         .split('\n')
-        .map(r => r.split(',')[0]);  // grab first column
+        .map(r => r.split(',')[0].trim())   // ← strip whitespace/CR
+        .filter(Boolean);                   // ← drop blanks
+      console.log('League order:', leagueOrder);
     } catch (e) {
       console.error('Failed to load league order:', e);
-      leagueOrder = Object.keys(sheetURLs);  // fallback to whatever you defined
+      leagueOrder = Object.keys(sheetURLs);
     }
   }
 
-  // 2️⃣ Fetch every league CSV (with console.log instrumentation)
+  // 2️⃣ Fetch each CSV with debug logs
   async function fetchAllGames() {
     const byLeague = {};
     await Promise.all(
       Object.entries(sheetURLs).map(async ([league, url]) => {
         try {
-          console.log(`➡️  Fetching ${league} from ${url}`);
-          const res = await fetch(url);
+          console.log(`➡️ Fetching ${league} from ${url}`);
+          const res  = await fetch(url);
           if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
           const text = await res.text();
-          console.log(`📄  ${league} CSV (first 200 chars):\n`, text.slice(0,200));
+          console.log(`📄 ${league} CSV (first 200 chars):`, text.slice(0,200));
           const rows = text
             .trim()
             .split('\n')
-            .slice(1)             // drop header row
+            .slice(1)
             .map(r => r.split(','));
-          console.log(`🔢  ${league} rows.length =`, rows.length);
+          console.log(`🔢 ${league} rows.length =`, rows.length);
           if (rows.length) byLeague[league] = rows;
         } catch (e) {
-          console.warn(`❌  Error loading ${league}:`, e);
+          console.warn(`❌ Error loading ${league}:`, e);
         }
       })
     );
     return byLeague;
   }
 
-  // 3️⃣ Render into your #live-games-container, updating only changed parts
+  // 3️⃣ Render into #live-games-container, updating only changed parts
   function renderGames(byLeague) {
     const container = document.getElementById('live-games-container');
     if (!container) return;
-    // Clear the initial "Loading…" text once
-    if (container.childElementCount === 0) container.innerHTML = '';
+    // clear initial placeholder once
+    if (container.innerHTML.includes('Loading')) container.innerHTML = '';
 
     leagueOrder.forEach(league => {
       const games = byLeague[league] || [];
-      let leagueDiv = container.querySelector(`[data-league="${league}"]`);
-      if (!leagueDiv) {
-        leagueDiv = document.createElement('div');
-        leagueDiv.setAttribute('data-league', league);
-        leagueDiv.style.marginBottom = '12px';
-        leagueDiv.innerHTML = `
+      let section = container.querySelector(`[data-league="${league}"]`);
+      if (!section) {
+        section = document.createElement('div');
+        section.dataset.league = league;
+        section.style.marginBottom = '12px';
+        section.innerHTML = `
           <div style="color:#bbb;font-weight:bold;margin-bottom:4px;">${league}</div>
           <div class="games-list"></div>
         `;
-        container.appendChild(leagueDiv);
+        container.appendChild(section);
       }
-      const list = leagueDiv.querySelector('.games-list');
-      list.innerHTML = ''; // clear out old
+      const list = section.querySelector('.games-list');
+      list.innerHTML = '';
 
-      if (games.length === 0) {
-        const no = document.createElement('div');
-        no.textContent = 'No games today.';
-        no.style.color = '#666';
-        list.appendChild(no);
+      if (!games.length) {
+        const none = document.createElement('div');
+        none.textContent = 'No games today.';
+        none.style.color = '#666';
+        list.appendChild(none);
         return;
       }
 
@@ -1654,52 +1655,49 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
         // [sport, league, matchup, status, score, startTime, streamInfo]
         let [, , matchup, status, score, startTime] = cols;
         let [a, b] = matchup.split(' vs. ');
-        a = a.split(' ').pop();  // just mascot
+        a = a.split(' ').pop();
         b = b.split(' ').pop();
-        const displayScore = /Live|Final/.test(status)
+        const display = /Live|Final/.test(status)
           ? score
-          : new Date(startTime).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-        const color = /Live/.test(status)   ? 'lime'
-                    : /Final/.test(status)  ? '#aaa'
-                    :                        '#ccc';
+          : new Date(startTime).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+        const color = /Live/.test(status)
+          ? 'lime'
+          : /Final/.test(status)
+            ? '#aaa'
+            : '#ccc';
 
-        const div = document.createElement('div');
-        div.style.marginBottom = '6px';
-        div.innerHTML = `
+        const row = document.createElement('div');
+        row.style.marginBottom = '6px';
+        row.innerHTML = `
           <span>${a} vs. ${b}</span><br>
           <span style="color:${color};font-size:10px;">
-            ${status==='Scheduled'? '' : status} ${displayScore || ''}
+            ${status==='Scheduled'?'':status} ${display || ''}
           </span>
         `;
-        list.appendChild(div);
+        list.appendChild(row);
       });
     });
   }
 
-  // 4️⃣ Do the fetch + render
+  // 4️⃣ Orchestrator
   async function loadAndRender() {
     const byLeague = await fetchAllGames();
     renderGames(byLeague);
   }
 
-  // 🏁 Wire it all up on page load
+  // 🏁 Kickoff on page load
   document.addEventListener('DOMContentLoaded', async () => {
-    // only show on Home tab
-    const homeContainer = document.getElementById('live-games-container');
-    document
-      .querySelectorAll('#menuList li[data-section]')
-      .forEach(item => {
-        item.addEventListener('click', () => {
-          homeContainer
-            .closest('.content-section')
-            .style.display =
-              item.dataset.section === 'Home' ? 'block' : 'none';
-        });
+    // Only show on “Home”
+    const homeEl = document.getElementById('live-games-container');
+    document.querySelectorAll('#menuList li[data-section]').forEach(el => {
+      el.addEventListener('click', () => {
+        const isHome = el.dataset.section === 'Home';
+        homeEl.closest('.content-section').style.display = isHome ? 'block' : 'none';
       });
+    });
 
     await loadLeagueOrder();
     await loadAndRender();
-    // refresh every 5 minutes
     setInterval(loadAndRender, 5 * 60 * 1000);
   });
 </script>
