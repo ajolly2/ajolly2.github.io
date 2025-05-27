@@ -1552,92 +1552,91 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 });
     </script>
 
- <script>
-async function loadAllGames() {
-  const container = document.getElementById("live-espn-games");
-  if (!container) return;
+<script>
+  async function loadGamesFromSheets() {
+    const container = document.getElementById("live-espn-games");
+    if (!container) return;
+    container.innerHTML = "Loading games...";
 
-  container.innerHTML = "Loading games...";
+    const sheetUrls = {
+      NFL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv",
+      NHL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv",
+      NBA: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv",
+      MLB: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv",
+      WNBA: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv",
+      NCAABaseball: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=748675011&single=true&output=csv",
+      NCAASoftball: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1365095373&single=true&output=csv"
+    };
 
-  const sheets = [
-    {
-      league: "NBA",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv"
-    },
-    {
-      league: "MLB",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv"
-    },
-    {
-      league: "WNBA",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv"
-    },
-    {
-      league: "NHL",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv"
-    },
-    {
-      league: "NFL",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv"
-    },
-    {
-      league: "NCAABaseball",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=748675011&single=true&output=csv"
-    },
-    {
-      league: "NCAASoftball",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1365095373&single=true&output=csv"
+    const priorityUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv";
+
+    function extractMascotName(team) {
+      const parts = team.trim().split(" ");
+      return parts[parts.length - 1];
     }
-  ];
 
-  const allGameHtml = [];
-
-  for (const sheet of sheets) {
     try {
-      const res = await fetch(sheet.url);
-      const text = await res.text();
-      const rows = text.trim().split("\n").map(row => row.split(","));
-      const games = rows.slice(1).filter(row => row.length >= 7);
+      const priorityRes = await fetch(priorityUrl);
+      const priorityText = await priorityRes.text();
+      const priorityLines = priorityText.trim().split("\n");
+      const priority = priorityLines.map(line => line.trim()).filter(line => !!line);
 
-      if (games.length === 0) continue;
+      let allOutput = "";
 
-      const section = games.map(row => {
-        const [sport, league, matchup, status, score, startTime, streamInfo] = row;
-        const displayScore = (status.includes("Live") || status.includes("Final")) ? score : startTime;
-        const statusColor = status.includes("Live") ? "lime" : status.includes("Final") ? "#aaa" : "#ccc";
+      for (const league of priority) {
+        const url = sheetUrls[league];
+        if (!url) continue;
 
-        return `
-          <div style="margin-bottom: 8px;">
-            <div style="color: #bbb; font-weight: bold;">${league}</div>
-            <div>${matchup}</div>
-            <div style="color: ${statusColor}; font-size: 10px;">${status} — ${displayScore}</div>
-          </div>
-        `;
-      });
+        try {
+          const res = await fetch(url);
+          const text = await res.text();
+          const rows = text.trim().split("\n").slice(1).map(row => row.split(","));
+          if (rows.length === 0) continue;
 
-      allGameHtml.push(...section);
+          let section = `<div style='margin-bottom:10px;'>\n`;
+          section += `<div style='color:#ccc; font-weight:bold; margin-bottom:4px;'>${league}</div>\n`;
+
+          for (const row of rows) {
+            const matchup = row[2] || `${extractMascotName(row[1])} vs. ${extractMascotName(row[2])}`;
+            const status = row[3] || "";
+            const score = row[4] || "";
+            const time = row[5] || "";
+
+            const display = (status.includes("Final") || status === "F" || status.includes("Live")) ? score : time;
+            const statusLabel = (status === "Scheduled" || status === "Pre-Game") ? time : `${status} — ${display}`;
+            const teams = matchup.includes(" vs.") ? matchup : `${extractMascotName(row[1])} vs. ${extractMascotName(row[2])}`;
+
+            section += `<div style='margin-left:10px;'>${teams}<br><span style='color:#aaa; font-size:10px;'>${statusLabel}</span></div>\n`;
+          }
+
+          section += "</div>\n";
+          allOutput += section;
+        } catch (err) {
+          console.warn(`Error loading data for ${league}: ${err}`);
+        }
+      }
+
+      container.innerHTML = allOutput || "<div style='padding:10px;'>No games found.</div>";
     } catch (err) {
-      console.error(`Failed to load ${sheet.league} games:`, err);
+      console.error("Error loading priority list:", err);
+      container.innerHTML = "<div style='padding:10px;'>Error loading games.</div>";
     }
   }
 
-  container.innerHTML = allGameHtml.length > 0
-    ? allGameHtml.join("")
-    : "<div style='padding: 10px;'>No games found.</div>";
-}
+  document.addEventListener("DOMContentLoaded", () => {
+    loadGamesFromSheets();
+    setInterval(loadGamesFromSheets, 5 * 60 * 1000); // 5-minute interval
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadAllGames();
-  setInterval(loadAllGames, 5 * 60 * 1000); // Refresh every 5 minutes
-
-  const container = document.getElementById("standings-Home");
-  document.querySelectorAll("#menuList li[data-section]").forEach(item => {
-    item.addEventListener("click", () => {
-      const section = item.dataset.section;
-      if (container) container.style.display = section === "Home" ? "block" : "none";
+    const container = document.getElementById("standings-Home");
+    document.querySelectorAll("#menuList li[data-section]").forEach(item => {
+      item.addEventListener("click", () => {
+        const section = item.dataset.section;
+        if (container) {
+          container.style.display = section === "Home" ? "block" : "none";
+        }
+      });
     });
   });
-});
 </script>
 
   </body>
