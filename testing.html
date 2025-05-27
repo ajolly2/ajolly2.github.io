@@ -1583,20 +1583,18 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
   let leagueOrder = [];
 
-  // ─── HELPER: parse "H:MM[:SS] AM/PM" into today’s Date ────────────────────────
+  // ─── HELPER: parse "H:MM[:SS] AM/PM" as Eastern today, then convert to local ─────
   function parseTimeToToday(timeStr) {
-    const m = timeStr.trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)$/i);
-    if (!m) return null;
-    let [ , hh, mm, ss = '0', ampm ] = m;
-    let hour = parseInt(hh, 10);
-    if (/pm/i.test(ampm) && hour < 12) hour += 12;
-    if (/am/i.test(ampm) && hour === 12) hour = 0;
-    const d = new Date();
-    d.setHours(hour, parseInt(mm,10), parseInt(ss,10), 0);
-    return d;
+    // get today's date in New York format "MM/DD/YYYY"
+    const nyDate = new Date().toLocaleDateString('en-US', { timeZone: 'America/New_York' });
+    // try parsing with explicit EDT (DST) timezone
+    let dt = new Date(`${nyDate} ${timeStr} EDT`);
+    // if that failed (winter?), fall back to plain parse (may assume EST)
+    if (isNaN(dt)) dt = new Date(`${nyDate} ${timeStr}`);
+    return dt;
   }
 
-  // ─── 1️⃣ Load your priority list ───────────────────────────────────────────────
+  // ─── 1️⃣ Load league priority order ─────────────────────────────────────────────
   async function loadLeagueOrder() {
     try {
       const res = await fetch(leagueOrderURL);
@@ -1605,45 +1603,42 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
         .trim()
         .split(/\r?\n/)
         .map(l => l.trim().split(',')[0])
-        .filter(l => l && sheetURLs[l]);
-      console.log('✅ leagueOrder:', leagueOrder);
-    } catch (e) {
-      console.error('❌ Cannot load league order, fallback:', e);
+        .filter(l => sheetURLs[l]);
+    } catch {
       leagueOrder = Object.keys(sheetURLs);
     }
+    console.log('League order:', leagueOrder);
   }
 
-  // ─── 2️⃣ Fetch each league’s CSV ──────────────────────────────────────────────
+  // ─── 2️⃣ Fetch all CSVs ─────────────────────────────────────────────────────────
   async function fetchAllGames() {
     const byLeague = {};
     await Promise.all(
       Object.entries(sheetURLs).map(async ([league, url]) => {
         try {
-          console.log(`➡️ Fetching ${league}`);
+          console.log(`Fetching ${league}`);
           const res = await fetch(url);
-          if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
-          const txt = await res.text();
-          const rows = txt
+          if (!res.ok) throw new Error(res.status);
+          const text = await res.text();
+          const rows = text
             .trim()
             .split(/\r?\n/)
             .slice(1)
             .map(r => r.split(','));
-          console.log(`🔢 ${league} rows:`, rows.length);
           if (rows.length) byLeague[league] = rows;
         } catch (e) {
-          console.warn(`❌ ${league} fetch failed:`, e);
+          console.warn(`Failed ${league}:`, e);
         }
       })
     );
     return byLeague;
   }
 
-  // ─── 3️⃣ Render into the DOM ──────────────────────────────────────────────────
+  // ─── 3️⃣ Render into #live-games-container ─────────────────────────────────────
   function renderGames(byLeague) {
     const container = document.getElementById('live-games-container');
     if (!container) return;
-    if (container.childElementCount === 0) container.innerHTML = ''; // clear “Loading…”
-
+    if (container.childElementCount === 0) container.innerHTML = '';
     leagueOrder.forEach(league => {
       const rows = byLeague[league] || [];
       let block = container.querySelector(`[data-league="${league}"]`);
@@ -1657,10 +1652,8 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
         `;
         container.appendChild(block);
       }
-
       const list = block.querySelector('.games-list');
       list.innerHTML = '';
-
       if (!rows.length) {
         const none = document.createElement('div');
         none.textContent = 'No games today.';
@@ -1668,63 +1661,44 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
         list.appendChild(none);
         return;
       }
-
       rows.forEach(cols => {
-        // CSV cols: [sport, league, matchup, status, score, startTime, ...]
+        // [sport, league, matchup, status, score, startRaw, ...]
         let [, , matchup, status, score, startRaw] = cols;
         const [homeRaw, awayRaw] = matchup.split(' vs. ');
         const home = homeRaw.trim().split(' ').pop();
         const away = awayRaw.trim().split(' ').pop();
-
         const isLive  = /Live/.test(status);
         const isFinal = /Final/.test(status);
-
-        // upcoming: parse into today’s date
         const dateObj = parseTimeToToday(startRaw);
-        const displayTime = isLive || isFinal
+        const display = isLive || isFinal
           ? score
-          : dateObj
-            ? dateObj.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})
-            : startRaw;
-
-        const label = isLive
-          ? 'Live'
-          : isFinal
-          ? 'F'
-          : '';
-
-        const color = isLive
-          ? 'lime'
-          : isFinal
-          ? '#aaa'
-          : '#ccc';
-
+          : dateObj.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+        const label = isLive ? 'Live' : isFinal ? 'F' : '';
+        const color = isLive ? 'lime' : isFinal ? '#aaa' : '#ccc';
         const entry = document.createElement('div');
         entry.style.marginBottom = '6px';
         entry.innerHTML = `
           <span>${home} vs. ${away}</span><br>
           <span style="color:${color};font-size:10px;">
-            ${label ? label + ' ' : ''}${displayTime}
+            ${label}${label?' ':' '}${display}
           </span>`;
         list.appendChild(entry);
       });
     });
   }
 
-  // ─── 4️⃣ Main + 5-min refresh ─────────────────────────────────────────────────
+  // ─── 4️⃣ Kick it all off + refresh every 5m ─────────────────────────────────────
   async function loadAndRender() {
     const data = await fetchAllGames();
     renderGames(data);
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🏁 Live-games init');
     // only show on Home
     const liveSec = document
       .getElementById('live-games-container')
       .closest('.content-section');
-    document
-      .querySelectorAll('#menuList li[data-section]')
+    document.querySelectorAll('#menuList li[data-section]')
       .forEach(item =>
         item.addEventListener('click', () => {
           liveSec.style.display =
