@@ -1672,18 +1672,18 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     leagueOrder.forEach(league=>{
       const section = document.createElement('div');
       section.className = 'league-section';
-      section.innerHTML = `<div class="league-header" style="padding:6px 10px;">${league}</div>`;
+      section.innerHTML = `<div class="league-header">${league}</div>`;
       const list = document.createElement('div');
       section.appendChild(list);
 
       let prevTime = null;
       (byLeague[league]||[]).forEach(cols=>{
-        const [date, status, matchup,, , startRaw] = cols;
-        if (!['LIVE', 'SCHEDULED'].includes(status)) return;
+        const [, , matchup, status, score, startRaw] = cols;
+        if (!matchup || !status || status.toLowerCase().includes('final')) return;
 
         const [homeRaw, awayRaw] = matchup.split(' vs. ');
-        const home = homeRaw.trim().split(' ').pop();
-        const away = awayRaw.trim().split(' ').pop();
+        const home = homeRaw?.trim().split(' ').pop();
+        const away = awayRaw?.trim().split(' ').pop();
 
         const dt = parseTimeToLocal(startRaw);
         const displayTime = dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
@@ -1693,18 +1693,13 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
         const row = document.createElement('div');
         row.className = 'game-row';
 
-        if (status === 'LIVE') {
-          row.style.backgroundColor = '#2a2a2a';
-          row.style.fontWeight = 'bold';
-        }
-
         const t = document.createElement('div');
         t.className = 'game-time';
         t.textContent = showTime ? displayTime : '';
 
         const m = document.createElement('div');
         m.className = 'game-matchup';
-        m.textContent = `${home} vs. ${away}`;
+        m.textContent = `${home} vs. ${away} ${score ? `(${score})` : ''}`;
 
         const c = document.createElement('div');
         c.className = 'game-channel';
@@ -1726,7 +1721,7 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   document.addEventListener('DOMContentLoaded', async () => {
     await loadLeagueOrder();
     await loadAndRender();
-    setInterval(loadAndRender, 5 * 60 * 1000); // refresh every 5 minutes
+    setInterval(loadAndRender, 5 * 60 * 1000); // refresh every 5 mins
   });
 </script>
 
