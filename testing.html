@@ -51,7 +51,9 @@
 <meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
     <style>
       .column.tv-listings #live-games-container {
-  padding-left: 0 !important;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
       /* container for each league */
 .league-section {
@@ -213,7 +215,14 @@
         padding: 10px 0;
       }
       .column.tv-listings {
-  padding: 0px;  /* whatever you like */
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+      .column.tv-listings * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
       .main-menu {
         background-color: #151515;
