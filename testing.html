@@ -1042,133 +1042,7 @@
   </div>
 </div>
 
-<script>
-  const TEAM_ABBREVIATIONS = {
-    "Liverpool": "LFC", "Arsenal": "ARS", "Newcastle United": "NEW", "Manchester City": "MC",
-    "Chelsea": "CHE", "Nottingham Forest": "NF", "Aston Villa": "AV", "Fulham": "FUL",
-    "Brighton & Hove Albion": "BHA", "AFC Bournemouth": "BOU", "Brentford": "BRE",
-    "Crystal Palace": "CP", "Wolverhampton Wanderers": "WOL", "Manchester United": "MU",
-    "Everton": "EVE", "Tottenham Hotspur": "TOT", "West Ham United": "WHU",
-    "Ipswich Town": "IPS", "Leicester City": "LEI", "Southampton": "SOU"
-  };
 
-  function abbreviateTeam(name) {
-    name = name.replace(/ FC$/, "");
-    return TEAM_ABBREVIATIONS[name] || name;
-  }
-
-  function fullTeamName(name) {
-    return name.replace(/ FC$/, "");
-  }
-
-  async function fetchSheetData() {
-const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
-    const res = await fetch(url);
-    const text = await res.text();
-    const rows = text.trim().split('\n').map(row => row.split(','));
-
-    const compactBody = document.getElementById('compactBody');
-    const fullBody = document.getElementById('fullBody');
-    for (let i = 1; i < rows.length; i++) {
-      const row = rows[i];
-      const fullName = fullTeamName(row[1]);
-      const abbr = abbreviateTeam(row[1]);
-
-      const trCompact = document.createElement('tr');
-      trCompact.innerHTML = `<td>${row[0]}</td><td>${abbr}</td><td>${row[9]}</td>`;
-      compactBody.appendChild(trCompact);
-
-      const trFull = document.createElement('tr');
-      row[1] = fullName;
-      trFull.innerHTML = row.map(col => `<td>${col}</td>`).join('');
-      fullBody.appendChild(trFull);
-    }
-  }
-
- document.addEventListener('DOMContentLoaded', () => {
-    // only call it if the compact/full table elements exist
-    if (document.getElementById('compactBody') &&
-        document.getElementById('fullBody')) {
-      fetchSheetData();
-
-      // Premier League click‐handler
-      document.querySelectorAll('#menuList li[data-section]').forEach(item => {
-        item.addEventListener('click', () => {
-          const show = item.dataset.section === 'PremierLeague';
-          document.getElementById('standings-PremierLeague').style.display = show ? 'block' : 'none';
-          document.getElementById('topScorers-PremierLeague').style.display = show ? 'block' : 'none';
-        });
-      });
-    }
-  });
-</script> 
-      
-
-      <script>
-        
-  async function fetchTopScorers() {
-    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv';
-    const res = await fetch(url);
-    const text = await res.text();
-    const rows = text.trim().split('\n').map(row => row.split(','));
-
-    const teamAbbreviations = {
-  "Liverpool": "LFC",
-  "Arsenal": "ARS",
-  "Manchester City": "MC",
-  "Newcastle United": "NEW",
-  "Chelsea": "CHE",
-  "Nottingham Forest": "NF",
-  "Aston Villa": "AVL",
-  "Fulham": "FUL",
-  "Brighton & Hove Albion": "BHA",
-  "AFC Bournemouth": "BOU",
-  "Brentford": "BRE",
-  "Crystal Palace": "CRY",
-  "Wolverhampton Wanderers": "WOL",
-  "Manchester United": "MU",
-  "Everton": "EVE",
-  "Tottenham Hotspur": "TOT",
-  "West Ham United": "WHU",
-  "Ipswich Town": "IPS",
-  "Leicester City": "LEI",
-  "Southampton": "SOU"
-};
-
-    const tbody = document.getElementById('scorersBody');
-    tbody.innerHTML = '';
-
-    for (let i = 1; i < Math.min(rows.length, 11); i++) {
-      const row = rows[i];
-      const fullName = row[0].trim();
-const teamName = row[1].replace(/ FC$/, '').trim();
-      const goals = row[2].trim();
-
-      const nameParts = fullName.split(' ');
-      const formattedName = nameParts.length > 1
-        ? `${nameParts[0][0]}. ${nameParts.slice(1).join(' ')}`
-        : fullName;
-
-      const teamAbbrev = teamAbbreviations[teamName] || "";
-      const teamSpan = `<span style="font-size: 9px; color: blue; margin-left: 5px;">${teamAbbrev}</span>`;
-
-      const tr = document.createElement('tr');
-tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-size:8px; color:#818181;">${teamAbbrev}</span></td><td style="text-align:center">${goals}</td>`;
-      tbody.appendChild(tr);
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('#menuList li[data-section]').forEach(item => {
-      item.addEventListener('click', () => {
-        const show = item.dataset.section === 'PremierLeague';
-        const scorersPanel = document.getElementById('scorers-PremierLeague');
-        if (scorersPanel) scorersPanel.style.display = show ? 'block' : 'none';
-        if (show) fetchTopScorers();
-      });
-    });
-  });
-</script>
 
 
 
@@ -1614,108 +1488,124 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
 <!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
 <script>
-      // 1️⃣ “priority” order (if that sheet fails, we fall back to sheetURLs keys)
-      const leagueOrderURL =
-        'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
+  // 1️⃣ Your “priority” sheet order
+  const leagueOrderURL =
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
 
-      // 2️⃣ CSV URL for each league’s tab
-      const sheetURLs = {
-        NFL:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
-        NHL:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
-        NBA:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
-        MLB:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
-        WNBA:          'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv',
-        NCAABaseball:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=748675011&single=true&output=csv',
-        NCAASoftball:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1365095373&single=true&output=csv'
-      };
+  // 2️⃣ The CSV URL for each league tab
+  const sheetURLs = {
+    NFL:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
+    NHL:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
+    NBA:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
+    MLB:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
+    WNBA:          'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv',
+    NCAABaseball:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=748675011&single=true&output=csv',
+    NCAASoftball:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1365095373&single=true&output=csv'
+  };
 
-      let leagueOrder = [];
+  let leagueOrder = [];
 
-      async function loadLeagueOrder() {
+  async function loadLeagueOrder() {
+    try {
+      const txt = await (await fetch(leagueOrderURL)).text();
+      leagueOrder = txt.trim().split('\n').map(r => r.split(',')[0]);
+    } catch {
+      leagueOrder = Object.keys(sheetURLs);
+    }
+  }
+
+  async function fetchAllGames() {
+    const byLeague = {};
+    await Promise.all(
+      Object.entries(sheetURLs).map(async ([league, url]) => {
         try {
-          const txt = await (await fetch(leagueOrderURL)).text();
-          leagueOrder = txt.trim().split('\n').map(r => r.split(',')[0]);
-        } catch {
-          leagueOrder = Object.keys(sheetURLs);
+          const txt = await (await fetch(url)).text();
+          const rows = txt
+            .trim()
+            .split('\n')
+            .slice(1)
+            .map(r => r.split(','));
+          if (rows.length) byLeague[league] = rows;
+        } catch (e) {
+          console.warn(`Error loading ${league}:`, e);
         }
-      }
+      })
+    );
+    return byLeague;
+  }
 
-      async function fetchAllGames() {
-        const byLeague = {};
-        await Promise.all(
-          Object.entries(sheetURLs).map(async ([league, url]) => {
-            try {
-              const rows = (await (await fetch(url)).text())
-                .trim()
-                .split('\n')
-                .slice(1)
-                .map(r => r.split(','));
-              if (rows.length) byLeague[league] = rows;
-            } catch (e) {
-              console.warn(`Error loading ${league}:`, e);
-            }
-          })
-        );
-        return byLeague;
-      }
+  function renderGames(byLeague) {
+    const container = document.getElementById('live-games-container');
+    container.innerHTML = '';  // clear "Loading…"
 
-      function renderGames(byLeague) {
-        const container = document.getElementById('live-games-container');
-        container.innerHTML = ''; // clear “Loading…”
+    leagueOrder.forEach(league => {
+      const games = byLeague[league] || [];
+      const section = document.createElement('div');
+      section.className = 'league-section';
+      section.innerHTML = `<div class="league-header">${league}</div>`;
+      const list = document.createElement('div');
+      section.appendChild(list);
 
-        leagueOrder.forEach(league => {
-          const games = byLeague[league] || [];
-          const section = document.createElement('div');
-          section.className = 'league-section';
-          section.innerHTML = `<div class="league-header">${league}</div>`;
-          const list = document.createElement('div');
-          section.appendChild(list);
+      // group by time
+      let prevTime = null;
+      games.forEach(cols => {
+        let [, , matchup, , , startTime] = cols;
+        // show only the last word of each team name
+        let [a, b] = matchup.split(' vs. ').map(x => x.split(' ').pop());
+        const dt = new Date(startTime);
+        const displayTime = dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+        const showTime = displayTime !== prevTime;
+        prevTime = displayTime;
 
-          let prevTime = null;
-          games.forEach(cols => {
-            // cols = [sport, league, matchup, status, score, startTime, …]
-            const [, , matchup, , , startTime] = cols;
-            const [teamA, teamB] = matchup.split(' vs. ').map(x => x.split(' ').pop());
-            const dt = new Date(startTime);
-            const displayTime = dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
-            const showTime = displayTime !== prevTime;
-            prevTime = displayTime;
+        const row = document.createElement('div');
+        row.className = 'game-row';
 
-            const row = document.createElement('div');
-            row.className = 'game-row';
+        const t = document.createElement('div');
+        t.className = 'game-time';
+        t.textContent = showTime ? displayTime : '';
 
-            const t = document.createElement('div');
-            t.className = 'game-time';
-            t.textContent = showTime ? displayTime : '';
+        const m = document.createElement('div');
+        m.className = 'game-matchup';
+        m.textContent = `${a} vs. ${b}`;
 
-            const m = document.createElement('div');
-            m.className = 'game-matchup';
-            m.textContent = `${teamA} vs. ${teamB}`;
+        const c = document.createElement('div');
+        c.className = 'game-channel';
+        c.textContent = '[Channel]';
 
-            const c = document.createElement('div');
-            c.className = 'game-channel';
-            c.textContent = '[Channel]';
-
-            row.append(t, m, c);
-            list.appendChild(row);
-          });
-
-          container.appendChild(section);
-        });
-      }
-
-      async function loadAndRender() {
-        await loadLeagueOrder();
-        const byLeague = await fetchAllGames();
-        renderGames(byLeague);
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        loadAndRender();
-        // refresh every 5 minutes
-        setInterval(loadAndRender, 5 * 60 * 1000);
+        row.append(t, m, c);
+        list.appendChild(row);
       });
-    </script>
+
+      container.appendChild(section);
+    });
+  }
+
+  async function loadAndRender() {
+    const byLeague = await fetchAllGames();
+    renderGames(byLeague);
+  }
+
+  // ↪ only run your standalone table-fetcher _if_ those table elements exist
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Premier League tables
+    if (document.getElementById('compactBody') &&
+        document.getElementById('fullBody')) {
+      fetchSheetData();
+      document.querySelectorAll('#menuList li[data-section]').forEach(item => {
+        item.addEventListener('click', () => {
+          const show = item.dataset.section === 'PremierLeague';
+          document.getElementById('standings-PremierLeague').style.display = show ? 'block' : 'none';
+          document.getElementById('topScorers-PremierLeague').style.display = show ? 'block' : 'none';
+        });
+      });
+    }
+
+    // Live games
+    await loadLeagueOrder();
+    await loadAndRender();
+    setInterval(loadAndRender, 5 * 60 * 1000);
+  });
+</script>
 
   </body>
 </html> 
