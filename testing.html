@@ -1552,92 +1552,141 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 });
     </script>
 
- <script>
-async function loadAllGames() {
-  const container = document.getElementById("live-espn-games");
-  if (!container) return;
+<!-- ↓ Replace your existing STANDINGS COLUMN with this ↓ -->
+<div class="column standings" style="flex: 0 0 250px; background-color: #1f1f1f; padding: 0;">
+  <div style="position: sticky; top: 0; width: 100%; height: 18px;
+              background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif;
+              font-size: 10px; display: flex; align-items: center;
+              padding-left: 10px; z-index: 11; border-bottom: 5px solid #1f1f1f;">
+    <strong>Live & Upcoming Games</strong>
+  </div>
+  <div id="live-games-container" style="padding: 10px; color: #D3D3D3; font-size: 11px;">
+    Loading games…
+  </div>
+</div>
 
-  container.innerHTML = "Loading games...";
+<script>
+  // 1) URL of your published "LeaguesPriority" sheet (one league name per row, top → bottom)
+  const leagueOrderURL = 
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
 
-  const sheets = [
-    {
-      league: "NBA",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv"
-    },
-    {
-      league: "MLB",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv"
-    },
-    {
-      league: "WNBA",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv"
-    },
-    {
-      league: "NHL",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv"
-    },
-    {
-      league: "NFL",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv"
-    },
-    {
-      league: "NCAABaseball",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=748675011&single=true&output=csv"
-    },
-    {
-      league: "NCAASoftball",
-      url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1365095373&single=true&output=csv"
-    }
-  ];
+  // 2) CSV URLs for each league tab you’ve already published
+  const sheetURLs = {
+    NFL:           'https://docs.google.com/spreadsheets/d/e/.../pub?gid=1646106823&single=true&output=csv',
+    NHL:           'https://docs.google.com/spreadsheets/d/e/.../pub?gid=905422182&single=true&output=csv',
+    NBA:           'https://docs.google.com/spreadsheets/d/e/.../pub?gid=529321486&single=true&output=csv',
+    MLB:           'https://docs.google.com/spreadsheets/d/e/.../pub?gid=355225860&single=true&output=csv',
+    WNBA:          'https://docs.google.com/spreadsheets/d/e/.../pub?gid=1033631487&single=true&output=csv',
+    NCAABaseball:  'https://docs.google.com/spreadsheets/d/e/.../pub?gid=748675011&single=true&output=csv',
+    NCAASoftball:  'https://docs.google.com/spreadsheets/d/e/.../pub?gid=1365095373&single=true&output=csv'
+    // add more as needed…
+  };
 
-  const allGameHtml = [];
+  let leagueOrder = [];
 
-  for (const sheet of sheets) {
+  // 1️⃣ Load the league order
+  async function loadLeagueOrder() {
     try {
-      const res = await fetch(sheet.url);
+      const res  = await fetch(leagueOrderURL);
       const text = await res.text();
-      const rows = text.trim().split("\n").map(row => row.split(","));
-      const games = rows.slice(1).filter(row => row.length >= 7);
-
-      if (games.length === 0) continue;
-
-      const section = games.map(row => {
-        const [sport, league, matchup, status, score, startTime, streamInfo] = row;
-        const displayScore = (status.includes("Live") || status.includes("Final")) ? score : startTime;
-        const statusColor = status.includes("Live") ? "lime" : status.includes("Final") ? "#aaa" : "#ccc";
-
-        return `
-          <div style="margin-bottom: 8px;">
-            <div style="color: #bbb; font-weight: bold;">${league}</div>
-            <div>${matchup}</div>
-            <div style="color: ${statusColor}; font-size: 10px;">${status} — ${displayScore}</div>
-          </div>
-        `;
-      });
-
-      allGameHtml.push(...section);
-    } catch (err) {
-      console.error(`Failed to load ${sheet.league} games:`, err);
+      leagueOrder = text.trim().split('\n').map(r => r.split(',')[0]);
+    } catch {
+      console.error('Failed to load league order');
+      leagueOrder = Object.keys(sheetURLs);
     }
   }
 
-  container.innerHTML = allGameHtml.length > 0
-    ? allGameHtml.join("")
-    : "<div style='padding: 10px;'>No games found.</div>";
-}
+  // 2️⃣ Fetch each league’s CSV
+  async function fetchAllGames() {
+    const byLeague = {};
+    await Promise.all(Object.entries(sheetURLs).map(async ([league, url]) => {
+      try {
+        const res  = await fetch(url);
+        const text = await res.text();
+        const rows = text.trim().split('\n').slice(1).map(r => r.split(','));
+        if (rows.length) byLeague[league] = rows;
+      } catch (e) {
+        console.warn(`Error loading ${league}`, e);
+      }
+    }));
+    return byLeague;
+  }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadAllGames();
-  setInterval(loadAllGames, 5 * 60 * 1000); // Refresh every 5 minutes
+  // 3️⃣ Render, updating only each league’s list
+  function renderGames(byLeague) {
+    const container = document.getElementById('live-games-container');
+    if (container.childElementCount === 0) container.innerHTML = ''; // clear initial “Loading…”
 
-  const container = document.getElementById("standings-Home");
-  document.querySelectorAll("#menuList li[data-section]").forEach(item => {
-    item.addEventListener("click", () => {
-      const section = item.dataset.section;
-      if (container) container.style.display = section === "Home" ? "block" : "none";
+    leagueOrder.forEach(league => {
+      const games = byLeague[league] || [];
+      let leagueDiv = container.querySelector(`[data-league="${league}"]`);
+      if (!leagueDiv) {
+        leagueDiv = document.createElement('div');
+        leagueDiv.setAttribute('data-league', league);
+        leagueDiv.style.marginBottom = '12px';
+        leagueDiv.innerHTML = `
+          <div style="color:#bbb;font-weight:bold;margin-bottom:4px;">${league}</div>
+          <div class="games-list"></div>
+        `;
+        container.appendChild(leagueDiv);
+      }
+      const list = leagueDiv.querySelector('.games-list');
+      list.innerHTML = ''; // clear old
+
+      if (games.length === 0) {
+        const no = document.createElement('div');
+        no.textContent = 'No games today.';
+        no.style.color = '#666';
+        list.appendChild(no);
+        return;
+      }
+
+      games.forEach(cols => {
+        // [sport, league, matchup, status, score, startTime, streamInfo]
+        let [, , matchup, status, score, startTime] = cols;
+        let [a,b] = matchup.split(' vs. ');
+        a = a.split(' ').pop();
+        b = b.split(' ').pop();
+        const displayScore = /Live|Final/.test(status)
+          ? score
+          : new Date(startTime).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+        const color = /Live/.test(status)   ? 'lime'
+                    : /Final/.test(status)  ? '#aaa'
+                    :                        '#ccc';
+
+        const div = document.createElement('div');
+        div.style.marginBottom = '6px';
+        div.innerHTML = `
+          <span>${a} vs. ${b}</span><br>
+          <span style="color:${color};font-size:10px;">
+            ${status==='Scheduled'? '' : status} ${displayScore || ''}
+          </span>`;
+        list.appendChild(div);
+      });
     });
+  }
+
+  // 4️⃣ Main loader
+  async function loadAndRender() {
+    const byLeague = await fetchAllGames();
+    renderGames(byLeague);
+  }
+
+  // 🏁 On page load…
+  document.addEventListener('DOMContentLoaded', async () => {
+    // only show on Home
+    const homeContainer = document.getElementById('live-games-container');
+    document.querySelectorAll('#menuList li[data-section]').forEach(item => {
+      item.addEventListener('click', () => {
+        homeContainer.closest('.content-section').style.display =
+          (item.dataset.section === 'Home') ? 'block' : 'none';
+      });
+    });
+
+    await loadLeagueOrder();
+    await loadAndRender();
+    setInterval(loadAndRender, 5 * 60 * 1000);
   });
-});
 </script>
 
   </body>
