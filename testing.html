@@ -50,6 +50,39 @@
 <meta name="twitter:description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place." />
 <meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
     <style>
+       /* --- Standings Column Styles --- */
+  .column.standings {
+    flex: 0 0 250px;
+    background-color: #1f1f1f;
+    padding: 0;
+  }
+  .league-section {
+    margin-bottom: 16px;
+  }
+  .league-header {
+    padding: 6px 10px;
+    font-weight: bold;
+    color: #bbb;
+  }
+  .game-row {
+    display: flex;
+    align-items: center;
+    padding: 4px 10px;
+  }
+  .game-time {
+    flex: 0 0 60px;
+  }
+  .game-matchup {
+    flex: 1;
+    padding-left: 10px;
+  }
+  .game-channel {
+    flex: 0 0 60px;
+    text-align: right;
+  }
+  .game-row:nth-child(odd) {
+    background: rgba(255,255,255,0.03);
+  }
       /* Owners */
 @font-face {
   font-family: 'Owners';
@@ -658,22 +691,15 @@
 <div class="divider"></div>
 
 <!-- ─── STANDINGS COLUMN ───────────────────────────────────────────────────────── -->
-<div class="column standings" style="flex: 0 0 250px; background-color: #1f1f1f; padding: 0;">
-  <div style="
-      position: sticky; top: 0; width: 100%; height: 18px;
-      background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif;
-      font-size: 10px; display: flex; align-items: center;
-      padding-left: 10px; z-index: 11; border-bottom: 5px solid #1f1f1f;
-    ">
+<div class="column standings">
+  <div style="position:sticky;top:0;width:100%;height:18px;
+              background-color:#3c3c3c;font-family:Helvetica,Arial,sans-serif;
+              font-size:10px;display:flex;align-items:center;
+              padding-left:10px;z-index:11;border-bottom:5px solid #1f1f1f;">
     <strong>Live & Upcoming Games</strong>
   </div>
-  <div id="standings-Home" class="content-section" style="display: block;">
-    <div
-      id="live-games-container"
-      style="padding: 10px; color: #D3D3D3; font-size: 11px;"
-    >
-      Loading games…
-    </div>
+  <div id="live-games-container" style="padding-top:4px;color:#D3D3D3;font-size:11px;">
+    Loading games…
   </div>
 </div>
 
@@ -1560,152 +1586,106 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
 <!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
 <script>
-  // ─── CONFIG ───────────────────────────────────────────────────────────────────
+  // 1️⃣ Your “priority” sheet order
   const leagueOrderURL =
     'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
 
+  // 2️⃣ The CSV URL for each league tab
   const sheetURLs = {
-    NFL:
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
-    NHL:
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
-    NBA:
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
-    MLB:
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
-    WNBA:
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv',
-    NCAABaseball:
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=748675011&single=true&output=csv',
-    NCAASoftball:
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1365095373&single=true&output=csv'
+    NFL:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
+    NHL:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
+    NBA:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
+    MLB:           'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
+    WNBA:          'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv',
+    NCAABaseball:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=748675011&single=true&output=csv',
+    NCAASoftball:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1365095373&single=true&output=csv'
   };
 
   let leagueOrder = [];
 
-  // ─── HELPER: parse "H:MM[:SS] AM/PM" as Eastern today, then convert to local ─────
-  function parseTimeToToday(timeStr) {
-    // get today's date in New York format "MM/DD/YYYY"
-    const nyDate = new Date().toLocaleDateString('en-US', { timeZone: 'America/New_York' });
-    // try parsing with explicit EDT (DST) timezone
-    let dt = new Date(`${nyDate} ${timeStr} EDT`);
-    // if that failed (winter?), fall back to plain parse (may assume EST)
-    if (isNaN(dt)) dt = new Date(`${nyDate} ${timeStr}`);
-    return dt;
-  }
-
-  // ─── 1️⃣ Load league priority order ─────────────────────────────────────────────
   async function loadLeagueOrder() {
     try {
-      const res = await fetch(leagueOrderURL);
-      const txt = await res.text();
-      leagueOrder = txt
-        .trim()
-        .split(/\r?\n/)
-        .map(l => l.trim().split(',')[0])
-        .filter(l => sheetURLs[l]);
+      const txt = await (await fetch(leagueOrderURL)).text();
+      leagueOrder = txt.trim().split('\n').map(r => r.split(',')[0]);
     } catch {
       leagueOrder = Object.keys(sheetURLs);
     }
-    console.log('League order:', leagueOrder);
   }
 
-  // ─── 2️⃣ Fetch all CSVs ─────────────────────────────────────────────────────────
   async function fetchAllGames() {
     const byLeague = {};
     await Promise.all(
       Object.entries(sheetURLs).map(async ([league, url]) => {
         try {
-          console.log(`Fetching ${league}`);
-          const res = await fetch(url);
-          if (!res.ok) throw new Error(res.status);
-          const text = await res.text();
-          const rows = text
+          const txt = await (await fetch(url)).text();
+          const rows = txt
             .trim()
-            .split(/\r?\n/)
+            .split('\n')
             .slice(1)
             .map(r => r.split(','));
           if (rows.length) byLeague[league] = rows;
         } catch (e) {
-          console.warn(`Failed ${league}:`, e);
+          console.warn(`Error loading ${league}:`, e);
         }
       })
     );
     return byLeague;
   }
 
-  // ─── 3️⃣ Render into #live-games-container ─────────────────────────────────────
   function renderGames(byLeague) {
     const container = document.getElementById('live-games-container');
-    if (!container) return;
-    if (container.childElementCount === 0) container.innerHTML = '';
+    container.innerHTML = '';  // clear "Loading…"
+
     leagueOrder.forEach(league => {
-      const rows = byLeague[league] || [];
-      let block = container.querySelector(`[data-league="${league}"]`);
-      if (!block) {
-        block = document.createElement('div');
-        block.dataset.league = league;
-        block.style.marginBottom = '12px';
-        block.innerHTML = `
-          <div style="color:#bbb;font-weight:bold;margin-bottom:4px;">${league}</div>
-          <div class="games-list"></div>
-        `;
-        container.appendChild(block);
-      }
-      const list = block.querySelector('.games-list');
-      list.innerHTML = '';
-      if (!rows.length) {
-        const none = document.createElement('div');
-        none.textContent = 'No games today.';
-        none.style.color = '#666';
-        list.appendChild(none);
-        return;
-      }
-      rows.forEach(cols => {
-        // [sport, league, matchup, status, score, startRaw, ...]
-        let [, , matchup, status, score, startRaw] = cols;
-        const [homeRaw, awayRaw] = matchup.split(' vs. ');
-        const home = homeRaw.trim().split(' ').pop();
-        const away = awayRaw.trim().split(' ').pop();
-        const isLive  = /Live/.test(status);
-        const isFinal = /Final/.test(status);
-        const dateObj = parseTimeToToday(startRaw);
-        const display = isLive || isFinal
-          ? score
-          : dateObj.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
-        const label = isLive ? 'Live' : isFinal ? 'F' : '';
-        const color = isLive ? 'lime' : isFinal ? '#aaa' : '#ccc';
-        const entry = document.createElement('div');
-        entry.style.marginBottom = '6px';
-        entry.innerHTML = `
-          <span>${home} vs. ${away}</span><br>
-          <span style="color:${color};font-size:10px;">
-            ${label}${label?' ':' '}${display}
-          </span>`;
-        list.appendChild(entry);
+      const games = byLeague[league] || [];
+      const section = document.createElement('div');
+      section.className = 'league-section';
+      section.innerHTML = `<div class="league-header">${league}</div>`;
+      const list = document.createElement('div');
+      section.appendChild(list);
+
+      // group by time
+      let prevTime = null;
+      // assume each row: [sport, league, matchup, status, score, startTime, ...]
+      games.forEach(cols => {
+        let [, , matchup, status, score, startTime] = cols;
+        // matchup like "Team A vs. Team B"
+        let [a, b] = matchup.split(' vs. ').map(x => x.split(' ').pop());
+        // format startTime into local "h:mm AM/PM"
+        const dt = new Date(startTime);
+        const displayTime = dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+        const showTime = displayTime !== prevTime;
+        prevTime = displayTime;
+
+        const row = document.createElement('div');
+        row.className = 'game-row';
+        // time cell
+        const t = document.createElement('div');
+        t.className = 'game-time';
+        t.textContent = showTime ? displayTime : '';
+        // matchup cell
+        const m = document.createElement('div');
+        m.className = 'game-matchup';
+        m.textContent = `${a} vs. ${b}`;
+        // channel placeholder
+        const c = document.createElement('div');
+        c.className = 'game-channel';
+        c.textContent = '[Channel]';
+
+        row.append(t, m, c);
+        list.appendChild(row);
       });
+
+      container.appendChild(section);
     });
   }
 
-  // ─── 4️⃣ Kick it all off + refresh every 5m ─────────────────────────────────────
   async function loadAndRender() {
-    const data = await fetchAllGames();
-    renderGames(data);
+    const byLeague = await fetchAllGames();
+    renderGames(byLeague);
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
-    // only show on Home
-    const liveSec = document
-      .getElementById('live-games-container')
-      .closest('.content-section');
-    document.querySelectorAll('#menuList li[data-section]')
-      .forEach(item =>
-        item.addEventListener('click', () => {
-          liveSec.style.display =
-            item.dataset.section === 'Home' ? 'block' : 'none';
-        })
-      );
-
     await loadLeagueOrder();
     await loadAndRender();
     setInterval(loadAndRender, 5 * 60 * 1000);
