@@ -1552,8 +1552,8 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 });
     </script>
 
-  <script>
-  async function loadAllGames() {
+ <script>
+  async function loadHomeGames() {
     const container = document.getElementById("live-espn-games");
     if (!container) return;
 
@@ -1561,58 +1561,59 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
     const sources = [
       {
-        name: "NBA",
+        league: "NBA",
         url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv"
       },
       {
-        name: "MLB",
+        league: "MLB",
         url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv"
       }
     ];
 
-    let htmlChunks = [];
+    let allLines = [];
 
     for (const source of sources) {
       try {
         const res = await fetch(source.url);
         const text = await res.text();
-        const rows = text.trim().split("\n").map(r => r.split(","));
+        const rows = text.trim().split("\n").map(row => row.split(","));
         const games = rows.slice(1).filter(row => row.length >= 7);
 
-        if (games.length > 0) {
-          htmlChunks.push(`<div style="margin-bottom: 8px; color: #aaa;"><strong>${source.name}</strong></div>`);
-          games.forEach(([sport, league, matchup, status, score, startTime, streamInfo]) => {
-            const displayScore = (status.includes("Live") || status.includes("Final")) ? score : startTime;
-            const statusColor = status.includes("Live") ? "lime" : status.includes("Final") ? "#aaa" : "#ccc";
+        const leagueLines = games.map(row => {
+          const [sport, league, matchup, status, score, startTime, streamInfo] = row;
+          const displayScore = (status.includes("Live") || status.includes("Final")) ? score : startTime;
+          const statusColor = status.includes("Live") ? "lime" : status.includes("Final") ? "#aaa" : "#ccc";
 
-            htmlChunks.push(`
-              <div style="margin-bottom: 6px;">
-                <div>${matchup}</div>
-                <div style="color: ${statusColor}; font-size: 10px;">${status} — ${displayScore}</div>
-              </div>
-            `);
-          });
-        }
-      } catch (e) {
-        console.error(`Error loading ${source.name}:`, e);
-        htmlChunks.push(`<div style="color: red; font-size: 10px;">Error loading ${source.name} games.</div>`);
+          return `
+            <div style="margin-bottom: 8px;">
+              <div style="color: #bbb; font-weight: bold;">${league}</div>
+              <div>${matchup}</div>
+              <div style="color: ${statusColor}; font-size: 10px;">${status} — ${displayScore}</div>
+            </div>
+          `;
+        });
+
+        allLines.push(...leagueLines);
+      } catch (err) {
+        console.error(`Failed to load ${source.league} games:`, err);
       }
     }
 
-    container.innerHTML = htmlChunks.length ? htmlChunks.join("") : "<div style='padding: 10px;'>No games today.</div>";
+    container.innerHTML = allLines.length
+      ? allLines.join("")
+      : "<div style='padding: 10px;'>No games available.</div>";
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    loadAllGames();
-    setInterval(loadAllGames, 5 * 60 * 1000); // Refresh every 5 minutes
+    loadHomeGames();
+    setInterval(loadHomeGames, 5 * 60 * 1000); // Refresh every 5 minutes
 
-    // Show only on Home panel
-    const espnGamesContainer = document.getElementById("standings-Home");
+    const homeContainer = document.getElementById("standings-Home");
     document.querySelectorAll("#menuList li[data-section]").forEach(item => {
       item.addEventListener("click", () => {
         const section = item.dataset.section;
-        if (espnGamesContainer) {
-          espnGamesContainer.style.display = section === "Home" ? "block" : "none";
+        if (homeContainer) {
+          homeContainer.style.display = section === "Home" ? "block" : "none";
         }
       });
     });
