@@ -659,15 +659,24 @@
 
 <!-- STANDINGS COLUMN -->
 <div class="column standings" style="flex: 0 0 250px; background-color: #1f1f1f; padding: 0;">
-  <div style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11; border-bottom: 5px solid #1f1f1f;">
+  <div style="
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 18px;
+      background-color: #3c3c3c;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      z-index: 11;
+      border-bottom: 5px solid #1f1f1f;
+    ">
     <strong>Live & Upcoming Games</strong>
   </div>
-
-  <!-- Show this only on Home -->
-  <div id="standings-Home" class="content-section" style="display: block;">
-    <div id="live-espn-games" style="padding: 10px; color: #D3D3D3; font-size: 11px;">
-      Loading games...
-    </div>
+  <div id="live-games-container" style="padding: 10px; color: #D3D3D3; font-size: 11px;">
+    Loading games…
   </div>
 </div>
 
