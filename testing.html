@@ -1620,18 +1620,21 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     </script>
 
 <!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
+<div id="live-games-container"></div>
+
 <script>
-  const sheetURLs = {
-    NFL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
-    NHL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
-    NBA:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
-    MLB:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
-    WNBA: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv'
-  };
+const leagueOrderURL =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
 
-  const leagueOrder = ["NFL", "NBA", "NHL", "MLB", "WNBA"];
+const sheetURLs = {
+  NFL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
+  NHL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
+  NBA:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
+  MLB:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
+  WNBA: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv'
+};
 
- const TEAM_ABBR = {
+const TEAM_ABBR = {
   // MLB
   "Arizona Diamondbacks":"ARI","Atlanta Braves":"ATL","Baltimore Orioles":"BAL","Boston Red Sox":"BOS",
   "Chicago White Sox":"CHW","Chicago Cubs":"CHC","Cincinnati Reds":"CIN","Cleveland Guardians":"CLE",
@@ -1669,129 +1672,139 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   "Vancouver Canucks":"VAN","Vegas Golden Knights":"VGK","Washington Capitals":"WSH","Winnipeg Jets":"WPG"
 };
 
-  function parseTimeToLocal(timeStr) {
-    const ny = new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'});
-    let dt = new Date(`${ny} ${timeStr} EDT`);
-    if (isNaN(dt)) dt = new Date(`${ny} ${timeStr}`);
-    return dt;
-  }
+let leagueOrder = [];
 
-  function convertStatus(raw) {
-    if (!raw) return "";
-    if (/final/i.test(raw)) return 'F';
-    if (/halftime/i.test(raw)) return 'HT';
-    if (/top\s*(\d)/i.test(raw)) return `Top ${RegExp.$1}`;
-    if (/bottom\s*(\d)/i.test(raw)) return `Bot ${RegExp.$1}`;
-    if (/top/i.test(raw)) return 'Top';
-    if (/bottom/i.test(raw)) return 'Bot';
-    return raw;
+async function loadLeagueOrder() {
+  try {
+    const txt = await (await fetch(leagueOrderURL)).text();
+    leagueOrder = txt.trim().split(/\r?\n/).map(r => r.split(',')[0]).filter(l => sheetURLs[l]);
+  } catch {
+    leagueOrder = Object.keys(sheetURLs);
   }
+}
 
-  async function fetchAllGames() {
-    const byLeague = {};
-    await Promise.all(
-      Object.entries(sheetURLs).map(async ([league, url]) => {
-        try {
-          const text = await (await fetch(url)).text();
-          const rows = text.trim().split(/\r?\n/).slice(1).map(r => r.split(','));
-          byLeague[league] = rows;
-        } catch (e) {
-          console.warn(`Failed to fetch ${league}:`, e);
-        }
-      })
-    );
-    return byLeague;
-  }
+function parseTimeToLocal(timeStr) {
+  const ny = new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'});
+  let dt = new Date(`${ny} ${timeStr} EDT`);
+  if (isNaN(dt)) dt = new Date(`${ny} ${timeStr}`);
+  return dt;
+}
 
- function renderGames(byLeague) {
+function convertStatus(raw) {
+  if (/final/i.test(raw)) return 'F';
+  if (/halftime/i.test(raw)) return 'HT';
+  if (/top\s*(\d)/i.test(raw)) return `Top ${RegExp.$1}`;
+  if (/bottom\s*(\d)/i.test(raw)) return `Bot ${RegExp.$1}`;
+  if (/top/i.test(raw)) return 'Top';
+  if (/bottom/i.test(raw)) return 'Bot';
+  return raw;
+}
+
+async function fetchAllGames() {
+  const byLeague = {};
+  await Promise.all(
+    Object.entries(sheetURLs).map(async ([league,url]) => {
+      try {
+        const rows = (await (await fetch(url)).text())
+          .trim().split(/\r?\n/).slice(1)
+          .map(r => r.split(','));
+        if (rows.length) byLeague[league] = rows;
+      } catch (e) {
+        console.warn(`failed ${league}`, e);
+      }
+    })
+  );
+  return byLeague;
+}
+
+function renderGames(byLeague) {
   const container = document.getElementById('live-games-container');
-  if (!container) return;
   container.innerHTML = '';
 
   leagueOrder.forEach(league => {
     const rows = byLeague[league] || [];
 
-    // Check if any rows for this league are valid matchups
-    const validRows = rows.filter(cols => {
-      const matchup = cols[2];
-      return matchup && matchup.includes(' vs. ');
+    const validRows = rows.filter(cols => cols[2]?.includes(" vs. "));
+    if (!validRows.length) return;
+
+    const groupedByDate = {};
+    validRows.forEach(cols => {
+      const date = cols[6]; // assuming column G = Date
+      if (!groupedByDate[date]) groupedByDate[date] = [];
+      groupedByDate[date].push(cols);
     });
 
-    if (validRows.length === 0) {
-      console.log(`[SKIPPED] No games today for ${league}`);
-      return; // Do not render this league at all
-    }
-
-    console.group(`Rendering ${league}`);
     const section = document.createElement('div');
     section.className = 'league-section';
-    section.innerHTML = `<div style="margin-top:1.25em"></div><div class="league-header">${league}</div>`;
-    const list = document.createElement('div');
-    section.appendChild(list);
+    section.innerHTML = `<div class="league-header">${league}</div>`;
+    
+    Object.entries(groupedByDate).forEach(([date, games]) => {
+      const dateLabel = new Date(date).toLocaleDateString('en-US', {
+        weekday: 'long', month: 'short', day: 'numeric'
+      });
 
-    let prevTime = null;
+      const dateHeader = document.createElement('div');
+      dateHeader.className = 'date-header';
+      dateHeader.textContent = `— ${dateLabel} —`;
+      section.appendChild(dateHeader);
 
-    validRows.forEach(cols => {
-      const [, , matchup, statusRaw, score, startRaw] = cols;
-      const [homeTeam, awayTeam] = matchup.split(' vs. ').map(t => t.trim());
-      const homeAbbr = TEAM_ABBR[homeTeam] || homeTeam;
-      const awayAbbr = TEAM_ABBR[awayTeam] || awayTeam;
+      let prevTime = null;
+      games.forEach(cols => {
+        const [, , matchup, statusRaw, score, startRaw] = cols;
+        const [homeTeam, awayTeam] = matchup.split(' vs. ').map(t => t.trim());
+        const homeAbbr = TEAM_ABBR[homeTeam] || homeTeam;
+        const awayAbbr = TEAM_ABBR[awayTeam] || awayTeam;
 
-      const status = convertStatus(statusRaw?.trim());
-      const isLive = /top|bot|half|inning|\d+['’]/i.test(statusRaw);
-      const dt = parseTimeToLocal(startRaw);
-      const displayTime = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-      const showTime = displayTime !== prevTime;
-      prevTime = displayTime;
+        const status = convertStatus(statusRaw?.trim());
+        const isLive = /top|bot|half|inning|\d+['’]/i.test(statusRaw);
+        const dt = parseTimeToLocal(startRaw);
+        const displayTime = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        const showTime = displayTime !== prevTime;
+        prevTime = displayTime;
 
-      const row = document.createElement('div');
-      row.className = 'game-row';
+        const row = document.createElement('div');
+        row.className = 'game-row';
 
-      const t = document.createElement('div');
-      t.className = 'game-time';
-      t.style.color = isLive ? 'red' : '#ccc';
-      t.textContent = isLive ? status : (showTime ? displayTime : '');
+        const t = document.createElement('div');
+        t.className = 'game-time';
+        t.style.color = isLive ? 'red' : '#ccc';
+        t.textContent = isLive ? status : (showTime ? displayTime : '');
 
-      const m = document.createElement('div');
-      m.className = 'game-matchup';
-      if (score && score.includes('-')) {
-        const [homeScore, awayScore] = score.split('-').map(s => s.trim());
-        m.innerHTML = `${homeAbbr} ${homeScore}-${awayScore} ${awayAbbr}`;
-      } else {
-        m.textContent = `${homeAbbr} vs. ${awayAbbr}`;
-      }
+        const m = document.createElement('div');
+        m.className = 'game-matchup';
+        if (score && score.includes('-')) {
+          const [homeScore, awayScore] = score.split('-').map(s => s.trim());
+          m.innerHTML = `${homeAbbr} ${homeScore}-${awayScore} ${awayAbbr}`;
+        } else {
+          m.textContent = `${homeAbbr} vs. ${awayAbbr}`;
+        }
 
-      const c = document.createElement('div');
-      c.className = 'game-channel';
-      c.textContent = '';
+        const c = document.createElement('div');
+        c.className = 'game-channel';
+        c.textContent = '';
 
-      row.append(t, m, c);
-      list.appendChild(row);
+        row.append(t, m, c);
+        section.appendChild(row);
+      });
     });
 
     container.appendChild(section);
-    console.groupEnd();
   });
 }
 
-  async function loadAndRender() {
-    const data = await fetchAllGames();
-    renderGames(data);
-  }
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadLeagueOrder();
+  await loadAndRender();
+  setInterval(loadAndRender, 5 * 60 * 1000);
+});
 
-  document.addEventListener('DOMContentLoaded', () => {
-    loadAndRender();
-    setInterval(loadAndRender, 5 * 60 * 1000);
-
-    const tvSection = document.getElementById("tv-listings-Home");
-    document.querySelectorAll("#menuList li[data-section]").forEach(item => {
-      item.addEventListener("click", () => {
-        const section = item.dataset.section;
-        if (tvSection) tvSection.style.display = section === "Home" ? "block" : "none";
-      });
-    });
-  });
+async function loadAndRender() {
+  const data = await fetchAllGames();
+  renderGames(data);
+}
 </script>
+
+ 
 
   </body>
 </html> 
