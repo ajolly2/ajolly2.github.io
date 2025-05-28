@@ -1789,12 +1789,21 @@ async function loadLeagueOrder() {
 }
 
 function parseTimeToLocal(timeStr) {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  const dateString = `${year}-${month}-${day}`;
-  return new Date(`${dateString} ${timeStr}`);
+  // Get today's date in Eastern Time
+  const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+  const base = new Date(eastNow);
+
+  const year = base.getFullYear();
+  const month = String(base.getMonth() + 1).padStart(2, '0');
+  const day = String(base.getDate()).padStart(2, '0');
+
+  // Combine into full datetime string and treat it as Eastern Time (ET)
+  const easternTimeString = `${year}-${month}-${day} ${timeStr}`;
+  
+  // Create UTC time from ET, assuming EDT (GMT-0400)
+  const utcDate = new Date(`${easternTimeString} GMT-0400`);
+
+  return utcDate; // Returns a Date object in user's local time
 }
 
 async function fetchAllGames() {
