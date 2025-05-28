@@ -1723,11 +1723,14 @@ const TEAM_ABBR = {
 
 // ====== HELPERS ======
 function parseTimeToLocal(timeStr) {
-  const now = new Date();
-  const dateString = now.toISOString().split('T')[0];
-  return new Date(`${dateString} ${timeStr}`);
+  // get today’s date in New York
+  const ny = new Date().toLocaleDateString('en-US', { timeZone: 'America/New_York' });
+  // force it into EDT so the browser parses it correctly as Eastern
+  let dt = new Date(`${ny} ${timeStr} EDT`);
+  // fallback if parsing fails
+  if (Number.isNaN(dt.getTime())) dt = new Date(`${ny} ${timeStr}`);
+  return dt;
 }
-
 async function fetchAllGames() {
   const byLeague = {};
   await Promise.all(
@@ -1775,48 +1778,60 @@ function renderGamesByTab(byLeague, leagueOrder) {
     const seenTimes = new Set();
 
     games.forEach(cols => {
-      const [, , matchup, statusRaw, score, startRaw] = cols;
-      if (!matchup || !statusRaw) return;
+      const [, , matchup, statusRaw, score, startRaw] = cols;const liveRegex = /^(Top|Bot)\b/i;
+const seenTimes = new Set();
 
-      const [homeFull, awayFull] = matchup.split(" vs. ").map(t => t.trim());
-      const home = TEAM_ABBR[homeFull] || homeFull;
-      const away = TEAM_ABBR[awayFull] || awayFull;
+games.forEach(cols => {
+  const [, , matchup, statusRaw, score, startRaw] = cols;
+  if (!matchup || !statusRaw) return;
 
-      const status = statusRaw.toLowerCase();
-      const dt = parseTimeToLocal(startRaw);
-      const dateStr = dt.toLocaleDateString("en-CA");
-      const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-      const showTime = !seenTimes.has(timeStr);
-      seenTimes.add(timeStr);
+  const [home, away] = matchup.split(" vs. ").map(t => t.trim());
+  const status = statusRaw.toLowerCase();
+  const dt     = parseTimeToLocal(startRaw);
+  const dateStr= dt.toLocaleDateString("en-CA");
+  const timeStr= dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  
+  // only show each start-time once
+  const showTime = !seenTimes.has(timeStr);
 
-      let displayTime;
-      if (status.includes("final") || dateStr === yesterdayStr) {
-        displayTime = "F";
-      } else if (/in progress|half|inning/.test(status)) {
-        displayTime = statusRaw;
-      } else {
-        displayTime = showTime ? timeStr : "";
-      }
+  // decide left-column display
+  let displayTime;
+  if (/final/i.test(statusRaw) || dateStr === yesterdayStr) {
+    displayTime = "F";
+  } else if (liveRegex.test(statusRaw)) {
+    // in-progress: “<score> <inning>”
+    displayTime = score ? `${score} ${statusRaw}` : statusRaw;
+  } else {
+    displayTime = showTime ? timeStr : "";
+    if (showTime) seenTimes.add(timeStr);
+  }
 
-      const showScore = score && !/scheduled|not started/.test(status);
-      const matchupDisplay = showScore ? `${home} ${score} ${away}` : `${home} vs. ${away}`;
+  // abbreviate teams
+  const homeAbbr = TEAM_ABBR[home] || home;
+  const awayAbbr = TEAM_ABBR[away] || away;
 
-      const row = document.createElement("div");
-      row.className = "game-row";
-      row.innerHTML = `
-        <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
-        <div class="game-matchup">${matchupDisplay}</div>
-        <div class="game-channel"></div>
-      `;
+  // build row
+  const row = document.createElement("div");
+  row.className = "game-row";
+  row.innerHTML = `
+    <div class="game-time" style="color: ${liveRegex.test(statusRaw) ? 'red' : '#ccc'}">
+      ${displayTime}
+    </div>
+    <div class="game-matchup">
+      ${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}
+    </div>
+    <div class="game-channel"></div>
+  `;
 
-      if (status.includes("final") || dateStr === yesterdayStr) {
-        sections.scores.push(row);
-      } else if (/in progress|half|inning/.test(status)) {
-        sections.live.push(row);
-      } else if (dateStr === todayDateStr) {
-        sections.today.push(row);
-      }
-    });
+  // push into appropriate tab
+  if (/final/i.test(statusRaw) || dateStr === yesterdayStr) {
+    sections.scores.push(row);
+  } else if (liveRegex.test(statusRaw)) {
+    sections.live.push(row);
+  } else if (dateStr === todayDateStr) {
+    sections.today.push(row);
+  }
+});
 
     Object.entries(sections).forEach(([key, rows]) => {
       if (!rows.length) return;
