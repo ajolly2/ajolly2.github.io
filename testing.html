@@ -1685,6 +1685,138 @@ const sheetURLs = {
   WNBA: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv'
 };
 
+  const TEAM_ABBR = {
+  // MLB
+  "Arizona Diamondbacks":"ARI","Atlanta Braves":"ATL","Baltimore Orioles":"BAL","Boston Red Sox":"BOS",
+  "Chicago White Sox":"CHW","Chicago Cubs":"CHC","Cincinnati Reds":"CIN","Cleveland Guardians":"CLE",
+  "Colorado Rockies":"COL","Detroit Tigers":"DET","Houston Astros":"HOU","Kansas City Royals":"KC",
+  "Los Angeles Angels":"LAA","Los Angeles Dodgers":"LAD","Miami Marlins":"MIA","Milwaukee Brewers":"MIL",
+  "Minnesota Twins":"MIN","New York Yankees":"NYY","New York Mets":"NYM","Athletics":"ATH",
+  "Philadelphia Phillies":"PHI","Pittsburgh Pirates":"PIT","San Diego Padres":"SD","San Francisco Giants":"SF",
+  "Seattle Mariners":"SEA","St. Louis Cardinals":"STL","Tampa Bay Rays":"TB","Texas Rangers":"TEX",
+  "Toronto Blue Jays":"TOR","Washington Nationals":"WSH",
+
+  // NBA
+  "Atlanta Hawks":"ATL","Boston Celtics":"BOS","Brooklyn Nets":"BKN","Charlotte Hornets":"CHA",
+  "Chicago Bulls":"CHI","Cleveland Cavaliers":"CLE","Dallas Mavericks":"DAL","Denver Nuggets":"DEN",
+  "Detroit Pistons":"DET","Golden State Warriors":"GSW","Houston Rockets":"HOU","Indiana Pacers":"IND",
+  "LA Clippers":"LAC","Los Angeles Lakers":"LAL","Memphis Grizzlies":"MEM","Miami Heat":"MIA",
+  "Milwaukee Bucks":"MIL","Minnesota Timberwolves":"MIN","New Orleans Pelicans":"NOP","New York Knicks":"NYK",
+  "Oklahoma City Thunder":"OKC","Orlando Magic":"ORL","Philadelphia 76ers":"PHI","Phoenix Suns":"PHX",
+  "Portland Trail Blazers":"POR","Sacramento Kings":"SAC","San Antonio Spurs":"SAS","Toronto Raptors":"TOR",
+  "Utah Jazz":"UTA","Washington Wizards":"WAS",
+
+  // WNBA
+  "Atlanta Dream":"ATL","Chicago Sky":"CHI","Connecticut Sun":"CON","Dallas Wings":"DAL",
+  "Indiana Fever":"IND","Las Vegas Aces":"LVA","Los Angeles Sparks":"LA","Minnesota Lynx":"MIN",
+  "New York Liberty":"NY","Phoenix Mercury":"PHX","Seattle Storm":"SEA","Washington Mystics":"WAS",
+  "Golden State Valkyries":"GSV",
+
+  // NHL
+  "Anaheim Ducks":"ANA","Arizona Coyotes":"ARI","Boston Bruins":"BOS","Buffalo Sabres":"BUF",
+  "Calgary Flames":"CGY","Carolina Hurricanes":"CAR","Chicago Blackhawks":"CHI","Colorado Avalanche":"COL",
+  "Columbus Blue Jackets":"CBJ","Dallas Stars":"DAL","Detroit Red Wings":"DET","Edmonton Oilers":"EDM",
+  "Florida Panthers":"FLA","Los Angeles Kings":"LAK","Minnesota Wild":"MIN","Montreal Canadiens":"MTL",
+  "Nashville Predators":"NSH","New Jersey Devils":"NJD","New York Islanders":"NYI","New York Rangers":"NYR",
+  "Ottawa Senators":"OTT","Philadelphia Flyers":"PHI","Pittsburgh Penguins":"PIT","San Jose Sharks":"SJ",
+  "Seattle Kraken":"SEA","St. Louis Blues":"STL","Tampa Bay Lightning":"TB","Toronto Maple Leafs":"TOR",
+  "Vancouver Canucks":"VAN","Vegas Golden Knights":"VGK","Washington Capitals":"WSH","Winnipeg Jets":"WPG"
+};
+
+// UEFA Champions League (2024–25)
+"Arsenal":"ARS","Atletico Madrid":"ATM","Barcelona":"BAR","Bayern Munich":"BAY",
+"Benfica":"BEN","Borussia Dortmund":"DOR","Celtic":"CEL","Chelsea":"CHE",
+"Club Brugge":"BRU","Feyenoord":"FEY","Galatasaray":"GAL","Inter Milan":"INT",
+"Juventus":"JUV","Liverpool":"LIV","Manchester City":"MCI","Manchester United":"MUN",
+"Marseille":"MAR","Napoli":"NAP","Paris Saint-Germain":"PSG","Porto":"POR",
+"Real Madrid":"RMA","RB Leipzig":"RBL","Red Star Belgrade":"RSB","Sevilla":"SEV",
+"Shakhtar Donetsk":"SHA","Sporting CP":"SCP","Union Berlin":"UNB","Villarreal":"VIL"
+
+// English Premier League (2024–25)
+"Arsenal":"ARS","Aston Villa":"AVL","Bournemouth":"BOU","Brentford":"BRE",
+"Brighton & Hove Albion":"BHA","Burnley":"BUR","Chelsea":"CHE","Crystal Palace":"CRY",
+"Everton":"EVE","Fulham":"FUL","Leeds United":"LEE","Leicester City":"LEI",
+"Liverpool":"LIV","Luton Town":"LUT","Manchester City":"MCI","Manchester United":"MUN",
+"Newcastle United":"NEW","Nottingham Forest":"NFO","Sheffield United":"SHU","Tottenham Hotspur":"TOT",
+"West Ham United":"WHU","Wolverhampton Wanderers":"WOL"
+
+// Major League Soccer (2025)
+"Atlanta United":"ATL","Austin FC":"ATX","Charlotte FC":"CLT","Chicago Fire":"CHI",
+"FC Cincinnati":"CIN","Colorado Rapids":"COL","Columbus Crew":"CLB","D.C. United":"DCU",
+"FC Dallas":"DAL","Houston Dynamo":"HOU","Inter Miami":"MIA","LA Galaxy":"LAG",
+"Los Angeles FC":"LAFC","Minnesota United":"MIN","CF Montréal":"MTL","Nashville SC":"NSH",
+"New England Revolution":"NE","New York City FC":"NYC","New York Red Bulls":"RBNY","Orlando City":"ORL",
+"Philadelphia Union":"PHI","Portland Timbers":"POR","Real Salt Lake":"RSL","San Diego FC":"SD",
+"San Jose Earthquakes":"SJ","Seattle Sounders":"SEA","Sporting Kansas City":"SKC","St. Louis City SC":"STL",
+"Toronto FC":"TOR","Vancouver Whitecaps":"VAN"
+
+// LaLiga (2024–25)
+"Alavés":"ALA","Almería":"ALM","Athletic Club":"ATH","Atlético Madrid":"ATM",
+"Barcelona":"BAR","Cádiz":"CAD","Celta Vigo":"CEL","Elche":"ELC",
+"Espanyol":"ESP","Getafe":"GET","Girona":"GIR","Granada":"GRA",
+"Levante":"LEV","Mallorca":"MLL","Osasuna":"OSA","Rayo Vallecano":"RAY",
+"Real Betis":"BET","Real Madrid":"RMA","Real Sociedad":"RSO","Sevilla":"SEV",
+"Valencia":"VAL","Valladolid":"VLL","Villarreal":"VIL"
+
+// Serie A (2024–25)
+"Atalanta":"ATA","Bologna":"BOL","Cagliari":"CAG","Empoli":"EMP",
+"Fiorentina":"FIO","Genoa":"GEN","Hellas Verona":"VER","Inter Milan":"INT",
+"Juventus":"JUV","Lazio":"LAZ","Lecce":"LEC","AC Milan":"MIL",
+"Monza":"MON","Napoli":"NAP","Parma":"PAR","Roma":"ROM",
+"Salernitana":"SAL","Sampdoria":"SAM","Sassuolo":"SAS","Spezia":"SPE",
+"Torino":"TOR","Udinese":"UDI","Venezia":"VEN"
+
+// Bundesliga (2024–25)
+"Augsburg":"AUG","Bayer Leverkusen":"LEV","Bayern Munich":"BAY","Bochum":"BOC",
+"Borussia Dortmund":"DOR","Borussia Mönchengladbach":"BMG","Eintracht Frankfurt":"SGE","FC Heidenheim":"HEI",
+"Hertha BSC":"BSC","Hoffenheim":"TSG","Mainz 05":"M05","RB Leipzig":"RBL",
+"SC Freiburg":"SCF","Schalke 04":"S04","Stuttgart":"STU","Union Berlin":"UNB",
+"Werder Bremen":"BRE","Wolfsburg":"WOB"
+
+// FA Cup (2024–25)
+"Arsenal":"ARS","Aston Villa":"AVL","Bournemouth":"BOU","Brentford":"BRE",
+"Brighton & Hove Albion":"BHA","Burnley":"BUR","Chelsea":"CHE","Crystal Palace":"CRY",
+"Everton":"EVE","Fulham":"FUL","Leeds United":"LEE","Leicester City":"LEI",
+"Liverpool":"LIV","Luton Town":"LUT","Manchester City":"MCI","Manchester United":"MUN",
+"Newcastle United":"NEW","Nottingham Forest":"NFO","Sheffield United":"SHU","Tottenham Hotspur":"TOT",
+"West Ham United":"WHU","Wolverhampton Wanderers":"WOL"
+
+// Liga MX (2024–25)
+"América":"AME","Atlas":"ATS","Atlético San Luis":"ASL","Cruz Azul":"CAZ",
+"Guadalajara":"GDL","Juárez":"JUA","León":"LEO","Mazatlán":"MAZ",
+"Monterrey":"MTY","Necaxa":"NEC","Pachuca":"PAC","Puebla":"PUE",
+"Pumas UNAM":"UNAM","Querétaro":"QUE","Santos Laguna":"SAN","Tijuana":"TIJ",
+"Tigres UANL":"UANL","Toluca":"TOL"
+
+// NWSL (2024)
+"Angel City FC":"ACFC","Bay FC":"BAY","Chicago Red Stars":"CHI","Houston Dash":"HOU",
+"Kansas City Current":"KC","NJ/NY Gotham FC":"GOT","North Carolina Courage":"NC",
+"Orlando Pride":"ORL","Portland Thorns FC":"POR","Racing Louisville FC":"LOU",
+"San Diego Wave FC":"SDW","Seattle Reign FC":"SEA","Utah Royals FC":"UTA","Washington Spirit":"WAS"
+
+// Ligue 1 (2024–25)
+"Angers":"ANG","Bordeaux":"BOR","Brest":"BRE","Clermont":"CLE",
+"Dijon":"DIJ","Lens":"LEN","Lille":"LIL","Lorient":"LOR",
+"Lyon":"LYO","Marseille":"MAR","Metz":"MET","Monaco":"MON",
+"Montpellier":"MPL","Nantes":"NAN","Nice":"NIC","Paris Saint-Germain":"PSG",
+"Reims":"REI","Rennes":"REN","Saint-Étienne":"STE","Strasbourg":"STR",
+"Toulouse":"TOU","Troyes":"TRO"
+
+// UEFA Europa League (2024–25)
+"Ajax":"AJA","Arsenal":"ARS","Atalanta":"ATA","Bayer Leverkusen":"LEV",
+"Benfica":"BEN","Celtic":"CEL","Eintracht Frankfurt":"SGE","Fenerbahçe":"FEN",
+"Feyenoord":"FEY","Lazio":"LAZ","Leicester City":"LEI","Lille":"LIL",
+"Lyon":"LYO","Marseille":"MAR","Napoli":"NAP","PSV Eindhoven":"PSV",
+"Real Sociedad":"RSO","Roma":"ROM","Sevilla":"SEV","West Ham United":"WHU"
+
+// UEFA Conference League (2024–25)
+"Aberdeen":"ABE","Anderlecht":"AND","Basel":"BAS","Copenhagen":"COP",
+"Fiorentina":"FIO","Gent":"GEN","Hearts":"HEA","LASK":"LAS",
+"Molde":"MOL","Nice":"NIC","Partizan":"PAR","Slavia Prague":"SLA",
+"Trabzonspor":"TRA","Villarreal":"VIL","West Ham United":"WHU","Zorya Luhansk":"ZOR"
+
+  }
+
 let leagueOrder = [];
 
 async function loadLeagueOrder() {
@@ -1697,10 +1829,12 @@ async function loadLeagueOrder() {
 }
 
 function parseTimeToLocal(timeStr) {
-  const ny = new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'});
-  let dt = new Date(`${ny} ${timeStr} EDT`);
-  if (isNaN(dt)) dt = new Date(`${ny} ${timeStr}`);
-  return dt;
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const dateString = `${year}-${month}-${day}`;
+  return new Date(`${dateString} ${timeStr}`);
 }
 
 async function fetchAllGames() {
