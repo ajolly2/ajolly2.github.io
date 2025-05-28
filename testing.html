@@ -1806,6 +1806,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 
+      <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tabs = document.querySelectorAll(".games-tab");
+  const contentBoxes = document.querySelectorAll(".games-content");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      // Remove "active" from all tabs
+      tabs.forEach(t => t.classList.remove("active"));
+      // Hide all content boxes
+      contentBoxes.forEach(c => c.style.display = "none");
+
+      // Activate the clicked tab
+      tab.classList.add("active");
+      const targetId = "tv-listings-" + tab.dataset.tab;
+      const targetBox = document.getElementById(targetId);
+      if (targetBox) targetBox.style.display = "block";
+    });
+  });
+
+  // Ensure default active tab (scores) is visible
+  const defaultTab = document.querySelector(".games-tab.active");
+  if (defaultTab) {
+    const targetId = "tv-listings-" + defaultTab.dataset.tab;
+    const targetBox = document.getElementById(targetId);
+    if (targetBox) targetBox.style.display = "block";
+  }
+});
+</script>
  
 
   </body>
