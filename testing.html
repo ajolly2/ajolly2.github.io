@@ -789,6 +789,28 @@
   </div>
 </div>
 
+      <!-- ─── Standings Column ───────────────────────────────────────────────────────── -->
+<div id="standings-column" class="column standings" style="flex:0 0 250px; background-color:#1f1f1f;">
+  <div id="standings-container" style="display: none; padding:10px; color:white;">
+    <h2 id="standings-title" style="margin-top:0;"></h2>
+    <table id="compact-standings" style="width:100%; border-collapse:collapse; margin-bottom:1em;">
+      <thead>
+        <tr><th style="text-align:left">Pos</th><th>Team</th><th style="text-align:right">Pts</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <table id="full-standings" style="width:100%; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th>Pos</th><th>Team</th><th>Pl</th><th>W</th>
+          <th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+<!-- ─────────────────────────────────────────────────────────────────────────────── -->
 
 
 <!-- Divider between standings and news -->
@@ -1308,6 +1330,17 @@ tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-s
         document.querySelectorAll("#menuList li[data-section]").forEach(item => {
           item.addEventListener("click", () => {
             const section = item.dataset.section;
+            // ── START STANDINGS SNIPPET ──
+    const standCol = document.getElementById("standings-column");
+    const standCont = document.getElementById("standings-container");
+    if (sheetURLs[section]) {
+      standCont.style.display = "block";
+      loadStandings(section);                // your function to populate
+    } else {
+      standCont.style.display = "none";
+      standCont.querySelectorAll("tbody").forEach(tb => tb.innerHTML = "");
+    }
+    // ── END STANDINGS SNIPPET ──
             loadSocialFeed(section);
           });
         });
