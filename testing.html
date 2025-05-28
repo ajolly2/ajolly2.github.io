@@ -1621,9 +1621,6 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
 <!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
 <script>
-  const leagueOrderURL =
-    'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
-
   const sheetURLs = {
     NFL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
     NHL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
@@ -1632,50 +1629,21 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     WNBA: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv'
   };
 
-   const TEAM_ABBR = {
-    "Arizona Diamondbacks":"ARI","Atlanta Braves":"ATL","Baltimore Orioles":"BAL","Boston Red Sox":"BOS",
-    "Chicago White Sox":"CHW","Chicago Cubs":"CHC","Cincinnati Reds":"CIN","Cleveland Guardians":"CLE",
-    "Colorado Rockies":"COL","Detroit Tigers":"DET","Houston Astros":"HOU","Kansas City Royals":"KC",
-    "Los Angeles Angels":"LAA","Los Angeles Dodgers":"LAD","Miami Marlins":"MIA","Milwaukee Brewers":"MIL",
-    "Minnesota Twins":"MIN","New York Yankees":"NYY","New York Mets":"NYM","Oakland Athletics":"ATH",
-    "Philadelphia Phillies":"PHI","Pittsburgh Pirates":"PIT","San Diego Padres":"SD","San Francisco Giants":"SF",
-    "Seattle Mariners":"SEA","St. Louis Cardinals":"STL","Tampa Bay Rays":"TB","Texas Rangers":"TEX",
-    "Toronto Blue Jays":"TOR","Washington Nationals":"WSH",
+  const leagueOrder = ["NFL", "NBA", "NHL", "MLB", "WNBA"];
 
-    "Atlanta Hawks":"ATL","Boston Celtics":"BOS","Brooklyn Nets":"BKN","Charlotte Hornets":"CHA",
-    "Chicago Bulls":"CHI","Cleveland Cavaliers":"CLE","Dallas Mavericks":"DAL","Denver Nuggets":"DEN",
-    "Detroit Pistons":"DET","Golden State Warriors":"GSW","Houston Rockets":"HOU","Indiana Pacers":"IND",
-    "LA Clippers":"LAC","Los Angeles Lakers":"LAL","Memphis Grizzlies":"MEM","Miami Heat":"MIA",
-    "Milwaukee Bucks":"MIL","Minnesota Timberwolves":"MIN","New Orleans Pelicans":"NOP","New York Knicks":"NYK",
-    "Oklahoma City Thunder":"OKC","Orlando Magic":"ORL","Philadelphia 76ers":"PHI","Phoenix Suns":"PHX",
-    "Portland Trail Blazers":"POR","Sacramento Kings":"SAC","San Antonio Spurs":"SAS","Toronto Raptors":"TOR",
-    "Utah Jazz":"UTA","Washington Wizards":"WAS",
-
-    "Atlanta Dream":"ATL","Chicago Sky":"CHI","Connecticut Sun":"CON","Dallas Wings":"DAL",
-    "Indiana Fever":"IND","Las Vegas Aces":"LVA","Los Angeles Sparks":"LA","Minnesota Lynx":"MIN",
-    "New York Liberty":"NY","Phoenix Mercury":"PHX","Seattle Storm":"SEA","Washington Mystics":"WAS",
-
-    "Anaheim Ducks":"ANA","Arizona Coyotes":"ARI","Boston Bruins":"BOS","Buffalo Sabres":"BUF",
-    "Calgary Flames":"CGY","Carolina Hurricanes":"CAR","Chicago Blackhawks":"CHI","Colorado Avalanche":"COL",
-    "Columbus Blue Jackets":"CBJ","Dallas Stars":"DAL","Detroit Red Wings":"DET","Edmonton Oilers":"EDM",
-    "Florida Panthers":"FLA","Los Angeles Kings":"LAK","Minnesota Wild":"MIN","Montreal Canadiens":"MTL",
-    "Nashville Predators":"NSH","New Jersey Devils":"NJD","New York Islanders":"NYI","New York Rangers":"NYR",
-    "Ottawa Senators":"OTT","Philadelphia Flyers":"PHI","Pittsburgh Penguins":"PIT","San Jose Sharks":"SJ",
-    "Seattle Kraken":"SEA","St. Louis Blues":"STL","Tampa Bay Lightning":"TB","Toronto Maple Leafs":"TOR",
-    "Vancouver Canucks":"VAN","Vegas Golden Knights":"VGK","Washington Capitals":"WSH","Winnipeg Jets":"WPG"
+  const TEAM_ABBR = {
+    "Atlanta Hawks":"ATL", "Boston Celtics":"BOS", "Brooklyn Nets":"BKN", "Charlotte Hornets":"CHA",
+    "Chicago Bulls":"CHI", "Cleveland Cavaliers":"CLE", "Dallas Mavericks":"DAL", "Denver Nuggets":"DEN",
+    "Detroit Pistons":"DET", "Golden State Warriors":"GSW", "Houston Rockets":"HOU", "Indiana Pacers":"IND",
+    "LA Clippers":"LAC", "Los Angeles Lakers":"LAL", "Memphis Grizzlies":"MEM", "Miami Heat":"MIA",
+    "Milwaukee Bucks":"MIL", "Minnesota Timberwolves":"MIN", "New Orleans Pelicans":"NOP", "New York Knicks":"NYK",
+    "Oklahoma City Thunder":"OKC", "Orlando Magic":"ORL", "Philadelphia 76ers":"PHI", "Phoenix Suns":"PHX",
+    "Portland Trail Blazers":"POR", "Sacramento Kings":"SAC", "San Antonio Spurs":"SAS", "Toronto Raptors":"TOR",
+    "Utah Jazz":"UTA", "Washington Wizards":"WAS",
+    "New York Liberty": "NY", "Las Vegas Aces": "LVA", "Chicago Sky": "CHI", "Atlanta Dream": "ATL",
+    "Connecticut Sun": "CON", "Indiana Fever": "IND", "Minnesota Lynx": "MIN", "Phoenix Mercury": "PHX",
+    "Seattle Storm": "SEA", "Dallas Wings": "DAL", "Los Angeles Sparks": "LA", "Washington Mystics": "WAS"
   };
-
-  let leagueOrder = [];
-
-  async function loadLeagueOrder() {
-    try {
-      const txt = await (await fetch(leagueOrderURL)).text();
-      leagueOrder = txt.trim().split(/\r?\n/).map(r => r.split(',')[0])
-                         .filter(l => sheetURLs[l]);
-    } catch {
-      leagueOrder = Object.keys(sheetURLs);
-    }
-  }
 
   function parseTimeToLocal(timeStr) {
     const ny = new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'});
@@ -1685,6 +1653,7 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   }
 
   function convertStatus(raw) {
+    if (!raw) return "";
     if (/final/i.test(raw)) return 'F';
     if (/halftime/i.test(raw)) return 'HT';
     if (/top\s*(\d)/i.test(raw)) return `Top ${RegExp.$1}`;
@@ -1697,14 +1666,13 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   async function fetchAllGames() {
     const byLeague = {};
     await Promise.all(
-      Object.entries(sheetURLs).map(async ([league,url]) => {
+      Object.entries(sheetURLs).map(async ([league, url]) => {
         try {
-          const rows = (await (await fetch(url)).text())
-            .trim().split(/\r?\n/).slice(1)
-            .map(r => r.split(','));
-          if (rows.length) byLeague[league] = rows;
+          const text = await (await fetch(url)).text();
+          const rows = text.trim().split(/\r?\n/).slice(1).map(r => r.split(','));
+          byLeague[league] = rows;
         } catch (e) {
-          console.warn(`failed ${league}`, e);
+          console.warn(`Failed to fetch ${league}:`, e);
         }
       })
     );
@@ -1713,8 +1681,11 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
   function renderGames(byLeague) {
     const container = document.getElementById('live-games-container');
+    if (!container) return;
     container.innerHTML = '';
+
     leagueOrder.forEach(league => {
+      console.group(`Rendering ${league}`);
       const section = document.createElement('div');
       section.className = 'league-section';
       section.innerHTML = `<div style="margin-top:1.25em"></div><div class="league-header">${league}</div>`;
@@ -1722,15 +1693,20 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
       section.appendChild(list);
 
       let prevTime = null;
+
       (byLeague[league] || []).forEach(cols => {
         const [, , matchup, statusRaw, score, startRaw] = cols;
-        if (!matchup || !statusRaw) return;
+
+        if (!matchup) {
+          console.warn(`[${league}] Skipping row due to missing matchup:`, cols);
+          return;
+        }
 
         const [homeTeam, awayTeam] = matchup.split(' vs. ').map(t => t.trim());
         const homeAbbr = TEAM_ABBR[homeTeam] || homeTeam;
         const awayAbbr = TEAM_ABBR[awayTeam] || awayTeam;
 
-        const status = convertStatus(statusRaw.trim());
+        const status = convertStatus(statusRaw?.trim());
         const isLive = /top|bot|half|inning|\d+['’]/i.test(statusRaw);
         const dt = parseTimeToLocal(startRaw);
         const displayTime = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -1763,6 +1739,7 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
       });
 
       container.appendChild(section);
+      console.groupEnd();
     });
   }
 
@@ -1771,28 +1748,18 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     renderGames(data);
   }
 
-  document.addEventListener('DOMContentLoaded', async () => {
-  await loadLeagueOrder();
-  await loadAndRender();
-  setInterval(loadAndRender, 5 * 60 * 1000);
+  document.addEventListener('DOMContentLoaded', () => {
+    loadAndRender();
+    setInterval(loadAndRender, 5 * 60 * 1000);
 
-  const tvSection = document.getElementById("tv-listings-Home");
-
-  document.querySelectorAll("#menuList li[data-section]").forEach(item => {
-    item.addEventListener("click", () => {
-      const section = item.dataset.section;
-      // Show live games ONLY when "Home" is selected
-      if (section === "Home") {
-        if (tvSection) tvSection.style.display = "block";
-      } else {
-        if (tvSection) tvSection.style.display = "none";
-      }
+    const tvSection = document.getElementById("tv-listings-Home");
+    document.querySelectorAll("#menuList li[data-section]").forEach(item => {
+      item.addEventListener("click", () => {
+        const section = item.dataset.section;
+        if (tvSection) tvSection.style.display = section === "Home" ? "block" : "none";
+      });
     });
   });
-
-  // Ensure it's visible on initial load (Home)
-  if (tvSection) tvSection.style.display = "block";
-});
 </script>
 
   </body>
