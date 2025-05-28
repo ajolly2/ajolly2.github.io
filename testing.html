@@ -1772,10 +1772,27 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
-    await loadLeagueOrder();
-    await loadAndRender();
-    setInterval(loadAndRender, 5 * 60 * 1000);
+  await loadLeagueOrder();
+  await loadAndRender();
+  setInterval(loadAndRender, 5 * 60 * 1000);
+
+  const tvSection = document.getElementById("tv-listings-Home");
+
+  document.querySelectorAll("#menuList li[data-section]").forEach(item => {
+    item.addEventListener("click", () => {
+      const section = item.dataset.section;
+      // Show live games ONLY when "Home" is selected
+      if (section === "Home") {
+        if (tvSection) tvSection.style.display = "block";
+      } else {
+        if (tvSection) tvSection.style.display = "none";
+      }
+    });
   });
+
+  // Ensure it's visible on initial load (Home)
+  if (tvSection) tvSection.style.display = "block";
+});
 </script>
 
   </body>
