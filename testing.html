@@ -789,28 +789,6 @@
   </div>
 </div>
 
-      <!-- ─── Standings Column ───────────────────────────────────────────────────────── -->
-<div id="standings-column" class="column standings" style="flex:0 0 250px; background-color:#1f1f1f;">
-  <div id="standings-container" style="display: none; padding:10px; color:white;">
-    <h2 id="standings-title" style="margin-top:0;"></h2>
-    <table id="compact-standings" style="width:100%; border-collapse:collapse; margin-bottom:1em;">
-      <thead>
-        <tr><th style="text-align:left">Pos</th><th>Team</th><th style="text-align:right">Pts</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <table id="full-standings" style="width:100%; border-collapse:collapse;">
-      <thead>
-        <tr>
-          <th>Pos</th><th>Team</th><th>Pl</th><th>W</th>
-          <th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</div>
-<!-- ─────────────────────────────────────────────────────────────────────────────── -->
 
 
 <!-- Divider between standings and news -->
@@ -1330,17 +1308,6 @@ tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-s
         document.querySelectorAll("#menuList li[data-section]").forEach(item => {
           item.addEventListener("click", () => {
             const section = item.dataset.section;
-            // ── START STANDINGS SNIPPET ──
-    const standCol = document.getElementById("standings-column");
-    const standCont = document.getElementById("standings-container");
-    if (sheetURLs[section]) {
-      standCont.style.display = "block";
-      loadStandings(section);                // your function to populate
-    } else {
-      standCont.style.display = "none";
-      standCont.querySelectorAll("tbody").forEach(tb => tb.innerHTML = "");
-    }
-    // ── END STANDINGS SNIPPET ──
             loadSocialFeed(section);
           });
         });
@@ -1704,21 +1671,22 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     </script>
 
 <!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
+<div id="live-games-container"></div>
 
 <script>
-  // ====== CONFIG ======
-  const leagueOrderURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
-  const sheetURLs = {
-    NFL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
-    NHL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
-    NBA:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
-    MLB:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
-    WNBA: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv'
-  };
+const leagueOrderURL =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
 
-  // ====== ABBREVIATIONS ======
-  const TEAM_ABBR = {
-  // MLB
+const sheetURLs = {
+  NFL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
+  NHL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
+  NBA:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
+  MLB:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
+  WNBA: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv'
+};
+
+// FULL TEAM_ABBR — inserted exactly as provided
+const TEAM_ABBR = {
   "Arizona Diamondbacks":"ARI","Atlanta Braves":"ATL","Baltimore Orioles":"BAL","Boston Red Sox":"BOS",
   "Chicago White Sox":"CHW","Chicago Cubs":"CHC","Cincinnati Reds":"CIN","Cleveland Guardians":"CLE",
   "Colorado Rockies":"COL","Detroit Tigers":"DET","Houston Astros":"HOU","Kansas City Royals":"KC",
@@ -1728,7 +1696,6 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   "Seattle Mariners":"SEA","St. Louis Cardinals":"STL","Tampa Bay Rays":"TB","Texas Rangers":"TEX",
   "Toronto Blue Jays":"TOR","Washington Nationals":"WSH",
 
-  // NBA
   "Atlanta Hawks":"ATL","Boston Celtics":"BOS","Brooklyn Nets":"BKN","Charlotte Hornets":"CHA",
   "Chicago Bulls":"CHI","Cleveland Cavaliers":"CLE","Dallas Mavericks":"DAL","Denver Nuggets":"DEN",
   "Detroit Pistons":"DET","Golden State Warriors":"GSW","Houston Rockets":"HOU","Indiana Pacers":"IND",
@@ -1738,13 +1705,11 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   "Portland Trail Blazers":"POR","Sacramento Kings":"SAC","San Antonio Spurs":"SAS","Toronto Raptors":"TOR",
   "Utah Jazz":"UTA","Washington Wizards":"WAS",
 
-  // WNBA
   "Atlanta Dream":"ATL","Chicago Sky":"CHI","Connecticut Sun":"CON","Dallas Wings":"DAL",
   "Indiana Fever":"IND","Las Vegas Aces":"LVA","Los Angeles Sparks":"LA","Minnesota Lynx":"MIN",
   "New York Liberty":"NY","Phoenix Mercury":"PHX","Seattle Storm":"SEA","Washington Mystics":"WAS",
   "Golden State Valkyries":"GSV",
 
-  // NHL
   "Anaheim Ducks":"ANA","Arizona Coyotes":"ARI","Boston Bruins":"BOS","Buffalo Sabres":"BUF",
   "Calgary Flames":"CGY","Carolina Hurricanes":"CAR","Chicago Blackhawks":"CHI","Colorado Avalanche":"COL",
   "Columbus Blue Jackets":"CBJ","Dallas Stars":"DAL","Detroit Red Wings":"DET","Edmonton Oilers":"EDM",
@@ -1754,7 +1719,6 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   "Seattle Kraken":"SEA","St. Louis Blues":"STL","Tampa Bay Lightning":"TB","Toronto Maple Leafs":"TOR",
   "Vancouver Canucks":"VAN","Vegas Golden Knights":"VGK","Washington Capitals":"WSH","Winnipeg Jets":"WPG",
 
-  // UEFA Champions League
   "Arsenal":"ARS","Atletico Madrid":"ATM","Barcelona":"BAR","Bayern Munich":"BAY",
   "Benfica":"BEN","Borussia Dortmund":"DOR","Celtic":"CEL","Chelsea":"CHE",
   "Club Brugge":"BRU","Feyenoord":"FEY","Galatasaray":"GAL","Inter Milan":"INT",
@@ -1763,14 +1727,12 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   "Real Madrid":"RMA","RB Leipzig":"RBL","Red Star Belgrade":"RSB","Sevilla":"SEV",
   "Shakhtar Donetsk":"SHA","Sporting CP":"SCP","Union Berlin":"UNB","Villarreal":"VIL",
 
-  // English Premier League
   "Aston Villa":"AVL","Bournemouth":"BOU","Brentford":"BRE","Brighton & Hove Albion":"BHA",
   "Burnley":"BUR","Crystal Palace":"CRY","Everton":"EVE","Fulham":"FUL",
   "Leeds United":"LEE","Leicester City":"LEI","Luton Town":"LUT","Newcastle United":"NEW",
-  "Nottingham Forest":"NFO","Sheffield United":"SHU","Tottenham Hotspur":"TOT","West Ham United":"WHU",
-  "Wolverhampton Wanderers":"WOL",
+  "Nottingham Forest":"NFO","Sheffield United":"SHU","Tottenham Hotspur":"TOT",
+  "West Ham United":"WHU","Wolverhampton Wanderers":"WOL",
 
-  // Major League Soccer
   "Atlanta United":"ATL","Austin FC":"ATX","Charlotte FC":"CLT","Chicago Fire":"CHI",
   "FC Cincinnati":"CIN","Colorado Rapids":"COL","Columbus Crew":"CLB","D.C. United":"DCU",
   "FC Dallas":"DAL","Houston Dynamo":"HOU","Inter Miami":"MIA","LA Galaxy":"LAG",
@@ -1780,196 +1742,182 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   "San Jose Earthquakes":"SJ","Seattle Sounders":"SEA","Sporting Kansas City":"SKC","St. Louis City SC":"STL",
   "Toronto FC":"TOR","Vancouver Whitecaps":"VAN",
 
-  // LaLiga
-  "Alavés":"ALA","Almería":"ALM","Athletic Club":"ATH","Atlético Madrid":"ATM",
-  "Cádiz":"CAD","Celta Vigo":"CEL","Elche":"ELC","Espanyol":"ESP",
-  "Getafe":"GET","Girona":"GIR","Granada":"GRA","Levante":"LEV",
+  "Alavés":"ALA","Almería":"ALM","Athletic Club":"ATH","Cádiz":"CAD","Celta Vigo":"CEL",
+  "Elche":"ELC","Espanyol":"ESP","Getafe":"GET","Girona":"GIR","Granada":"GRA","Levante":"LEV",
   "Mallorca":"MLL","Osasuna":"OSA","Rayo Vallecano":"RAY","Real Betis":"BET",
   "Real Sociedad":"RSO","Valencia":"VAL","Valladolid":"VLL",
 
-  // Serie A
-  "Atalanta":"ATA","Bologna":"BOL","Cagliari":"CAG","Empoli":"EMP",
-  "Fiorentina":"FIO","Genoa":"GEN","Hellas Verona":"VER","Lazio":"LAZ",
-  "Lecce":"LEC","AC Milan":"MIL","Monza":"MON","Parma":"PAR","Roma":"ROM",
-  "Salernitana":"SAL","Sampdoria":"SAM","Sassuolo":"SAS","Spezia":"SPE",
+  "Atalanta":"ATA","Bologna":"BOL","Cagliari":"CAG","Empoli":"EMP","Fiorentina":"FIO","Genoa":"GEN",
+  "Hellas Verona":"VER","Lazio":"LAZ","Lecce":"LEC","AC Milan":"MIL","Monza":"MON","Parma":"PAR",
+  "Roma":"ROM","Salernitana":"SAL","Sampdoria":"SAM","Sassuolo":"SAS","Spezia":"SPE",
   "Torino":"TOR","Udinese":"UDI","Venezia":"VEN",
 
-  // Bundesliga
-  "Augsburg":"AUG","Bayer Leverkusen":"LEV","Bochum":"BOC",
-  "Borussia Mönchengladbach":"BMG","Eintracht Frankfurt":"SGE","FC Heidenheim":"HEI",
-  "Hertha BSC":"BSC","Hoffenheim":"TSG","Mainz 05":"M05",
-  "SC Freiburg":"SCF","Schalke 04":"S04","Stuttgart":"STU","Werder Bremen":"BRE","Wolfsburg":"WOB",
+  "Augsburg":"AUG","Bayer Leverkusen":"LEV","Bochum":"BOC","Borussia Mönchengladbach":"BMG",
+  "Eintracht Frankfurt":"SGE","FC Heidenheim":"HEI","Hertha BSC":"BSC","Hoffenheim":"TSG",
+  "Mainz 05":"M05","SC Freiburg":"SCF","Schalke 04":"S04","Stuttgart":"STU",
+  "Werder Bremen":"BRE","Wolfsburg":"WOB",
 
-  // FA Cup
-  // (same as EPL — abbreviations already included)
-
-  // Liga MX
-  "América":"AME","Atlas":"ATS","Atlético San Luis":"ASL","Cruz Azul":"CAZ",
-  "Guadalajara":"GDL","Juárez":"JUA","León":"LEO","Mazatlán":"MAZ",
-  "Monterrey":"MTY","Necaxa":"NEC","Pachuca":"PAC","Puebla":"PUE",
-  "Pumas UNAM":"UNAM","Querétaro":"QUE","Santos Laguna":"SAN","Tijuana":"TIJ",
+  "América":"AME","Atlas":"ATS","Atlético San Luis":"ASL","Cruz Azul":"CAZ","Guadalajara":"GDL",
+  "Juárez":"JUA","León":"LEO","Mazatlán":"MAZ","Monterrey":"MTY","Necaxa":"NEC","Pachuca":"PAC",
+  "Puebla":"PUE","Pumas UNAM":"UNAM","Querétaro":"QUE","Santos Laguna":"SAN","Tijuana":"TIJ",
   "Tigres UANL":"UANL","Toluca":"TOL",
 
-  // NWSL
   "Angel City FC":"ACFC","Bay FC":"BAY","Chicago Red Stars":"CHI","Houston Dash":"HOU",
   "Kansas City Current":"KC","NJ/NY Gotham FC":"GOT","North Carolina Courage":"NC",
   "Orlando Pride":"ORL","Portland Thorns FC":"POR","Racing Louisville FC":"LOU",
   "San Diego Wave FC":"SDW","Seattle Reign FC":"SEA","Utah Royals FC":"UTA","Washington Spirit":"WAS",
 
-  // Ligue 1
-  "Angers":"ANG","Bordeaux":"BOR","Brest":"BRE","Clermont":"CLE",
-  "Dijon":"DIJ","Lens":"LEN","Lille":"LIL","Lorient":"LOR",
-  "Lyon":"LYO","Metz":"MET","Monaco":"MON","Montpellier":"MPL",
-  "Nantes":"NAN","Nice":"NIC","Reims":"REI","Rennes":"REN",
-  "Saint-Étienne":"STE","Strasbourg":"STR","Toulouse":"TOU","Troyes":"TRO",
+  "Angers":"ANG","Bordeaux":"BOR","Brest":"BRE","Clermont":"CLE","Dijon":"DIJ","Lens":"LEN",
+  "Lille":"LIL","Lorient":"LOR","Lyon":"LYO","Metz":"MET","Monaco":"MON","Montpellier":"MPL",
+  "Nantes":"NAN","Nice":"NIC","Reims":"REI","Rennes":"REN","Saint-Étienne":"STE","Strasbourg":"STR",
+  "Toulouse":"TOU","Troyes":"TRO",
 
-  // Europa League
-  "Ajax":"AJA","Atalanta":"ATA","Fenerbahçe":"FEN","PSV Eindhoven":"PSV",
-
-  // Conference League
-  "Aberdeen":"ABE","Anderlecht":"AND","Basel":"BAS","Copenhagen":"COP",
-  "Gent":"GEN","Hearts":"HEA","LASK":"LAS","Molde":"MOL",
-  "Partizan":"PAR","Slavia Prague":"SLA","Trabzonspor":"TRA","Zorya Luhansk":"ZOR"
+  "Ajax":"AJA","Fenerbahçe":"FEN","PSV Eindhoven":"PSV","Zorya Luhansk":"ZOR","Slavia Prague":"SLA",
+  "Basel":"BAS","Gent":"GEN","Molde":"MOL","LASK":"LAS","Partizan":"PAR","Trabzonspor":"TRA",
+  "Copenhagen":"COP","Aberdeen":"ABE","Anderlecht":"AND","Hearts":"HEA"
 };
 
+let leagueOrder = [];
 
-
-
-  // ====== HELPERS ======
-  function parseTimeToLocal(timeStr) {
-    // get today’s date in New York
-    const nyDate = new Date().toLocaleDateString('en-US',{timeZone:'America/New_York'});
-    let dt = new Date(`${nyDate} ${timeStr} EDT`);
-    if (isNaN(dt)) dt = new Date(`${nyDate} ${timeStr}`);
-    return dt;
+async function loadLeagueOrder() {
+  try {
+    const txt = await (await fetch(leagueOrderURL)).text();
+    leagueOrder = txt.trim().split(/\r?\n/).map(r => r.split(',')[0]).filter(l => sheetURLs[l]);
+  } catch {
+    leagueOrder = Object.keys(sheetURLs);
   }
-  
-  const yourCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?output=csv';
- async function fetchAllGames() {
-  // fetch the raw CSV text
-  const text = await (await fetch(yourCsvUrl)).text();
-  const rows = text.trim().split(/\r?\n/).map(r => r.split(','));
-  
-  // Pull off the header row and build our index map
-  const headers = rows.shift();
-  const idx = {
-    matchup: headers.indexOf("matchup"),
-    start:   headers.indexOf("start"),
-    status:  headers.indexOf("status"),
-    score:   headers.indexOf("score")
-  };
-
-  // Return both the raw rows and the idx map
-  return { idx, rows };
 }
 
-  async function loadLeagueOrder() {
-    try {
-      const txt = await (await fetch(leagueOrderURL)).text();
-      return txt.trim().split(/\r?\n/).map(r => r.split(',')[0]).filter(l => sheetURLs[l]);
-    } catch {
-      return Object.keys(sheetURLs);
-    }
-  }
+function parseTimeToLocal(timeStr) {
+  // Get today's date in Eastern Time
+  const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+  const base = new Date(eastNow);
 
-  function renderGamesByTab(byLeague, leagueOrder) {
-    const containers = {
-      scores: document.getElementById("tv-listings-scores"),
-      today:  document.getElementById("tv-listings-today"),
-      live:   document.getElementById("tv-listings-live")
-    };
-    Object.values(containers).forEach(c => c.innerHTML = "");
+  const year = base.getFullYear();
+  const month = String(base.getMonth() + 1).padStart(2, '0');
+  const day = String(base.getDate()).padStart(2, '0');
 
-    const now = new Date();
-    const todayStr     = now.toLocaleDateString("en-CA");
-    const yesterday    = new Date(now); yesterday.setDate(now.getDate()-1);
-    const yesterdayStr = yesterday.toLocaleDateString("en-CA");
-    const liveRegex    = /^(Top|Bot)\b/i;
+  // Combine into full datetime string and treat it as Eastern Time (ET)
+  const easternTimeString = `${year}-${month}-${day} ${timeStr}`;
+  
+  // Create UTC time from ET, assuming EDT (GMT-0400)
+  const utcDate = new Date(`${easternTimeString} GMT-0400`);
 
-    leagueOrder.forEach(league => {
-      const games    = byLeague[league] || [];
-      const sections = { scores: [], today: [], live: [] };
-      const seenTimes = new Set();
+  return utcDate; // Returns a Date object in user's local time
+}
 
-      games.forEach(cols => {
-        const matchup   = cols[idx.matchup];
-const startRaw  = cols[idx.start];
-const statusRaw = cols[idx.status];
-const score     = cols[idx.score];
-        if (!matchup || !statusRaw) return;
+async function fetchAllGames() {
+  const byLeague = {};
+  await Promise.all(
+    Object.entries(sheetURLs).map(async ([league, url]) => {
+      try {
+        const rows = (await (await fetch(url)).text())
+          .trim().split(/\r?\n/).slice(1)
+          .map(r => r.split(','));
+        if (rows.length) byLeague[league] = rows;
+      } catch (e) {
+        console.warn(`failed ${league}`, e);
+      }
+    })
+  );
+  return byLeague;
+}
 
-        const [home, away] = matchup.split(" vs. ").map(t => t.trim());
-        const dt      = parseTimeToLocal(startRaw);
-        const dateStr = dt.toLocaleDateString("en-CA");
-        const timeStr = dt.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
-        const status  = statusRaw;
-        let   display;
+function renderGamesByTab(byLeague) {
+  const containers = {
+    scores: document.getElementById("tv-listings-scores"),
+    today: document.getElementById("tv-listings-today"),
+    live: document.getElementById("tv-listings-live")
+  };
 
-        if (/final/i.test(status) || dateStr === yesterdayStr) {
-          display = "F";
-        } else if (liveRegex.test(status)) {
-          display = score
-            ? `${score} ${status}`
-            : status;
-        } else {
-          display = seenTimes.has(timeStr) ? "" : timeStr;
-          seenTimes.add(timeStr);
-        }
+  Object.values(containers).forEach(c => (c.innerHTML = ""));
 
-        const homeAbbr = TEAM_ABBR[home] || home;
-        const awayAbbr = TEAM_ABBR[away] || away;
+  const now = new Date();
+  const todayDateStr = now.toLocaleDateString("en-CA");
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const yesterdayStr = yesterday.toLocaleDateString("en-CA");
 
-        const row = document.createElement("div");
-        row.className = "game-row";
-        row.innerHTML = `
-          <div class="game-time" style="color:${liveRegex.test(status)?'red':'#ccc'}">
-            ${display}
-          </div>
-          <div class="game-matchup">
-            ${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}
-          </div>
-          <div class="game-channel"></div>
-        `;
+  leagueOrder.forEach(league => {
+    const games = (byLeague[league] || []);
+    const sections = { scores: [], today: [], live: [] };
+    const seenTimes = new Set();
 
-        if (/final/i.test(status) || dateStr===yesterdayStr) {
-          sections.scores.push(row);
-        } else if (liveRegex.test(status)) {
-          sections.live.push(row);
-        } else if (dateStr===todayStr) {
-          sections.today.push(row);
-        }
-      });
+    games.forEach(cols => {
+      const [, , matchup, statusRaw, score, startRaw] = cols;
+      if (!matchup || !statusRaw) return;
 
-      Object.entries(sections).forEach(([tab, rows]) => {
-        if (!rows.length) return;
-        const box = document.createElement("div");
-        box.className = "league-section";
-        box.innerHTML = `<div style="margin-top:1em"></div>
-                         <div class="league-header">${league}</div>`;
-        rows.forEach(r => box.appendChild(r));
-        containers[tab].appendChild(box);
-      });
+      const [home, away] = matchup.split(" vs. ").map(t => t.trim());
+      const status = statusRaw.toLowerCase();
+      const dt = parseTimeToLocal(startRaw);
+      const dateStr = dt.toLocaleDateString("en-CA");
+      const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+     const showTime = !seenTimes.has(timeStr);
+seenTimes.add(timeStr);
+
+// Decide what to display in the time column
+let displayTime;
+if (status.includes("final") || dateStr === yesterdayStr) {
+  displayTime = "F";
+} else if (/in progress|half|inning/.test(status)) {
+  displayTime = statusRaw;
+} else {
+  displayTime = showTime ? timeStr : "";
+}
+
+// Use abbreviations if available
+const homeAbbr = TEAM_ABBR[home] || home;
+const awayAbbr = TEAM_ABBR[away] || away;
+
+const row = document.createElement("div");
+row.className = "game-row";
+row.innerHTML = `
+  <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
+  <div class="game-matchup">${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}</div>
+  <div class="game-channel"></div>
+`;
+      if (status.includes("final") || dateStr === yesterdayStr) {
+        sections.scores.push(row);
+      } else if (/in progress|half|inning/.test(status)) {
+        sections.live.push(row);
+      } else if (dateStr === todayDateStr) {
+        sections.today.push(row);
+      }
     });
-  }
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    const order = await loadLeagueOrder();
-    const data  = await fetchAllGames();
-    renderGamesByTab(data, order);
-
-    // tab‐click logic
-    const tabs  = document.querySelectorAll(".games-tab");
-    const panes = document.querySelectorAll(".games-content");
-    tabs.forEach(t => t.addEventListener("click", () => {
-      tabs.forEach(x=>x.classList.remove("active"));
-      panes.forEach(p=>p.style.display="none");
-      t.classList.add("active");
-      document.getElementById("tv-listings-"+t.dataset.tab).style.display="block";
-    }));
-    // default to TODAY
-    document.querySelector(".games-tab[data-tab='today']").click();
+    Object.entries(sections).forEach(([key, rows]) => {
+      if (!rows.length) return;
+      const leagueBox = document.createElement("div");
+      leagueBox.className = "league-section";
+      leagueBox.innerHTML = `<div style="margin-top:1em"></div><div class="league-header">${league}</div>`;
+      rows.forEach(r => leagueBox.appendChild(r));
+      containers[key].appendChild(leagueBox);
+    });
   });
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadLeagueOrder();
+  const data = await fetchAllGames();
+  renderGamesByTab(data);
+
+  const tabs = document.querySelectorAll(".games-tab");
+  const boxes = document.querySelectorAll(".games-content");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      boxes.forEach(b => b.style.display = "none");
+      tab.classList.add("active");
+      const target = tab.dataset.tab;
+      document.getElementById("tv-listings-" + target).style.display = "block";
+    });
+  });
+
+  // Activate default tab (today)
+  document.querySelector(".games-tab[data-tab='today']")?.click();
+});
 </script>
+ 
 
   </body>
 </html> 
