@@ -1852,20 +1852,26 @@ function renderGamesByTab(byLeague) {
       const dt = parseTimeToLocal(startRaw);
       const dateStr = dt.toLocaleDateString("en-CA");
       const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-      const showTime = !seenTimes.has(timeStr);
-      seenTimes.add(timeStr);
+     const showTime = !seenTimes.has(timeStr);
+seenTimes.add(timeStr);
 
-      const hAbbr = TEAM_ABBR[home] || home;
-      const aAbbr = TEAM_ABBR[away] || away;
+// Decide what to display in the time column
+let displayTime;
+if (status.includes("final") || dateStr === yesterdayStr) {
+  displayTime = "F";
+} else if (/in progress|half|inning/.test(status)) {
+  displayTime = statusRaw;
+} else {
+  displayTime = showTime ? timeStr : "";
+}
 
-      const row = document.createElement("div");
-      row.className = "game-row";
-      row.innerHTML = `
-        <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${/in progress|half|inning/.test(status) ? statusRaw : (showTime ? timeStr : "")}</div>
-        <div class="game-matchup">${score ? `${hAbbr} ${score} ${aAbbr}` : `${hAbbr} vs. ${aAbbr}`}</div>
-        <div class="game-channel"></div>
-      `;
-
+const row = document.createElement("div");
+row.className = "game-row";
+row.innerHTML = `
+  <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
+  <div class="game-matchup">${score ? `${home} ${score} ${away}` : `${home} vs. ${away}`}</div>
+  <div class="game-channel"></div>
+`;
       if (status.includes("final") || dateStr === yesterdayStr) {
         sections.scores.push(row);
       } else if (/in progress|half|inning/.test(status)) {
