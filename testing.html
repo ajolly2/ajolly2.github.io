@@ -1854,28 +1854,30 @@ function renderGamesByTab(byLeague) {
       const dt = parseTimeToLocal(startRaw);
       const dateStr = dt.toLocaleDateString("en-CA");
       const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-     const showTime = !seenTimes.has(timeStr);
+    const showTime = !seenTimes.has(timeStr);
 seenTimes.add(timeStr);
 
-// Decide what to display in the time column
+// Determine display time based on game status
 let displayTime;
+let displayScore;
+
 if (status.includes("final") || dateStr === yesterdayStr) {
   displayTime = "F";
+  displayScore = score;
 } else if (/in progress|half|inning/.test(status)) {
-  displayTime = statusRaw;
+  displayTime = statusRaw; // e.g., Top 1
+  displayScore = score;
 } else {
   displayTime = showTime ? timeStr : "";
+  displayScore = ""; // No score before game starts
 }
 
-// Use abbreviations if available
-const homeAbbr = TEAM_ABBR[home] || home;
-const awayAbbr = TEAM_ABBR[away] || away;
-
+// Build the row
 const row = document.createElement("div");
 row.className = "game-row";
 row.innerHTML = `
   <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
-  <div class="game-matchup">${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}</div>
+  <div class="game-matchup">${displayScore ? `${home} ${displayScore} ${away}` : `${home} vs. ${away}`}</div>
   <div class="game-channel"></div>
 `;
       if (status.includes("final") || dateStr === yesterdayStr) {
