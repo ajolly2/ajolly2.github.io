@@ -1727,17 +1727,13 @@ function renderGamesByTab(byLeague) {
     live: document.getElementById("tv-listings-live")
   };
 
-  Object.entries(containers).forEach(([key, el]) => {
-    if (el) el.innerHTML = "";
-  });
+  Object.values(containers).forEach(c => (c.innerHTML = ""));
 
   const now = new Date();
   const todayDateStr = now.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
   const yesterdayStr = yesterday.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
-
-  console.log("=== Date Classification Debug ===", todayDateStr, yesterdayStr);
 
   leagueOrder.forEach(league => {
     const games = (byLeague[league] || []);
@@ -1755,7 +1751,8 @@ function renderGamesByTab(byLeague) {
       const dateStr = dt.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
       const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 
-      console.log(`[${league}] ${matchup} (${startRaw}) → ${dateStr} | status: ${statusRaw}`);
+      const logString = `[${league}] ${matchup} (${startRaw}) → ${dateStr} | status: ${statusRaw}`;
+      if (league === "NBA") console.log(logString);
 
       const row = document.createElement("div");
       row.className = "game-row";
@@ -1771,11 +1768,13 @@ function renderGamesByTab(byLeague) {
         sections.live.push(row);
       } else if (dateStr === todayDateStr) {
         sections.today.push(row);
+      } else {
+        console.log(`[UNMATCHED DATE] ${logString}`);
       }
     });
 
     Object.entries(sections).forEach(([key, rows]) => {
-      if (!rows.length || !containers[key]) return;
+      if (!rows.length) return;
       const leagueBox = document.createElement("div");
       leagueBox.className = "league-section";
       leagueBox.innerHTML = `<div style="margin-top:1em"></div><div class="league-header">${league}</div>`;
