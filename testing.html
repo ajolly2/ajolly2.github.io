@@ -1717,7 +1717,7 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     leagueOrder.forEach(league => {
       const section = document.createElement('div');
       section.className = 'league-section';
-      section.innerHTML = `<div class="league-header">${league}</div>`;
+      section.innerHTML = `<div style="margin-top:1.25em"></div><div class="league-header">${league}</div>`;
       const list = document.createElement('div');
       section.appendChild(list);
 
