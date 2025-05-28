@@ -1772,6 +1772,9 @@ function renderGamesByTab(byLeague) {
   yesterday.setDate(now.getDate() - 1);
   const yesterdayStr = yesterday.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 
+  console.log("=== Date Classification Debug Start ===");
+  console.log("Eastern Today:", todayDateStr, "Yesterday:", yesterdayStr);
+
   leagueOrder.forEach(league => {
     const games = (byLeague[league] || []);
     const sections = { scores: [], today: [], live: [] };
@@ -1788,6 +1791,8 @@ function renderGamesByTab(byLeague) {
       const dateStr = dt.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
       const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 
+      console.log(`[${league}] ${matchup} → Start: ${startRaw} → Parsed: ${dt.toISOString()} (${dateStr}) → Status: ${statusRaw}`);
+
       const row = document.createElement("div");
       row.className = "game-row";
       row.innerHTML = `
@@ -1797,11 +1802,16 @@ function renderGamesByTab(byLeague) {
       `;
 
       if (status.includes("final") || dateStr === yesterdayStr) {
+        console.log("→ SCORES tab");
         sections.scores.push(row);
       } else if (/in progress|half|inning/.test(status)) {
+        console.log("→ LIVE tab");
         sections.live.push(row);
       } else if (dateStr === todayDateStr) {
+        console.log("→ TODAY tab");
         sections.today.push(row);
+      } else {
+        console.log("→ Not matched to any tab");
       }
     });
 
@@ -1814,19 +1824,9 @@ function renderGamesByTab(byLeague) {
       containers[key].appendChild(leagueBox);
     });
   });
-}
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".games-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".games-tab").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      const target = tab.dataset.tab;
-      document.querySelectorAll(".games-content").forEach(c => c.style.display = "none");
-      document.getElementById("tv-listings-" + target).style.display = "block";
-    });
-  });
-});
+  console.log("=== Date Classification Debug End ===");
+}
 
 </script>
 
