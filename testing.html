@@ -1813,21 +1813,23 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
     return dt;
   }
 
-  async function fetchAllGames() {
-    const byLeague = {};
-    await Promise.all(
-      Object.entries(sheetURLs).map(async ([league, url]) => {
-        try {
-          const text = await (await fetch(url)).text();
-          const rows = text.trim().split(/\r?\n/).slice(1).map(r => r.split(','));
-          if (rows.length) byLeague[league] = rows;
-        } catch(e) {
-          console.warn(`failed ${league}`, e);
-        }
-      })
-    );
-    return byLeague;
-  }
+ async function fetchAllGames() {
+  // fetch the raw CSV text
+  const text = await (await fetch(yourCsvUrl)).text();
+  const rows = text.trim().split(/\r?\n/).map(r => r.split(','));
+  
+  // Pull off the header row and build our index map
+  const headers = rows.shift();
+  const idx = {
+    matchup: headers.indexOf("matchup"),
+    start:   headers.indexOf("start"),
+    status:  headers.indexOf("status"),
+    score:   headers.indexOf("score")
+  };
+
+  // Return both the raw rows and the idx map
+  return { idx, rows };
+}
 
   async function loadLeagueOrder() {
     try {
@@ -1858,7 +1860,10 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
       const seenTimes = new Set();
 
       games.forEach(cols => {
-        const [, , matchup, statusRaw, score, startRaw] = cols;
+        const matchup   = cols[idx.matchup];
+const startRaw  = cols[idx.start];
+const statusRaw = cols[idx.status];
+const score     = cols[idx.score];
         if (!matchup || !statusRaw) return;
 
         const [home, away] = matchup.split(" vs. ").map(t => t.trim());
