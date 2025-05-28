@@ -101,6 +101,44 @@
   font-size: 11px;
   color: #ccc;
 }
+      .games-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 10px;
+  line-height: 18px;
+  color: #aaa;
+  cursor: pointer;
+  background-color: #2a2a2a;
+  border-right: 1px solid #1f1f1f;
+}
+.games-tab.active {
+  background-color: #3c3c3c;
+  color: #fff;
+}
+.league-header {
+  padding: 6px 10px;
+  font-weight: bold;
+  color: #bbb;
+}
+.game-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
+  align-items: center;
+  padding: 4px 10px;
+  border-bottom: 1px solid #2a2a2a;
+}
+.game-time {
+  font-size: 11px;
+  color: #ccc;
+}
+.game-matchup {
+  padding-left: 10px;
+}
+.game-channel {
+  text-align: right;
+  font-size: 11px;
+  color: #ccc;
+}
       /* Owners */
 @font-face {
   font-family: 'Owners';
@@ -720,21 +758,23 @@
 
 <!-- ─── TV-LISTINGS COLUMN ───────────────────────────────────────────────────────── -->
 <div class="column tv-listings" style="flex: 0 0 250px; background-color: #1f1f1f;">
-  <div style="
+  <div id="games-header" style="
       position: sticky; top: 0; width: 100%; height: 18px;
       background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif;
       font-size: 10px; display: flex; align-items: center;
-      padding-left: 1px; z-index: 11; border-bottom: 5px solid #1f1f1f;
+      padding-left: 1px; z-index: 11; border-bottom: 1px solid #1f1f1f;
     ">
-    <strong>Live & Upcoming Games</strong>
+    <strong>Games</strong>
   </div>
-  <div id="tv-listings-Home" class="content-section" style="display: block;">
-    <div
-      id="live-games-container"
-      style="color: #D3D3D3; font-size: 11px;"
-    >
-      Loading games…
-    </div>
+  <div id="games-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
+    <div class="games-tab active" data-tab="scores">SCORES</div>
+    <div class="games-tab" data-tab="today">TODAY</div>
+    <div class="games-tab" data-tab="live">LIVE</div>
+  </div>
+  <div id="tv-listings-container">
+    <div id="tv-listings-scores" class="games-content" style="display: block;"></div>
+    <div id="tv-listings-today" class="games-content" style="display: none;"></div>
+    <div id="tv-listings-live" class="games-content" style="display: none;"></div>
   </div>
 </div>
 
@@ -1717,91 +1757,77 @@ async function fetchAllGames() {
   return byLeague;
 }
 
-function renderGames(byLeague) {
-  const container = document.getElementById('live-games-container');
-  container.innerHTML = '';
+function renderGamesByTab(byLeague) {
+  const containers = {
+    scores: document.getElementById("tv-listings-scores"),
+    today: document.getElementById("tv-listings-today"),
+    live: document.getElementById("tv-listings-live")
+  };
+
+  Object.values(containers).forEach(c => (c.innerHTML = ""));
+
+  const now = new Date();
+  const todayDateStr = now.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const yesterdayStr = yesterday.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 
   leagueOrder.forEach(league => {
-    const rows = byLeague[league] || [];
+    const games = (byLeague[league] || []);
+    const sections = { scores: [], today: [], live: [] };
 
-    const validRows = rows.filter(cols => cols[2]?.includes(" vs. "));
-    if (!validRows.length) return;
+    games.forEach(cols => {
+      const [, , matchup, statusRaw, score, startRaw] = cols;
+      if (!matchup || !statusRaw) return;
 
-    const groupedByDate = {};
-    validRows.forEach(cols => {
-      const date = cols[6]; // assuming column G = Date
-      if (!groupedByDate[date]) groupedByDate[date] = [];
-      groupedByDate[date].push(cols);
+      const [home, away] = matchup.split(" vs. ").map(t => t.trim());
+      const hAbbr = TEAM_ABBR[home] || home;
+      const aAbbr = TEAM_ABBR[away] || away;
+      const status = statusRaw.toLowerCase();
+      const dt = parseTimeToLocal(startRaw);
+      const dateStr = dt.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+      const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+
+      const row = document.createElement("div");
+      row.className = "game-row";
+      row.innerHTML = `
+        <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${/in progress|half|inning/.test(status) ? statusRaw : timeStr}</div>
+        <div class="game-matchup">${score ? `${hAbbr} ${score} ${aAbbr}` : `${hAbbr} vs. ${aAbbr}`}</div>
+        <div class="game-channel"></div>
+      `;
+
+      if (status.includes("final") || dateStr === yesterdayStr) {
+        sections.scores.push(row);
+      } else if (/in progress|half|inning/.test(status)) {
+        sections.live.push(row);
+      } else if (dateStr === todayDateStr) {
+        sections.today.push(row);
+      }
     });
 
-    const section = document.createElement('div');
-    section.className = 'league-section';
-    section.innerHTML = `<div class="league-header">${league}</div>`;
-    
-    Object.entries(groupedByDate).forEach(([date, games]) => {
-      const dateLabel = new Date(date).toLocaleDateString('en-US', {
-        weekday: 'long', month: 'short', day: 'numeric'
-      });
-
-      const dateHeader = document.createElement('div');
-      dateHeader.className = 'date-header';
-      dateHeader.textContent = `— ${dateLabel} —`;
-      section.appendChild(dateHeader);
-
-      let prevTime = null;
-      games.forEach(cols => {
-        const [, , matchup, statusRaw, score, startRaw] = cols;
-        const [homeTeam, awayTeam] = matchup.split(' vs. ').map(t => t.trim());
-        const homeAbbr = TEAM_ABBR[homeTeam] || homeTeam;
-        const awayAbbr = TEAM_ABBR[awayTeam] || awayTeam;
-
-        const status = convertStatus(statusRaw?.trim());
-        const isLive = /top|bot|half|inning|\d+['’]/i.test(statusRaw);
-        const dt = parseTimeToLocal(startRaw);
-        const displayTime = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-        const showTime = displayTime !== prevTime;
-        prevTime = displayTime;
-
-        const row = document.createElement('div');
-        row.className = 'game-row';
-
-        const t = document.createElement('div');
-        t.className = 'game-time';
-        t.style.color = isLive ? 'red' : '#ccc';
-        t.textContent = isLive ? status : (showTime ? displayTime : '');
-
-        const m = document.createElement('div');
-        m.className = 'game-matchup';
-        if (score && score.includes('-')) {
-          const [homeScore, awayScore] = score.split('-').map(s => s.trim());
-          m.innerHTML = `${homeAbbr} ${homeScore}-${awayScore} ${awayAbbr}`;
-        } else {
-          m.textContent = `${homeAbbr} vs. ${awayAbbr}`;
-        }
-
-        const c = document.createElement('div');
-        c.className = 'game-channel';
-        c.textContent = '';
-
-        row.append(t, m, c);
-        section.appendChild(row);
-      });
+    Object.entries(sections).forEach(([key, rows]) => {
+      if (!rows.length) return;
+      const leagueBox = document.createElement("div");
+      leagueBox.className = "league-section";
+      leagueBox.innerHTML = `<div style="margin-top:1em"></div><div class="league-header">${league}</div>`;
+      rows.forEach(r => leagueBox.appendChild(r));
+      containers[key].appendChild(leagueBox);
     });
-
-    container.appendChild(section);
   });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await loadLeagueOrder();
-  await loadAndRender();
-  setInterval(loadAndRender, 5 * 60 * 1000);
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".games-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".games-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      const target = tab.dataset.tab;
+      document.querySelectorAll(".games-content").forEach(c => c.style.display = "none");
+      document.getElementById("tv-listings-" + target).style.display = "block";
+    });
+  });
 });
 
-async function loadAndRender() {
-  const data = await fetchAllGames();
-  renderGames(data);
-}
 </script>
 
  
