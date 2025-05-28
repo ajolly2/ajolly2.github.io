@@ -1811,10 +1811,18 @@ async function fetchAllGames() {
   await Promise.all(
     Object.entries(sheetURLs).map(async ([league, url]) => {
       try {
-        const rows = (await (await fetch(url)).text())
-          .trim().split(/\r?\n/).slice(1)
-          .map(r => r.split(','));
-        if (rows.length) byLeague[league] = rows;
+        const text = await (await fetch(url)).text();
+        // Split CSV into array of rows (each row = array of cols)
+        const allRows = text.trim().split(/\r?\n/).map(r => r.split(','));
+        // First row is headers → build name→index map
+        const headers = allRows[0].map(h => h.trim());
+        const idx = headers.reduce((acc, h, i) => {
+          acc[h] = i;
+          return acc;
+        }, {});
+        // The rest are data rows
+        const dataRows = allRows.slice(1);
+        byLeague[league] = { rows: dataRows, idx };
       } catch (e) {
         console.warn(`failed ${league}`, e);
       }
@@ -1839,13 +1847,17 @@ function renderGamesByTab(byLeague) {
   const yesterdayStr = yesterday.toLocaleDateString("en-CA");
 
   leagueOrder.forEach(league => {
-    const games = (byLeague[league] || []);
-    const sections = { scores: [], today: [], live: [] };
-    const seenTimes = new Set();
+  // pull rows + header→index map
+  const info    = byLeague[league] || { rows: [], idx: {} };
+  const games   = info.rows;
+  const idx     = info.idx;
 
-    games.forEach(cols => {
-      const [, , matchup, statusRaw, score, startRaw] = cols;
-      if (!matchup || !statusRaw) return;
+ games.forEach(cols => {
+    const matchup   = cols[ idx['Matchup'] ];
+    const statusRaw = cols[ idx['Status'] ];
+    const score     = cols[ idx['Score'] ];
+    const startRaw  = cols[ idx['Start'] ];
+    if (!matchup || statusRaw == null) return;
 
       const [home, away] = matchup.split(" vs. ").map(t => t.trim());
       const status = statusRaw.toLowerCase();
