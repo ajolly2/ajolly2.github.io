@@ -1808,90 +1808,99 @@ function parseTimeToLocal(timeStr) {
 
 async function fetchAllGames() {
   const byLeague = {};
+
   await Promise.all(
     Object.entries(sheetURLs).map(async ([league, url]) => {
-      try {
-        const rows = (await (await fetch(url)).text())
-          .trim().split(/\r?\n/).slice(1)
-          .map(r => r.split(','));
-        if (rows.length) byLeague[league] = rows;
-      } catch (e) {
-        console.warn(`failed ${league}`, e);
-      }
+      const text  = await (await fetch(url)).text();
+      const lines = text.trim().split(/\r?\n/);
+      // 1a) pull off the header row
+      const headerCols = lines.shift().split(',');
+
+      // 1b) build an idx map from column name → index
+      const idx = {
+        matchup: headerCols.indexOf("matchup"),
+        score:   headerCols.indexOf("score"),
+        status:  headerCols.indexOf("status"),
+        start:   headerCols.indexOf("start")
+      };
+
+      // 1c) parse the remaining lines
+      const rows = lines.map(line => line.split(','));
+      byLeague[league] = { rows, idx };
     })
   );
+
   return byLeague;
 }
 
 function renderGamesByTab(byLeague) {
   const containers = {
     scores: document.getElementById("tv-listings-scores"),
-    today: document.getElementById("tv-listings-today"),
-    live: document.getElementById("tv-listings-live")
+    today:  document.getElementById("tv-listings-today"),
+    live:   document.getElementById("tv-listings-live")
   };
+  Object.values(containers).forEach(c => c.innerHTML = "");
 
-  Object.values(containers).forEach(c => (c.innerHTML = ""));
-
-  const now = new Date();
-  const todayDateStr = now.toLocaleDateString("en-CA");
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-  const yesterdayStr = yesterday.toLocaleDateString("en-CA");
+  const now           = new Date();
+  const todayDateStr  = now.toLocaleDateString("en-CA");
+  const yesterday     = new Date(now); yesterday.setDate(now.getDate()-1);
+  const yesterdayStr  = yesterday.toLocaleDateString("en-CA");
 
   leagueOrder.forEach(league => {
-    const games = (byLeague[league] || []);
+    // 2a) pull out both rows _and_ the idx map
+    const { rows, idx } = byLeague[league] || { rows: [], idx: {} };
     const sections = { scores: [], today: [], live: [] };
     const seenTimes = new Set();
 
-    games.forEach(cols => {
-      const [, , matchup, statusRaw, score, startRaw] = cols;
+    rows.forEach(cols => {
+      const matchup   = cols[idx.matchup];
+      const score     = cols[idx.score];
+      const statusRaw = cols[idx.status];
+      const startRaw  = cols[idx.start];
       if (!matchup || !statusRaw) return;
 
-      const [home, away] = matchup.split(" vs. ").map(t => t.trim());
-      const status = statusRaw.toLowerCase();
-      const dt = parseTimeToLocal(startRaw);
+      // …then everything else is unchanged…
+      const dt      = parseTimeToLocal(startRaw);
       const dateStr = dt.toLocaleDateString("en-CA");
-      const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-     const showTime = !seenTimes.has(timeStr);
-seenTimes.add(timeStr);
-
-// Decide what to display in the time column
-let displayTime;
-if (status.includes("final") || dateStr === yesterdayStr) {
-  displayTime = "F";
-} else if (/in progress|half|inning/.test(status)) {
-  displayTime = statusRaw;
-} else {
-  displayTime = showTime ? timeStr : "";
-}
-
-// Use abbreviations if available
-const homeAbbr = TEAM_ABBR[home] || home;
-const awayAbbr = TEAM_ABBR[away] || away;
-
-const row = document.createElement("div");
-row.className = "game-row";
-row.innerHTML = `
-  <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
-  <div class="game-matchup">${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}</div>
-  <div class="game-channel"></div>
-`;
-      if (status.includes("final") || dateStr === yesterdayStr) {
-        sections.scores.push(row);
-      } else if (/in progress|half|inning/.test(status)) {
-        sections.live.push(row);
-      } else if (dateStr === todayDateStr) {
-        sections.today.push(row);
+      const timeStr = dt.toLocaleTimeString([], { hour:"numeric", minute:"2-digit" });
+      const isLive  = /in progress|half|inning/i.test(statusRaw);
+      let display;
+      if (/final/i.test(statusRaw) || dateStr === yesterdayStr) {
+        display = "F";
+      } else if (isLive) {
+        display = statusRaw;
+      } else {
+        display = seenTimes.has(timeStr) ? "" : timeStr;
+        seenTimes.add(timeStr);
       }
+
+      const homeAbbr = TEAM_ABBR[ matchups[0] ] || matchups[0];  // adjust to your abbreviations map
+      const awayAbbr = TEAM_ABBR[ matchups[1] ] || matchups[1];
+
+      const row = document.createElement("div");
+      row.className = "game-row";
+      row.innerHTML = `
+        <div class="game-time" style="color:${isLive?'red':'#ccc'}">${display}</div>
+        <div class="game-matchup">${ score ? `${homeAbbr} ${score} ${awayAbbr}`
+                                          : `${homeAbbr} vs. ${awayAbbr}` }</div>
+        <div class="game-channel"></div>
+      `;
+      const bucket = /final/i.test(statusRaw) || dateStr===yesterdayStr
+                   ? "scores"
+                   : isLive
+                     ? "live"
+                     : (dateStr===todayDateStr ? "today" : null);
+      if (bucket) sections[bucket].push(row);
     });
 
-    Object.entries(sections).forEach(([key, rows]) => {
+    // append each league’s box to its tab…
+    Object.entries(sections).forEach(([tab, rows]) => {
       if (!rows.length) return;
-      const leagueBox = document.createElement("div");
-      leagueBox.className = "league-section";
-      leagueBox.innerHTML = `<div style="margin-top:1em"></div><div class="league-header">${league}</div>`;
-      rows.forEach(r => leagueBox.appendChild(r));
-      containers[key].appendChild(leagueBox);
+      const box = document.createElement("div");
+      box.className = "league-section";
+      box.innerHTML = `<div class="league-header">${league}</div>`;
+      rows.forEach(r => box.appendChild(r));
+      containers[tab].appendChild(box);
     });
   });
 }
