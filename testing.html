@@ -1865,11 +1865,15 @@ if (status.includes("final") || dateStr === yesterdayStr) {
   displayTime = showTime ? timeStr : "";
 }
 
+// Use abbreviations if available
+const homeAbbr = TEAM_ABBR[home] || home;
+const awayAbbr = TEAM_ABBR[away] || away;
+
 const row = document.createElement("div");
 row.className = "game-row";
 row.innerHTML = `
   <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
-  <div class="game-matchup">${score ? `${home} ${score} ${away}` : `${home} vs. ${away}`}</div>
+  <div class="game-matchup">${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}</div>
   <div class="game-channel"></div>
 `;
       if (status.includes("final") || dateStr === yesterdayStr) {
