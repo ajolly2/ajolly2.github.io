@@ -1841,11 +1841,14 @@ function renderGamesByTab(byLeague) {
 
   Object.values(containers).forEach(c => (c.innerHTML = ""));
 
-  const now = new Date();
-  const todayDateStr = now.toLocaleDateString("en-CA");
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-  const yesterdayStr = yesterday.toLocaleDateString("en-CA");
+ function easternDateStr(offset = 0) {
+  const estNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+  const base = new Date(estNow);
+  base.setDate(base.getDate() + offset);
+  return base.toISOString().slice(0, 10); // yyyy-mm-dd
+}
+const todayDateStr = easternDateStr(0);
+const yesterdayStr = easternDateStr(-1);
 
   leagueOrder.forEach(league => {
     const games = (byLeague[league] || []);
@@ -1858,8 +1861,7 @@ function renderGamesByTab(byLeague) {
 
       const [home, away] = matchup.split(" vs. ").map(t => t.trim());
       const status = statusRaw.toLowerCase();
-      const dt = parseTimeToLocal(startRaw);
-      const dateStr = dt.toLocaleDateString("en-CA");
+      const dateStr = cols[6]; // gameDate column from sheet, yyyy-mm-dd
       const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
      const showTime = !seenTimes.has(timeStr);
 seenTimes.add(timeStr);
