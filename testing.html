@@ -92,9 +92,19 @@
   font-size: 11px;
   color: #ccc;
 }
+      
       .game-time.live {
   color: #DC143C !important;
   font-weight: bold;
+}
+      .game-time-final {
+  font-size: 11px;
+  color: #ccc;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 .game-matchup {
@@ -1909,10 +1919,10 @@ const matchupDisplay = showScore
 const row = document.createElement("div");
 row.className = "game-row";
 row.innerHTML = `
-  <div class="game-time${/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status) ? ' live' : ''}">${displayTime}</div>  <div class="game-matchup">${matchupDisplay}</div>
+  <div class="game-time${displayTime === "F" ? ' game-time-final' : /(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status) ? ' live' : ''}">${displayTime}</div>
+  <div class="game-matchup">${matchupDisplay}</div>
   <div class="game-channel"></div>
 `;
-
  // SCORES: only yesterday, only finals
 if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
   sections.scores.push(row);
