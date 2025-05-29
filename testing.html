@@ -1877,17 +1877,30 @@ if (status.includes("final") || status === 'f') {
   displayTime = ""; // fallback if no time/status
 }
 
-  // Use abbreviations if available
-  const homeAbbr = TEAM_ABBR[home] || home;
-  const awayAbbr = TEAM_ABBR[away] || away;
+// Use abbreviations if available
+const homeAbbr = TEAM_ABBR[home] || home;
+const awayAbbr = TEAM_ABBR[away] || away;
 
-  const row = document.createElement("div");
-  row.className = "game-row";
-  row.innerHTML = `
-    <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
-    <div class="game-matchup">${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}</div>
-    <div class="game-channel"></div>
-  `;
+// Determine if we should show the score
+let showScore = false;
+if (
+  /in progress|half|inning|final|f/.test(status)
+  || (score && score !== "0–0" && (status !== "scheduled" && status !== "pre"))
+) {
+  showScore = true;
+}
+
+const matchupDisplay = showScore
+  ? `${homeAbbr} ${score} ${awayAbbr}`
+  : `${homeAbbr} vs. ${awayAbbr}`;
+
+const row = document.createElement("div");
+row.className = "game-row";
+row.innerHTML = `
+  <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
+  <div class="game-matchup">${matchupDisplay}</div>
+  <div class="game-channel"></div>
+`;
 
   // SCORES: only yesterday, only finals
   if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
