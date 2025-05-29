@@ -92,6 +92,10 @@
   font-size: 11px;
   color: #ccc;
 }
+      .game-time.live {
+  color: #DC143C !important;
+  font-weight: bold;
+}
 
 .game-matchup {
   padding-left: 10px;
@@ -1905,8 +1909,7 @@ const matchupDisplay = showScore
 const row = document.createElement("div");
 row.className = "game-row";
 row.innerHTML = `
-  <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
-  <div class="game-matchup">${matchupDisplay}</div>
+  <div class="game-time${/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status) ? ' live' : ''}">${displayTime}</div>  <div class="game-matchup">${matchupDisplay}</div>
   <div class="game-channel"></div>
 `;
 
