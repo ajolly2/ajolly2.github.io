@@ -1842,7 +1842,7 @@ function renderGamesByTab(byLeague) {
     const games = (byLeague[league] || []);
     const sections = { scores: [], today: [], live: [] };
     const seenTimes = new Set();
-
+console.log(cols);
     games.forEach(cols => {
       const [, , matchup, statusRaw, score, startRaw] = cols;
       if (!matchup || !statusRaw) return;
