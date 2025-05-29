@@ -1927,7 +1927,7 @@ row.innerHTML = `
       const leagueBox = document.createElement("div");
       leagueBox.className = "league-section";
       const displayName = LEAGUE_DISPLAY_NAMES[league] || league;
-      leagueBox.innerHTML = `<div style="margin-top:1em"></div><div class="league-header">${displayName}</div><div style="height:15px"></div>`;      rows.forEach(r => leagueBox.appendChild(r));
+      leagueBox.innerHTML = `<div style="margin-top:1em"></div><div class="league-header">${displayName}</div>`;      rows.forEach(r => leagueBox.appendChild(r));
       containers[key].appendChild(leagueBox);
     });
   });
