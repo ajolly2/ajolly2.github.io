@@ -1854,15 +1854,28 @@ function renderGamesByTab(byLeague) {
   yesterday.setDate(now.getDate() - 1);
   const yesterdayStr = yesterday.toISOString().slice(0,10);
 
-  // display time logic
-  let displayTime;
-  if (status.includes("final") || status === 'f') {
-    displayTime = "F";
-  } else if (/in progress|half|inning/.test(status)) {
-    displayTime = statusRaw;
-  } else {
-    displayTime = startRaw;
-  }
+// display time logic
+let displayTime;
+if (status.includes("final") || status === 'f') {
+  displayTime = "F";
+} else if (/in progress|half|inning/.test(status)) {
+  displayTime = statusRaw;
+} else if (startRaw) {
+  // Convert Eastern time string to user's local time string
+  const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+  const base = new Date(eastNow);
+  const year = base.getFullYear();
+  const month = String(base.getMonth() + 1).padStart(2, '0');
+  const day = String(base.getDate()).padStart(2, '0');
+  // Make a full datetime string in Eastern Time
+  const easternTimeString = `${year}-${month}-${day} ${startRaw}`;
+  // Parse it as ET, then show in local time
+  const localDate = new Date(`${easternTimeString} GMT-0400`);
+  // Format as h:mm AM/PM
+  displayTime = localDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+} else {
+  displayTime = ""; // fallback if no time/status
+}
 
   // Use abbreviations if available
   const homeAbbr = TEAM_ABBR[home] || home;
