@@ -1872,14 +1872,19 @@ row.innerHTML = `
   <div class="game-matchup">${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}</div>
   <div class="game-channel"></div>
 `;
-      if (status.includes("final") || dateStr === yesterdayStr) {
-        sections.scores.push(row);
-      } else if (/in progress|half|inning/.test(status)) {
-        sections.live.push(row);
-      } else if (dateStr === todayDateStr) {
-        sections.today.push(row);
-      }
-    });
+        if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
+    // Yesterday's games, only if final
+    sections.scores.push(row);
+  } else if (dateStr === todayDateStr && !status.includes('final') && status !== 'f') {
+    // Today's games, not final yet
+    if (/in progress|half|inning/.test(status)) {
+      sections.live.push(row);
+    } else {
+      sections.today.push(row);
+    }
+  }
+  // All other games (e.g., old, future) are ignored
+});
 
     Object.entries(sections).forEach(([key, rows]) => {
       if (!rows.length) return;
