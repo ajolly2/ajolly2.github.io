@@ -1873,7 +1873,7 @@ function renderGamesByTab(byLeague) {
 let displayTime;
 if (status.includes("final") || status === 'f') {
   displayTime = "F";
-} else if (/in progress|half|inning/.test(status)) {
+} else if (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)) {
   displayTime = statusRaw;
 } else if (startRaw) {
   // Use improved parseTimeToLocal for Safari compatibility
@@ -1892,7 +1892,7 @@ const awayAbbr = TEAM_ABBR[away] || away;
 // Determine if we should show the score
 let showScore = false;
 if (
-  /in progress|half|inning|final|f/.test(status)
+  /(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)
   || (score && score !== "0–0" && (status !== "scheduled" && status !== "pre"))
 ) {
   showScore = true;
