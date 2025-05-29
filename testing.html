@@ -71,34 +71,27 @@
 /* the wrapper around all the rows for a league */
 .games-list {}
 
-/* each row: time | matchup | channel */
 .game-row {
   display: grid;
   grid-template-columns: 60px 1fr 60px;
   align-items: center;
   padding: 4px 10px;
-  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 5px;
+  /* border-bottom: 1px solid #2a2a2a; */ /* (Optional: comment out for cleaner gap) */
+  background: transparent;
 }
-
-/* light striping on odd rows */
 .game-row:nth-child(odd) {
-  background: rgba(255,255,255,0.03);
+  background: transparent;
 }
-
-/* left column = time */
 .game-time {
   font-size: 11px;
   color: #ccc;
 }
-
-/* middle column = teams */
 .game-matchup {
   padding-left: 10px;
-  font-size: 11px; 
+  font-size: 11px;
   color: #ccc;
 }
-
-/* right column = channel placeholder */
 .game-channel {
   text-align: right;
   font-size: 11px;
@@ -140,12 +133,6 @@
   align-items: center;
   padding: 4px 10px;
   border-bottom: 1px solid #2a2a2a;
-  margin-bottom: 5px;   /* Add this line */
-  background: transparent; /* Optional: remove striping for clean gap */
-}
-.game-row:nth-child(odd) {
-  background: transparent; /* Remove striping if you prefer, else leave as is */
-
 }
 .game-time {
   font-size: 11px;
@@ -1841,14 +1828,11 @@ function renderGamesByTab(byLeague) {
 
   Object.values(containers).forEach(c => (c.innerHTML = ""));
 
- function easternDateStr(offset = 0) {
-  const estNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
-  const base = new Date(estNow);
-  base.setDate(base.getDate() + offset);
-  return base.toISOString().slice(0, 10); // yyyy-mm-dd
-}
-const todayDateStr = easternDateStr(0);
-const yesterdayStr = easternDateStr(-1);
+  const now = new Date();
+  const todayDateStr = now.toLocaleDateString("en-CA");
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const yesterdayStr = yesterday.toLocaleDateString("en-CA");
 
   leagueOrder.forEach(league => {
     const games = (byLeague[league] || []);
@@ -1861,7 +1845,8 @@ const yesterdayStr = easternDateStr(-1);
 
       const [home, away] = matchup.split(" vs. ").map(t => t.trim());
       const status = statusRaw.toLowerCase();
-      const dateStr = cols[6]; // gameDate column from sheet, yyyy-mm-dd
+      const dt = parseTimeToLocal(startRaw);
+      const dateStr = dt.toLocaleDateString("en-CA");
       const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
      const showTime = !seenTimes.has(timeStr);
 seenTimes.add(timeStr);
