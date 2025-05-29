@@ -1774,6 +1774,12 @@ const TEAM_ABBR = {
   "Basel":"BAS","Gent":"GEN","Molde":"MOL","LASK":"LAS","Partizan":"PAR","Trabzonspor":"TRA",
   "Copenhagen":"COP","Aberdeen":"ABE","Anderlecht":"AND","Hearts":"HEA"
 };
+  const LEAGUE_DISPLAY_NAMES = {
+  NCAASoftball: "College Softball",
+  NCAABaseball: "College Baseball",
+  // Add other custom mappings if you want
+  // Example: MLS: "Major League Soccer"
+};
 
 let leagueOrder = [];
 
@@ -1920,8 +1926,8 @@ row.innerHTML = `
       if (!rows.length) return;
       const leagueBox = document.createElement("div");
       leagueBox.className = "league-section";
-      leagueBox.innerHTML = `<div style="margin-top:1em"></div><div class="league-header">${league}</div>`;
-      rows.forEach(r => leagueBox.appendChild(r));
+      const displayName = LEAGUE_DISPLAY_NAMES[league] || league;
+      leagueBox.innerHTML = `<div style="margin-top:1em"></div><div class="league-header">${displayName}</div>`;      rows.forEach(r => leagueBox.appendChild(r));
       containers[key].appendChild(leagueBox);
     });
   });
