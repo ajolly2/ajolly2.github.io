@@ -446,6 +446,94 @@
 .expand-button:hover {
   background-color: #555;
 }
+      .news-main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden; /* so children scroll independently */
+  background: #fafaf9;
+}
+
+/* Headlines takes top 60%, Breaking 40% */
+.headlines-section {
+  flex: 0 0 60%;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 2px solid #d4d4d4;
+  min-height: 120px;
+  max-height: 60%;
+  overflow: hidden;
+}
+.breaking-section {
+  flex: 1 1 40%;
+  display: flex;
+  flex-direction: column;
+  min-height: 80px;
+  max-height: 40%;
+  overflow: hidden;
+}
+
+/* Section headers */
+.news-section-header {
+  background: #3c3c3c;
+  color: #fff;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+/* Breaking tab bar styling */
+.breaking-tabs-header {
+  gap: 0;
+  padding: 0;
+  height: 18px;
+}
+.news-tab {
+  flex: 1 1 0;
+  text-align: center;
+  cursor: pointer;
+  font-size: 10px;
+  color: #aaa;
+  background: #3c3c3c;
+  border-right: 1px solid #2a2a2a;
+  border-bottom: none;
+  transition: background 0.2s, color 0.2s;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.news-tab:last-child {
+  border-right: none;
+}
+.news-tab.active {
+  background: #fff;
+  color: #222;
+  font-weight: bold;
+  border-bottom: 2px solid #dc143c;
+}
+
+/* Feed content area - independent scrolling */
+.news-feed-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 0 10px;
+  background: #fafaf9;
+  font-size: 11px;
+  color: #111;
+}
+.headlines-section .news-feed-content {
+  height: calc(100% - 18px);
+}
+.breaking-section .news-feed-content {
+  height: calc(100% - 18px);
+}
 
     </style>
   </head>
@@ -807,41 +895,30 @@
 
       <!-- NEWS PANEL -->
       <div class="column news">
-        <!-- News header -->
-        <div
-          id="newsHeader"
-          style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11;"
-        ><strong>News</strong>
-        </div>
-        <!-- News submenu: this submenu appears only on Home -->
-        <div
-          id="newsSubMenu"
-          style="position: sticky; top: 18px; width: 100%; z-index: 10; background-color: #545454; font-family: Helvetica, Arial, sans-serif; font-size: 10px; height: 18px; display: flex; align-items: center; gap: 10px; padding: 0; margin: 0;"
-        >
-          <span class="news-menu-item active" data-feed="ESPN">ESPN</span>
-          <span class="news-menu-item" data-feed="CBS">CBS</span>
-          <span class="news-menu-item" data-feed="FOX">FOX</span>
-          <span class="news-menu-item" data-feed="Yahoo">Yahoo</span>
-        </div>
-        <!-- Home News Section -->
-        <div id="news-Home" class="content-section" style="display: block;">
-          <div class="rss-feed" id="feed-ESPN">
-            <h4>ESPN</h4>
-            <div class="feed-content">Loading ESPN feed...</div>
-          </div>
-          <div class="rss-feed" id="feed-CBS">
-            <h4>CBS</h4>
-            <div class="feed-content">Loading CBS feed...</div>
-          </div>
-          <div class="rss-feed" id="feed-FOX">
-            <h4>FOX</h4>
-            <div class="feed-content">Loading FOX feed...</div>
-          </div>
-          <div class="rss-feed" id="feed-Yahoo">
-            <h4>Yahoo</h4>
-            <div class="feed-content">Loading Yahoo feed...</div>
-          </div>
-        </div>
+        <div class="column news">
+  <!-- News header -->
+  <div class="news-header">News</div>
+  <div class="news-main-container">
+    <!-- Headlines Section -->
+    <div class="news-section headlines-section">
+      <div class="news-section-header">Headlines</div>
+      <div class="news-feed-content" id="headlines-feed">
+        Loading headlines...
+      </div>
+    </div>
+    <!-- Breaking/Fantasy/Transactions Tabs Section -->
+    <div class="news-section breaking-section">
+      <div class="news-section-header breaking-tabs-header">
+        <span class="news-tab active" data-tab="breaking">Breaking</span>
+        <span class="news-tab" data-tab="fantasy">Fantasy</span>
+        <span class="news-tab" data-tab="transactions">Transactions</span>
+      </div>
+      <div class="news-feed-content" id="breaking-feed">Loading breaking news...</div>
+      <div class="news-feed-content" id="fantasy-feed" style="display:none;">Loading fantasy news...</div>
+      <div class="news-feed-content" id="transactions-feed" style="display:none;">Loading transactions...</div>
+    </div>
+  </div>
+</div>
         <!-- MLB News Section -->
         <div id="news-MLB" class="content-section" style="display: none;">
           <div class="rss-feed" id="feed-_6gzCeS4YQ4h2adTs">
@@ -1970,6 +2047,80 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Activate default tab (today)
   document.querySelector(".games-tab[data-tab='today']")?.click();
+});
+   
+</script>
+<script>
+  // -- FEED URLs: Replace with your real feeds --
+const HEADLINES_FEED = "https://www.espn.com/espn/rss/news";
+const BREAKING_FEED = "https://www.cbssports.com/rss/headlines/";
+const FANTASY_FEED = "https://fantasynews.cbssports.com/rss/headlines/";
+const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news"; // EXAMPLE, replace as needed
+
+// -- Generic function to fetch and render a basic RSS feed --
+function fetchRSSFeed(url, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = "Loading...";
+  fetch(url)
+    .then(res => res.text())
+    .then(str => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(str, "application/xml");
+      const items = Array.from(xml.querySelectorAll("item"));
+      if (!items.length) {
+        container.innerHTML = "<p>No stories found.</p>";
+        return;
+      }
+      const ul = document.createElement("ul");
+      ul.style.margin = "0";
+      ul.style.padding = "0";
+      ul.style.listStyle = "none";
+      items.slice(0, 10).forEach(item => {
+        const li = document.createElement("li");
+        li.style.padding = "6px 0";
+        const title = item.querySelector("title")?.textContent || "";
+        const link = item.querySelector("link")?.textContent || "#";
+        li.innerHTML = `<a href="${link}" target="_blank" style="color:#212121;text-decoration:none;">${title}</a>`;
+        ul.appendChild(li);
+      });
+      container.innerHTML = "";
+      container.appendChild(ul);
+    })
+    .catch(() => {
+      container.innerHTML = "<p>Error loading feed.</p>";
+    });
+}
+
+// -- Tabs logic for Breaking/Fantasy/Transactions
+document.addEventListener("DOMContentLoaded", function() {
+  // Load default feeds
+  fetchRSSFeed(HEADLINES_FEED, "headlines-feed");
+  fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+
+  const tabs = document.querySelectorAll(".news-tab");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById("breaking-feed").style.display = "none";
+      document.getElementById("fantasy-feed").style.display = "none";
+      document.getElementById("transactions-feed").style.display = "none";
+
+      if (tab.dataset.tab === "breaking") {
+        document.getElementById("breaking-feed").style.display = "block";
+        fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+      }
+      if (tab.dataset.tab === "fantasy") {
+        document.getElementById("fantasy-feed").style.display = "block";
+        fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
+      }
+      if (tab.dataset.tab === "transactions") {
+        document.getElementById("transactions-feed").style.display = "block";
+        fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
+      }
+    });
+  });
 });
 </script>
  
