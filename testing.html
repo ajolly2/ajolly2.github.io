@@ -1840,50 +1840,52 @@ function renderGamesByTab(byLeague) {
     const seenTimes = new Set();
 
     games.forEach(cols => {
-      const [, , matchup, statusRaw, score, startRaw] = cols;
-      if (!matchup || !statusRaw) return;
+  const [, , matchup, statusRaw, score, startRaw, sheetDate] = cols;
+  if (!matchup || !statusRaw) return;
 
-      const [home, away] = matchup.split(" vs. ").map(t => t.trim());
-      const status = statusRaw.toLowerCase();
-      const dt = parseTimeToLocal(startRaw);
-      const dateStr = dt.toLocaleDateString("en-CA");
-      const timeStr = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-     const showTime = !seenTimes.has(timeStr);
-seenTimes.add(timeStr);
+  const [home, away] = matchup.split(" vs. ").map(t => t.trim());
+  const status = statusRaw.toLowerCase();
+  const dateStr = (sheetDate || '').split(' ')[0]; // Use sheet date (yyyy-mm-dd)
+  const now = new Date();
+  const todayDateStr = now.toISOString().slice(0,10);
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().slice(0,10);
 
-// Decide what to display in the time column
-let displayTime;
-if (status.includes("final") || dateStr === yesterdayStr) {
-  displayTime = "F";
-} else if (/in progress|half|inning/.test(status)) {
-  displayTime = statusRaw;
-} else {
-  displayTime = showTime ? timeStr : "";
-}
-
-// Use abbreviations if available
-const homeAbbr = TEAM_ABBR[home] || home;
-const awayAbbr = TEAM_ABBR[away] || away;
-
-const row = document.createElement("div");
-row.className = "game-row";
-row.innerHTML = `
-  <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
-  <div class="game-matchup">${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}</div>
-  <div class="game-channel"></div>
-`;
-        if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
-    // Yesterday's games, only if final
-    sections.scores.push(row);
-  } else if (dateStr === todayDateStr && !status.includes('final') && status !== 'f') {
-    // Today's games, not final yet
-    if (/in progress|half|inning/.test(status)) {
-      sections.live.push(row);
-    } else {
-      sections.today.push(row);
-    }
+  // display time logic
+  let displayTime;
+  if (status.includes("final") || status === 'f') {
+    displayTime = "F";
+  } else if (/in progress|half|inning/.test(status)) {
+    displayTime = statusRaw;
+  } else {
+    displayTime = startRaw;
   }
-  // All other games (e.g., old, future) are ignored
+
+  // Use abbreviations if available
+  const homeAbbr = TEAM_ABBR[home] || home;
+  const awayAbbr = TEAM_ABBR[away] || away;
+
+  const row = document.createElement("div");
+  row.className = "game-row";
+  row.innerHTML = `
+    <div class="game-time" style="color: ${/in progress|half|inning/.test(status) ? 'red' : '#ccc'}">${displayTime}</div>
+    <div class="game-matchup">${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}</div>
+    <div class="game-channel"></div>
+  `;
+
+  // SCORES: only yesterday, only finals
+  if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
+    sections.scores.push(row);
+  }
+  // LIVE: today + "in progress"/live
+  else if (dateStr === todayDateStr && /in progress|half|inning/.test(status)) {
+    sections.live.push(row);
+  }
+  // TODAY: today, not final
+  else if (dateStr === todayDateStr && !(status.includes('final') || status === 'f')) {
+    sections.today.push(row);
+  }
 });
 
     Object.entries(sections).forEach(([key, rows]) => {
