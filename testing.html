@@ -62,7 +62,7 @@
 
 /* league name header */
 .league-header {
-  padding: 6px 000;
+  padding: 6px;
   font-weight: bold;
   color: #fff;
   margin-bottom: 3em
@@ -1793,7 +1793,7 @@ async function loadLeagueOrder() {
 }
 
 function parseTimeToLocal(timeStr) {
-  // Get today's date in Eastern Time
+  // Returns a local Date object for a given ET time string (e.g., "12:00 PM")
   const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
   const base = new Date(eastNow);
 
@@ -1801,13 +1801,20 @@ function parseTimeToLocal(timeStr) {
   const month = String(base.getMonth() + 1).padStart(2, '0');
   const day = String(base.getDate()).padStart(2, '0');
 
-  // Combine into full datetime string and treat it as Eastern Time (ET)
-  const easternTimeString = `${year}-${month}-${day} ${timeStr}`;
-  
-  // Create UTC time from ET, assuming EDT (GMT-0400)
-  const utcDate = new Date(`${easternTimeString} GMT-0400`);
+  // Parse "12:00 PM" style string
+  let [time, modifier] = timeStr.split(' ');
+  if (!time || !modifier) return null;
 
-  return utcDate; // Returns a Date object in user's local time
+  let [hours, minutes] = time.split(':');
+  hours = parseInt(hours, 10);
+  if (modifier === "PM" && hours !== 12) hours += 12;
+  if (modifier === "AM" && hours === 12) hours = 0;
+  minutes = parseInt(minutes, 10);
+
+  // Build ISO 8601 string with ET offset (-04:00 for EDT, -05:00 for EST)
+  // For May sports, it's EDT (-04:00)
+  const isoString = `${year}-${month}-${day}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00-04:00`;
+  return new Date(isoString);
 }
 
 async function fetchAllGames() {
@@ -1867,18 +1874,11 @@ if (status.includes("final") || status === 'f') {
 } else if (/in progress|half|inning/.test(status)) {
   displayTime = statusRaw;
 } else if (startRaw) {
-  // Convert Eastern time string to user's local time string
-  const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
-  const base = new Date(eastNow);
-  const year = base.getFullYear();
-  const month = String(base.getMonth() + 1).padStart(2, '0');
-  const day = String(base.getDate()).padStart(2, '0');
-  // Make a full datetime string in Eastern Time
-  const easternTimeString = `${year}-${month}-${day} ${startRaw}`;
-  // Parse it as ET, then show in local time
-  const localDate = new Date(`${easternTimeString} GMT-0400`);
-  // Format as h:mm AM/PM
-  displayTime = localDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  // Use improved parseTimeToLocal for Safari compatibility
+  const localDate = parseTimeToLocal(startRaw);
+  displayTime = localDate
+    ? localDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+    : startRaw;
 } else {
   displayTime = ""; // fallback if no time/status
 }
