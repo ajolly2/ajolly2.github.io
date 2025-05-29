@@ -62,10 +62,12 @@
 
 /* league name header */
 .league-header {
-  padding: 6px;
   font-weight: bold;
-  color: #fff;
-  margin-bottom: 3em
+  color: #fff;                     /* White league name */
+  font-size: 2em;
+  line-height: 1.2;
+  margin-top: 1.5em;               /* 1.5 line breaks above */
+  margin-bottom: 0.5em;            /* 0.5 line break below */
 }
 
 /* the wrapper around all the rows for a league */
@@ -77,16 +79,18 @@
   align-items: center;
   padding: 4px 10px;
   margin-bottom: 10px;
-  /* border-bottom: 1px solid #2a2a2a; */ /* (Optional: comment out for cleaner gap) */
   background: transparent;
 }
+
 .game-row:nth-child(odd) {
   background: transparent;
 }
+
 .game-time {
   font-size: 11px;
   color: #ccc;
 }
+
 .game-matchup {
   padding-left: 10px;
   font-size: 11px;
