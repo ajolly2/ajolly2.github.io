@@ -91,12 +91,6 @@
 .game-time {
   font-size: 11px;
   color: #ccc;
-text-align: center;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 18px;  /* (optional) ensures enough height for centering vertically */
 }
       .game-time.live {
   color: #DC143C !important;
@@ -1919,17 +1913,18 @@ row.innerHTML = `
   <div class="game-channel"></div>
 `;
 
-if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
-  // SCORES: yesterday's finals
-  sections.scores.push(row);
-} else if (dateStr === todayDateStr) {
-  // TODAY: all today's games, regardless of status
-  sections.today.push(row);
-  // LIVE: today, in progress/live
-  if (/in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th)/i.test(status)) {
+  // SCORES: only yesterday, only finals
+  if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
+    sections.scores.push(row);
+  }
+  // LIVE: today + "in progress"/live
+  else if (dateStr === todayDateStr && /in progress|half|inning/.test(status)) {
     sections.live.push(row);
   }
-}
+  // TODAY: today, not final
+  else if (dateStr === todayDateStr && !(status.includes('final') || status === 'f')) {
+    sections.today.push(row);
+  }
 });
 
     Object.entries(sections).forEach(([key, rows]) => {
