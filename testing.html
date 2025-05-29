@@ -1849,7 +1849,7 @@ function renderGamesByTab(byLeague) {
       const matchup   = cols[idx['Matchup']];
       const statusRaw = cols[idx['Status']];
       const score     = cols[idx['Score']];
-      const startRaw  = cols[idx['Start']];
+      const startRaw  = cols[idx['Time']];
       if (!matchup || statusRaw == null) return;
 
       const [home, away] = matchup.split(" vs. ").map(t => t.trim());
