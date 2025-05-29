@@ -1780,129 +1780,150 @@ const TEAM_ABBR = {
 
 // 4) Load leagueOrder (so you only show leagues in the order your CSV says)
 let leagueOrder = [];
+
 async function loadLeagueOrder() {
   try {
     const txt = await (await fetch(leagueOrderURL)).text();
-    leagueOrder = txt.trim()
-                     .split(/\r?\n/)
-                     .map(r => r.split(',')[0])
-                     .filter(l => sheetURLs[l]);
+    leagueOrder = txt
+      .trim()
+      .split(/\r?\n/)
+      .map(r => r.split(',')[0])
+      .filter(l => sheetURLs[l]);
   } catch {
     leagueOrder = Object.keys(sheetURLs);
   }
 }
 
-// 5) Convert “7:05 PM” (ET) → local Date
 function parseTimeToLocal(timeStr) {
   const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
   const base = new Date(eastNow);
-  const y = base.getFullYear(), m = base.getMonth()+1, d = base.getDate();
-  const mm = String(m).padStart(2,'0'), dd = String(d).padStart(2,'0');
-  const dateTime = `${y}-${mm}-${dd} ${timeStr} GMT-0400`;
-  return new Date(dateTime);
+  const year = base.getFullYear();
+  const month = String(base.getMonth() + 1).padStart(2, '0');
+  const day = String(base.getDate()).padStart(2, '0');
+  const easternTimeString = `${year}-${month}-${day} ${timeStr}`;
+  return new Date(`${easternTimeString} GMT-0400`);
 }
 
-// 6) Fetch & parse every sheet by header name
 async function fetchAllGames() {
   const byLeague = {};
-  await Promise.all(Object.entries(sheetURLs).map(async ([league,url]) => {
-    try {
-      const csv  = await (await fetch(url)).text();
-      const all  = csv.trim().split(/\r?\n/).map(r=>r.split(','));
-      const hdrs = all[0].map(h=>h.trim());
-      const idx  = hdrs.reduce((o,h,i)=>{ o[h]=i; return o }, {});
-      byLeague[league] = { rows: all.slice(1), idx };
-    } catch(e){
-      console.warn(`failed ${league}`, e);
-      byLeague[league] = { rows: [], idx: {} };
-    }
-  }));
+  await Promise.all(
+    Object.entries(sheetURLs).map(async ([league, url]) => {
+      try {
+        const text = await (await fetch(url)).text();
+        const allRows = text.trim().split(/\r?\n/).map(r => r.split(','));
+        const headers = allRows[0].map(h => h.trim());
+        const idx = headers.reduce((acc, h, i) => { acc[h] = i; return acc; }, {});
+        byLeague[league] = { rows: allRows.slice(1), idx };
+      } catch (e) {
+        console.warn(`failed ${league}`, e);
+      }
+    })
+  );
   return byLeague;
 }
 
-// 7) Render into your three containers
 function renderGamesByTab(byLeague) {
-  const ct = {
+  const containers = {
     scores: document.getElementById("tv-listings-scores"),
     today:  document.getElementById("tv-listings-today"),
     live:   document.getElementById("tv-listings-live")
   };
-  Object.values(ct).forEach(c=>c.innerHTML="");
+  Object.values(containers).forEach(c => c.innerHTML = "");
 
   const now = new Date();
-  const todayStr = now.toLocaleDateString("en-CA");
-  const yest = new Date(now); yest.setDate(now.getDate()-1);
-  const yestStr = yest.toLocaleDateString("en-CA");
+  const todayDateStr = now.toLocaleDateString("en-CA");
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const yesterdayStr = yesterday.toLocaleDateString("en-CA");
 
   leagueOrder.forEach(league => {
-    const { rows, idx } = byLeague[league];
-    const sections = { scores: [], today: [], live: [] };
+    const info  = byLeague[league] || { rows: [], idx: {} };
+    const games = info.rows;
+    const idx   = info.idx;
+
+    // ←——— HERE: reset per-league sections & seenTimes
+    const sections  = { scores: [], today: [], live: [] };
     const seenTimes = new Set();
 
-    rows.forEach(cols => {
-      const m = cols[idx['Matchup']];
-      const s = cols[idx['Status' ]];
-      const sc= cols[idx['Score'  ]];
-      const t0= cols[idx['Start'  ]];
-      if(!m||s==null) return;
+    games.forEach(cols => {
+      const matchup   = cols[idx['Matchup']];
+      const statusRaw = cols[idx['Status']];
+      const score     = cols[idx['Score']];
+      const startRaw  = cols[idx['Start']];
+      if (!matchup || statusRaw == null) return;
 
-      const [home, away] = m.split(" vs. ").map(x=>x.trim());
-      const st = s.toLowerCase();
-      const dt = parseTimeToLocal(t0);
-      const dStr = dt.toLocaleDateString("en-CA");
-      const tm   = dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
-      const firstOfTime = !seenTimes.has(tm);
-      seenTimes.add(tm);
+      const [home, away] = matchup.split(" vs. ").map(t => t.trim());
+      const status       = statusRaw.toLowerCase();
+      const dt           = parseTimeToLocal(startRaw);
+      const dateStr      = dt.toLocaleDateString("en-CA");
+      const timeStr      = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      const showTime     = !seenTimes.has(timeStr);
+      seenTimes.add(timeStr);
 
+      // ←——— HERE: always show any non-empty status
       let displayTime;
-      if (st.includes("final")||dStr===yestStr)      displayTime = "F";
-      else if (/in progress|half|inning/.test(st))   displayTime = s;
-      else                                           displayTime = firstOfTime? tm : "";
+      if (status.includes("final") || dateStr === yesterdayStr) {
+        displayTime = "F";
+      } else if (statusRaw.trim() !== "") {
+        displayTime = statusRaw;
+      } else {
+        displayTime = showTime ? timeStr : "";
+      }
 
-      const color = /in progress|half|inning/.test(st)? 'red':'#ccc';
-      const hA = TEAM_ABBR[home]||home, aA = TEAM_ABBR[away]||away;
-      const text = sc? `${hA} ${sc} ${aA}` : `${hA} vs. ${aA}`;
-
+      const homeAbbr = TEAM_ABBR[home] || home;
+      const awayAbbr = TEAM_ABBR[away] || away;
       const row = document.createElement("div");
       row.className = "game-row";
       row.innerHTML = `
-        <div class="game-time" style="color:${color}">${displayTime}</div>
-        <div class="game-matchup">${text}</div>
+        <div class="game-time" style="color:${/in progress|half|inning/.test(status)?'red':'#ccc'}">
+          ${displayTime}
+        </div>
+        <div class="game-matchup">
+          ${score ? `${homeAbbr} ${score} ${awayAbbr}` : `${homeAbbr} vs. ${awayAbbr}`}
+        </div>
         <div class="game-channel"></div>
       `;
 
-      if      (st.includes("final")||dStr===yestStr) sections.scores.push(row);
-      else if (/in progress|half|inning/.test(st))  sections.live.push(row);
-      else if (dStr===todayStr)                     sections.today.push(row);
+      // classification into tabs
+      if (status.includes("final") || dateStr === yesterdayStr) {
+        sections.scores.push(row);
+      } else if (/in progress|half|inning/.test(status)) {
+        sections.live.push(row);
+      } else if (dateStr === todayDateStr) {
+        sections.today.push(row);
+      }
     });
 
-    Object.entries(sections).forEach(([tab,rows])=>{
-      if(!rows.length) return;
-      const wrapper = document.createElement("div");
-      wrapper.className = "league-section";
-      wrapper.innerHTML = `<div class="league-header">${league}</div>`;
-      rows.forEach(r=>wrapper.appendChild(r));
-      ct[tab].appendChild(wrapper);
+    // render each non-empty section
+    Object.entries(sections).forEach(([key, rows]) => {
+      if (!rows.length) return;
+      const leagueBox = document.createElement("div");
+      leagueBox.className = "league-section";
+      leagueBox.innerHTML = `<div style="margin-top:1em"></div>
+                             <div class="league-header">${league}</div>`;
+      rows.forEach(r => leagueBox.appendChild(r));
+      containers[key].appendChild(leagueBox);
     });
   });
 }
 
-// 8) Wire up on page load + tabs
-document.addEventListener("DOMContentLoaded", async ()=>{
+document.addEventListener("DOMContentLoaded", async () => {
   await loadLeagueOrder();
   const data = await fetchAllGames();
   renderGamesByTab(data);
 
-  const tabs = document.querySelectorAll(".games-tab");
-  const panes= document.querySelectorAll(".games-content");
-  tabs.forEach(t=>{
-    t.addEventListener("click",()=>{
-      tabs.forEach(x=>x.classList.remove("active"));
-      panes.forEach(p=>p.style.display="none");
-      t.classList.add("active");
-      document.getElementById("tv-listings-"+t.dataset.tab).style.display="block";
+  // tab switching
+  const tabs  = document.querySelectorAll(".games-tab");
+  const boxes = document.querySelectorAll(".games-content");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      boxes.forEach(b => b.style.display = "none");
+      tab.classList.add("active");
+      document.getElementById("tv-listings-" + tab.dataset.tab).style.display = "block";
     });
   });
+
   // default to Today
   document.querySelector(".games-tab[data-tab='today']")?.click();
 });
