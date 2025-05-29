@@ -1778,96 +1778,105 @@ const TEAM_ABBR = {
   "Copenhagen":"COP","Aberdeen":"ABE","Anderlecht":"AND","Hearts":"HEA"
 };
 
-// 4) Load leagueOrder (so you only show leagues in the order your CSV says)
-let leagueOrder = [];
+<script>
+const leagueOrderURL =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=0&single=true&output=csv';
 
+const sheetURLs = {
+  NFL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1646106823&single=true&output=csv',
+  NHL:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=905422182&single=true&output=csv',
+  NBA:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=529321486&single=true&output=csv',
+  MLB:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=355225860&single=true&output=csv',
+  WNBA: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS75MzF61eZ1loPVTa56TvlfU2Z5ZXUiQuIL-nQ8XVlJYIzrHEzAoVstru5wwlEaTuZSlRd4XrwEXZM/pub?gid=1033631487&single=true&output=csv'
+};
+
+const TEAM_ABBR = {
+  /* …your full team-abbrev map… */
+};
+
+// Load league order (same as before)
 async function loadLeagueOrder() {
   try {
     const txt = await (await fetch(leagueOrderURL)).text();
-    leagueOrder = txt
-      .trim()
-      .split(/\r?\n/)
-      .map(r => r.split(',')[0])
-      .filter(l => sheetURLs[l]);
+    return txt.trim().split(/\r?\n/).map(r=>r.split(',')[0]).filter(l=>sheetURLs[l]);
   } catch {
-    leagueOrder = Object.keys(sheetURLs);
+    return Object.keys(sheetURLs);
   }
 }
 
+// Parse "Time" (or whatever your column is called) into a Date in local tz
 function parseTimeToLocal(timeStr) {
-  const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
-  const base = new Date(eastNow);
-  const year = base.getFullYear();
-  const month = String(base.getMonth() + 1).padStart(2, '0');
-  const day = String(base.getDate()).padStart(2, '0');
-  const easternTimeString = `${year}-${month}-${day} ${timeStr}`;
-  return new Date(`${easternTimeString} GMT-0400`);
+  const eastNow = new Date().toLocaleString("en-US",{timeZone:"America/New_York"});
+  const base   = new Date(eastNow);
+  const y = base.getFullYear(), m = String(base.getMonth()+1).padStart(2,'0'), d = String(base.getDate()).padStart(2,'0');
+  return new Date(`${y}-${m}-${d} ${timeStr} GMT-0400`);
 }
 
+// Fetch *all* games, build lower-case header→index map for each sheet
 async function fetchAllGames() {
   const byLeague = {};
-  await Promise.all(
-    Object.entries(sheetURLs).map(async ([league, url]) => {
-      try {
-        const text = await (await fetch(url)).text();
-        const allRows = text.trim().split(/\r?\n/).map(r => r.split(','));
-        const headers = allRows[0].map(h => h.trim());
-        const idx = headers.reduce((acc, h, i) => { acc[h] = i; return acc; }, {});
-        byLeague[league] = { rows: allRows.slice(1), idx };
-      } catch (e) {
-        console.warn(`failed ${league}`, e);
-      }
-    })
-  );
+  await Promise.all(Object.entries(sheetURLs).map(async ([league,url]) => {
+    try {
+      const csv  = await (await fetch(url)).text();
+      const rows = csv.trim().split(/\r?\n/).map(r=>r.split(','));
+      const headers = rows.shift().map(h=>h.trim());
+      // Build a map: headerNameLower → its column index
+      const idx = {};
+      headers.forEach((h,i)=>{ idx[h.toLowerCase()] = i });
+      console.log(`→ [${league}] headers:`, headers);
+      byLeague[league] = { rows, idx };
+    } catch(e) {
+      console.warn(`Failed loading ${league}`, e);
+      byLeague[league] = { rows: [], idx: {} };
+    }
+  }));
   return byLeague;
 }
 
-function renderGamesByTab(byLeague) {
+// Render into the three tabs
+function renderGamesByTab(byLeague, leagueOrder) {
   const containers = {
     scores: document.getElementById("tv-listings-scores"),
     today:  document.getElementById("tv-listings-today"),
     live:   document.getElementById("tv-listings-live")
   };
-  Object.values(containers).forEach(c => c.innerHTML = "");
+  Object.values(containers).forEach(c=>c.innerHTML="");
 
-  const now = new Date();
+  const now          = new Date();
   const todayDateStr = now.toLocaleDateString("en-CA");
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
+  const yesterday    = new Date(now); yesterday.setDate(now.getDate()-1);
   const yesterdayStr = yesterday.toLocaleDateString("en-CA");
 
   leagueOrder.forEach(league => {
-    const info  = byLeague[league] || { rows: [], idx: {} };
-    const games = info.rows;
-    const idx   = info.idx;
-
-    // ←——— HERE: reset per-league sections & seenTimes
-    const sections  = { scores: [], today: [], live: [] };
+    const { rows, idx } = byLeague[league] || { rows:[], idx:{} };
     const seenTimes = new Set();
+    const sections = { scores:[], today:[], live:[] };
 
-    games.forEach(cols => {
-      const matchup   = cols[idx['Matchup']];
-      const statusRaw = cols[idx['Status']];
-      const score     = cols[idx['Score']];
-      const startRaw  = cols[idx['Time']];
-      if (!matchup || statusRaw == null) return;
+    rows.forEach(cols => {
+      // pick your columns by lower-case header name:
+      const matchup   = cols[idx["matchup"]];
+      const statusRaw = cols[idx["status"]];
+      const score     = cols[idx["score"]];
+      const timeRaw   = cols[idx["time"]];    // ← use *exactly* your sheet’s column name here, lower-cased
 
-      const [home, away] = matchup.split(" vs. ").map(t => t.trim());
-      const status       = statusRaw.toLowerCase();
-      const dt           = parseTimeToLocal(startRaw);
-      const dateStr      = dt.toLocaleDateString("en-CA");
-      const timeStr      = dt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-      const showTime     = !seenTimes.has(timeStr);
-      seenTimes.add(timeStr);
+      if (!matchup || statusRaw == null || timeRaw == null) return;
 
-      // ←——— HERE: always show any non-empty status
+      const [home, away] = matchup.split(" vs. ").map(t=>t.trim());
+      const status = statusRaw.toLowerCase();
+      const dt     = parseTimeToLocal(timeRaw);
+      const date   = dt.toLocaleDateString("en-CA");
+      const clock  = dt.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"});
+      const showTime = !seenTimes.has(clock);
+      seenTimes.add(clock);
+
+      // pick what to show in the time column
       let displayTime;
-      if (status.includes("final") || dateStr === yesterdayStr) {
+      if (status.includes("final") || date===yesterdayStr) {
         displayTime = "F";
-      } else if (statusRaw.trim() !== "") {
+      } else if (/in progress|half|inning/.test(status)) {
         displayTime = statusRaw;
       } else {
-        displayTime = showTime ? timeStr : "";
+        displayTime = showTime ? clock : "";
       }
 
       const homeAbbr = TEAM_ABBR[home] || home;
@@ -1884,46 +1893,42 @@ function renderGamesByTab(byLeague) {
         <div class="game-channel"></div>
       `;
 
-      // classification into tabs
-      if (status.includes("final") || dateStr === yesterdayStr) {
+      if (status.includes("final") || date===yesterdayStr) {
         sections.scores.push(row);
       } else if (/in progress|half|inning/.test(status)) {
         sections.live.push(row);
-      } else if (dateStr === todayDateStr) {
+      } else if (date===todayDateStr) {
         sections.today.push(row);
       }
     });
 
-    // render each non-empty section
-    Object.entries(sections).forEach(([key, rows]) => {
+    // append each nonempty section under a league header
+    Object.entries(sections).forEach(([tab, rows]) => {
       if (!rows.length) return;
-      const leagueBox = document.createElement("div");
-      leagueBox.className = "league-section";
-      leagueBox.innerHTML = `<div style="margin-top:1em"></div>
-                             <div class="league-header">${league}</div>`;
-      rows.forEach(r => leagueBox.appendChild(r));
-      containers[key].appendChild(leagueBox);
+      const box = document.createElement("div");
+      box.className = "league-section";
+      box.innerHTML = `<div class="league-header">${league}</div>`;
+      rows.forEach(r=>box.appendChild(r));
+      containers[tab].appendChild(box);
     });
   });
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadLeagueOrder();
-  const data = await fetchAllGames();
-  renderGamesByTab(data);
+// wire it all up
+document.addEventListener("DOMContentLoaded", async ()=>{
+  const leagueOrder = await loadLeagueOrder();
+  const data        = await fetchAllGames();
+  renderGamesByTab(data, leagueOrder);
 
-  // tab switching
-  const tabs  = document.querySelectorAll(".games-tab");
-  const boxes = document.querySelectorAll(".games-content");
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      tabs.forEach(t => t.classList.remove("active"));
-      boxes.forEach(b => b.style.display = "none");
+  // tabs click
+  document.querySelectorAll(".games-tab").forEach(tab=>{
+    tab.addEventListener("click",()=>{
+      document.querySelectorAll(".games-tab").forEach(t=>t.classList.remove("active"));
+      document.querySelectorAll(".games-content").forEach(c=>c.style.display="none");
       tab.classList.add("active");
-      document.getElementById("tv-listings-" + tab.dataset.tab).style.display = "block";
+      document.getElementById("tv-listings-"+tab.dataset.tab).style.display="block";
     });
   });
-
   // default to Today
   document.querySelector(".games-tab[data-tab='today']")?.click();
 });
