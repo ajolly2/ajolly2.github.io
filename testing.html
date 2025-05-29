@@ -65,6 +65,7 @@
   padding: 6px 10px;
   font-weight: bold;
   color: #bbb;
+  margin-bottom: 10px;
 }
 
 /* the wrapper around all the rows for a league */
@@ -93,6 +94,8 @@
 /* middle column = teams */
 .game-matchup {
   padding-left: 10px;
+  font-size: 11px; 
+  color: #ccc;
 }
 
 /* right column = channel placeholder */
@@ -137,6 +140,12 @@
   align-items: center;
   padding: 4px 10px;
   border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 5px;   /* Add this line */
+  background: transparent; /* Optional: remove striping for clean gap */
+}
+.game-row:nth-child(odd) {
+  background: transparent; /* Remove striping if you prefer, else leave as is */
+
 }
 .game-time {
   font-size: 11px;
