@@ -133,6 +133,19 @@
   display: none;
 }
 
+  .headlines-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 10px;
+  line-height: 18px;
+  color: #aaa;
+  cursor: pointer;
+  background-color: #2a2a2a;
+  border-right: 1px solid #1f1f1f;
+}
+.headlines-tab.active {
+  background-color: #3c3c3c;
+  color: #fff;
 #tv-listings-scores,
 #tv-listings-today,
 #tv-listings-live {
@@ -906,11 +919,11 @@
     <!-- Headlines Section -->
     <div class="news-section headlines-section">
       <div class="news-section-header">Headlines</div>
-     <div id="games-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
-    <div class="games-tab active" data-tab="scores">ESPN</div>
-    <div class="games-tab" data-tab="today">CBS</div>
-    <div class="games-tab" data-tab="live">Yahoo</div>
-       <div class="games-tab" data-tab="live">FOX</div>
+     <div id="headlines-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
+    <div class="headlines-tab active" data-tab="scores">ESPN</div>
+    <div class="headlines-tab" data-tab="today">CBS</div>
+    <div class="headlines-tab" data-tab="live">Yahoo</div>
+       <div class="headlines-tab" data-tab="live">FOX</div>
   </div>
       <div class="news-feed-content" id="headlines-feed">
         Loading headlines...
