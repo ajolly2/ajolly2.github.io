@@ -2026,6 +2026,8 @@ function renderGamesByTab(byLeague) {
   leagueOrder.forEach(league => {
     const games = (byLeague[league] || []);
     const sections = { scores: [], today: [], live: [] };
+// One Set per league to track display times already shown
+const seenDisplayTimes = new Set();
     const seenTimes = new Set();
 
     games.forEach(cols => {
@@ -2074,10 +2076,14 @@ const matchupDisplay = showScore
   ? `${homeAbbr} ${score} ${awayAbbr}`
   : `${homeAbbr} vs. ${awayAbbr}`;
 
+const isLiveOrFinal = displayTime === "F" || /(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status);
+const showTime = isLiveOrFinal || !seenDisplayTimes.has(displayTime) ? displayTime : "";
+if (!isLiveOrFinal) seenDisplayTimes.add(displayTime);
+
 const row = document.createElement("div");
 row.className = "game-row";
 row.innerHTML = `
-  <div class="game-time${displayTime === "F" ? ' game-time-final' : /(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status) ? ' live' : ''}">${displayTime}</div>
+  <div class="game-time${displayTime === "F" ? ' game-time-final' : isLiveOrFinal ? ' live' : ''}">${showTime}</div>
   <div class="game-matchup">${matchupDisplay}</div>
   <div class="game-channel"></div>
 `;
