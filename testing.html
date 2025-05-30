@@ -293,6 +293,8 @@
       /* Container for columns */
       .container {
         display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
         width: 100%;
         height: calc(100% - 20px);
         justify-content: center;
@@ -300,6 +302,7 @@
       .column {
         overflow: auto;
         padding: 10px 0;
+        border: 1px solid red;
       }
       .column.tv-listings {
   padding: 0;
