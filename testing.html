@@ -302,6 +302,7 @@
   white-space: nowrap;
       }
       .column {
+        flex: 1;
         overflow: auto;
         padding: 10px 0;
           min-width: 0;  /* prevents flex columns from overflowing */
@@ -335,7 +336,7 @@
   padding: 0;
 }
       .social {
-        flex: 0 0 250px;
+  
         background-color: #fff;
       }
       #menuTopBox {
@@ -1208,7 +1209,7 @@
       <div class="divider"></div>
 
       <!-- SOCIAL PANEL -->
-      <div class="column social" style="padding: 0; margin: 0;">
+      <div class="column social" style="padding: 0; margin: 0; flex: 0 0 250px;">
         <div
           id="socialHeader"
           style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11;"
