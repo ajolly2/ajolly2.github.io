@@ -897,16 +897,21 @@
       <div class="column news">
         <div class="column news">
   <!-- News header -->
-  <div class="news-header">News</div>
+  <div class="news-header" style="
+      position: sticky; top: 0; width: 100%; height: 18px;
+      background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif;
+      font-size: 10px; display: flex; align-items: center;
+      padding-left: 1px; z-index: 11; border-bottom: 1px solid #1f1f1f;">News</div>
   <div class="news-main-container">
     <!-- Headlines Section -->
     <div class="news-section headlines-section">
       <div class="news-section-header">Headlines</div>
-      <div class="news-section-header breaking-tabs-header">
-         <span class="news-tab active" data-tab="breaking">Breaking</span>
-        <span class="news-tab" data-tab="fantasy">Fantasy</span>
-        <span class="news-tab" data-tab="transactions">Transactions</span>
-      </div>
+     <div id="games-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
+    <div class="games-tab active" data-tab="scores">ESPN</div>
+    <div class="games-tab" data-tab="today">CBS</div>
+    <div class="games-tab" data-tab="live">Yahoo</div>
+       <div class="games-tab" data-tab="live">FOX</div>
+  </div>
       <div class="news-feed-content" id="headlines-feed">
         Loading headlines...
       </div>
