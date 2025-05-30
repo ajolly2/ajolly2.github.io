@@ -2169,25 +2169,25 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
  
 <script>
-  <script>
-  function setupHeadlineTabs() {
-    document.querySelectorAll(".headlines-tab").forEach(tab => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".headlines-tab").forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
+function setupHeadlineTabs() {
+  document.querySelectorAll(".headlines-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      // Deactivate all tabs
+      document.querySelectorAll(".headlines-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
 
-        document.querySelectorAll(".news-feed-content[id$='-feed']").forEach(el => el.style.display = "none");
-        const source = tab.dataset.source;
-        const selectedFeed = document.getElementById(`${source}-feed`);
-        if (selectedFeed) selectedFeed.style.display = "block";
-      });
+      // Hide all feed panels
+      document.querySelectorAll(".news-feed-content[id$='-feed']").forEach(el => el.style.display = "none");
+
+      // Show selected panel
+      const source = tab.dataset.source;
+      const feed = document.getElementById(`${source}-feed`);
+      if (feed) feed.style.display = "block";
     });
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    setupHeadlineTabs();
   });
-</script>
+}
+
+document.addEventListener("DOMContentLoaded", setupHeadlineTabs);
 </script>
 
   </body>
