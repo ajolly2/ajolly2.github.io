@@ -50,45 +50,41 @@
 <meta name="twitter:description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place." />
 <meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
     <style>
-.headlines-tabs-header {
+..headlines-tabs-header {
   display: flex;
-  background: #222;
-  color: white;
-  padding: 6px 10px;
-  font-weight: bold;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .news-tab {
-  margin-right: 12px;
+  padding: 5px 10px;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: #333;
+  background-color: #eaeaea;
+  border-radius: 5px;
+  font-weight: bold;
 }
 
 .news-tab.active {
-  background: #555;
+  background-color: #0072ce;
   color: #fff;
 }
 
 .headline-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  list-style-type: none;
+  padding-left: 0;
 }
 
 .headline-list li {
-  margin: 6px 0;
+  margin-bottom: 8px;
 }
 
-.headline-list li a {
+.headline-list a {
   text-decoration: none;
-  color: #eee;
+  color: #000;
 }
 
-.headline-list li a:hover {
+.headline-list a:hover {
   text-decoration: underline;
-  color: #fff;
 }
       .column.news {
   flex: 1;
@@ -2137,6 +2133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
    
 </script>
+      
 <script>
   // -- FEED URLs: Replace with your real feeds --
 const HEADLINES_FEED = "https://www.espn.com/espn/rss/news";
@@ -2210,67 +2207,58 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>
-<script>
-const FEED_ENDPOINT = "https://script.google.com/macros/s/AKfycbz3SXWl-5-xtv58RpA7b-3p1bEr28W7u6mu2pwyRoNkoRWITxKV8-HVyhn9uFSPgT3N_g/exec";
 
-async function loadHeadlines(source) {
-  const feedContainer = document.getElementById(`${source}-feed`);
-  if (!feedContainer) return;
+      <script>
+const endpoint = "https://script.google.com/macros/s/AKfycbz3SXWl-5-xtv58RpA7b-3p1bEr28W7u6mu2pwyRoNkoRWITxKV8-HVyhn9uFSPgT3N_g/exec";
 
-  feedContainer.innerHTML = "Loading...";
-
+async function fetchHeadlinesBySource() {
   try {
-    const response = await fetch(`${FEED_ENDPOINT}?source=${source}`);
-    const data = await response.json();
+    const response = await fetch(endpoint);
+    if (!response.ok) throw new Error("Network error");
+    const feeds = await response.json();
 
-    const ul = document.createElement("ul");
-    ul.className = "headline-list";
+    ["espn", "cbs", "yahoo", "fox"].forEach(source => {
+      const container = document.getElementById(`${source}-feed`);
+      if (!container) return;
+      const ul = document.createElement("ul");
+      ul.className = "headline-list";
 
-    data.forEach(item => {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = item.link;
-      a.textContent = item.title;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      li.appendChild(a);
-      ul.appendChild(li);
+      (feeds[source] || []).forEach(item => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = item.link;
+        a.textContent = item.title;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+
+      container.innerHTML = "";
+      container.appendChild(ul);
     });
 
-    feedContainer.innerHTML = "";
-    feedContainer.appendChild(ul);
-
   } catch (err) {
-    console.error("Error loading headlines:", err);
-    feedContainer.innerText = "Failed to load headlines.";
+    console.error("Headline load failed", err);
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Load default feed
-  loadHeadlines("espn");
-
-  // Tab switching
-  document.querySelectorAll(".news-tab").forEach(tab => {
+function setupHeadlineTabs() {
+  document.querySelectorAll(".news-tab[data-source]").forEach(tab => {
     tab.addEventListener("click", () => {
-      document.querySelectorAll(".news-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".news-tab[data-source]").forEach(t => t.classList.remove("active"));
       tab.classList.add("active");
 
       const source = tab.dataset.source;
-
-      document.querySelectorAll(".news-feed-content").forEach(div => {
-        div.style.display = "none";
-      });
-
-      const target = document.getElementById(`${source}-feed`);
-      target.style.display = "block";
-
-      // Load feed only if not already loaded
-      if (!target.hasChildNodes()) {
-        loadHeadlines(source);
-      }
+      document.querySelectorAll(".news-feed-content[id$='-feed']").forEach(el => el.style.display = "none");
+      document.getElementById(`${source}-feed`).style.display = "block";
     });
   });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  fetchHeadlinesBySource();
+  setupHeadlineTabs();
 });
 </script>
 
