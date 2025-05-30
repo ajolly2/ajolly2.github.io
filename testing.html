@@ -136,6 +136,13 @@
   display: none;
 }
 
+#espn-feed,
+#cbs-feed,
+#yahoo-feed,
+#fox-feed {
+  padding: 10px;
+}
+
       .games-tab {
   flex: 1;
   text-align: center;
@@ -2161,6 +2168,27 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
  
+<script>
+  <script>
+  function setupHeadlineTabs() {
+    document.querySelectorAll(".headlines-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".headlines-tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        document.querySelectorAll(".news-feed-content[id$='-feed']").forEach(el => el.style.display = "none");
+        const source = tab.dataset.source;
+        const selectedFeed = document.getElementById(`${source}-feed`);
+        if (selectedFeed) selectedFeed.style.display = "block";
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setupHeadlineTabs();
+  });
+</script>
+</script>
 
   </body>
 </html> 
