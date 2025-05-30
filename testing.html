@@ -922,16 +922,17 @@
       background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif;
       font-size: 10px; display: flex; align-items: center;
       padding-left: 1px; z-index: 11; border-bottom: 1px solid #1f1f1f;">News</div>
-           <div id="headlines-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
+           
+  <div class="news-main-container">
+    <!-- Headlines Section -->
+    <div class="news-section headlines-section">
+      <div class="news-section-header">Headlines</div>
+      <div id="headlines-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
     <div class="headlines-tab active" data-tab="scores">ESPN</div>
     <div class="headlines-tab" data-tab="today">CBS</div>
     <div class="headlines-tab" data-tab="live">Yahoo</div>
              <div class="headlines-tab" data-tab="live">FOX</div>
   </div>
-  <div class="news-main-container">
-    <!-- Headlines Section -->
-    <div class="news-section headlines-section">
-      <div class="news-section-header">Headlines</div>
       <div class="news-feed-content" id="headlines-feed">
         Loading headlines...
       </div>
