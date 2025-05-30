@@ -50,6 +50,49 @@
 <meta name="twitter:description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place." />
 <meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
     <style>
+
+      .column.news {
+  flex: 1;
+  min-width: 300px;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.news-main-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.news-section-header {
+  font-weight: bold;
+  font-size: 14px;
+  color: #fff;
+  padding: 8px 12px;
+  background: #333;
+  border-bottom: 1px solid #444;
+}
+
+.news-feed-content {
+  padding: 10px 12px;
+  overflow-y: auto;
+  max-height: 500px;
+}
+
+.rss-item {
+  margin-bottom: 12px;
+}
+
+.rss-item-title {
+  color: #ccc;
+  text-decoration: none;
+}
+
+.rss-item-title:hover {
+  text-decoration: underline;
+}
       .column.tv-listings #live-games-container {
   margin: 0;
   padding: 0;
@@ -900,12 +943,12 @@
   <div class="news-header">News</div>
   <div class="news-main-container">
     <!-- Headlines Section -->
-    <div class="news-section headlines-section">
-      <div class="news-section-header">Headlines</div>
-      <div class="news-feed-content" id="headlines-feed">
-        Loading headlines...
-      </div>
-    </div>
+<div class="news-section headlines-section">
+  <div class="news-section-header">Headlines</div>
+  <div class="news-feed-content" id="headlines-feed">
+    Loading headlines...
+  </div>
+</div>
     <!-- Breaking/Fantasy/Transactions Tabs Section -->
     <div class="news-section breaking-section">
       <div class="news-section-header breaking-tabs-header">
@@ -2123,7 +2166,30 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>
- 
+ <script>
+  async function fetchHeadlines() {
+    const endpoint = 'https://script.google.com/macros/s/AKfycbyBTbYrGmTp_mk1LF0fGpJuig7HC0VUiH97MM87JmZ6ph8s-qTD08df1Tw5FRunLFaG2g/exec';
+    const feedContainer = document.getElementById('headlines-feed');
+    feedContainer.innerHTML = '';
+
+    try {
+      const response = await fetch(endpoint);
+      const data = await response.json();
+
+      data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'rss-item';
+        div.innerHTML = `<a href="${item.link}" target="_blank" class="rss-item-title">${item.title}</a>`;
+        feedContainer.appendChild(div);
+      });
+    } catch (err) {
+      feedContainer.innerHTML = 'Failed to load headlines';
+      console.error(err);
+    }
+  }
+
+  fetchHeadlines();
+</script>
 
   </body>
 </html> 
