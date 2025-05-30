@@ -50,25 +50,35 @@
 <meta name="twitter:description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place." />
 <meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
     <style>
-..headlines-tabs-header {
+/* Headlines tab header (replaces .headlines-tabs-header) */
+.headlines-tabs-header,
+.breaking-tabs {
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
 }
 
-.news-tab {
+/* Shared tab styling for news */
+.news-tab,
+.headline-tab,
+.breaking-tab {
   padding: 5px 10px;
   cursor: pointer;
   background-color: #eaeaea;
   border-radius: 5px;
   font-weight: bold;
+  text-align: center;
+  flex: 1;
 }
 
-.news-tab.active {
+.news-tab.active,
+.headline-tab.active,
+.breaking-tab.active {
   background-color: #0072ce;
   color: #fff;
 }
 
+/* Headline list */
 .headline-list {
   list-style-type: none;
   padding-left: 0;
@@ -86,7 +96,9 @@
 .headline-list a:hover {
   text-decoration: underline;
 }
-      .column.news {
+
+/* Main news column */
+.column.news {
   flex: 1;
   min-width: 300px;
   max-width: 350px;
@@ -95,13 +107,16 @@
   overflow-y: auto;
 }
 
+/* Container inside news */
 .news-main-container {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
-.news-section-header {
+/* Section headers like "News", "Headlines" */
+.news-header,
+.section-header {
   font-weight: bold;
   font-size: 14px;
   color: #fff;
@@ -110,10 +125,31 @@
   border-bottom: 1px solid #444;
 }
 
-.news-feed-content {
+/* Feed content area */
+.news-feed-content,
+.tab-content {
   padding: 10px 12px;
   overflow-y: auto;
   max-height: 500px;
+  display: none;
+}
+
+/* Only show active tab's content */
+.news-feed-content.active,
+.tab-content.active {
+  display: block;
+}
+
+/* Headlines container takes up 65% of height */
+.headlines-tabs-container {
+  flex: 0 0 65%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Breaking section tabs appear inline (no "Breaking" title) */
+.breaking-tabs {
+  margin-top: 12px;
 }
 
 .rss-item {
@@ -971,37 +1007,36 @@
 <div class="divider"></div>
 
 
-      <!-- NEWS PANEL -->
-        <div class="column news">
+     <!-- NEWS PANEL -->
+<div class="column news">
   <!-- News header -->
   <div class="news-header">News</div>
-  <div class="news-main-container">
-    <!-- Headlines Section -->
-<!-- Headlines Panel -->
-<div class="news-section headlines-tabs">
-  <div class="news-section-header headlines-tabs-header">
-    <span class="news-tab active" data-source="espn">ESPN</span>
-    <span class="news-tab" data-source="cbs">CBS</span>
-    <span class="news-tab" data-source="yahoo">Yahoo</span>
-    <span class="news-tab" data-source="fox">FOX</span>
-  </div>
-  <div class="news-feed-content" id="espn-feed">Loading...</div>
-  <div class="news-feed-content" id="cbs-feed" style="display: none;">Loading...</div>
-  <div class="news-feed-content" id="yahoo-feed" style="display: none;">Loading...</div>
-  <div class="news-feed-content" id="fox-feed" style="display: none;">Loading...</div>
-</div>
-    <!-- Breaking/Fantasy/Transactions Tabs Section -->
-    <div class="news-section breaking-section">
-      <div class="news-section-header breaking-tabs-header">
-        <span class="news-tab active" data-tab="breaking">Breaking</span>
-        <span class="news-tab" data-tab="fantasy">Fantasy</span>
-        <span class="news-tab" data-tab="transactions">Transactions</span>
-      </div>
-      <div class="news-feed-content" id="breaking-feed">Loading breaking news...</div>
-      <div class="news-feed-content" id="fantasy-feed" style="display:none;">Loading fantasy news...</div>
-      <div class="news-feed-content" id="transactions-feed" style="display:none;">Loading transactions...</div>
+
+  <!-- Headlines section -->
+  <div class="section-header">Headlines</div>
+  <div class="headlines-tabs-container">
+    <div class="tab-header">
+      <span class="headline-tab active" data-target="headline1"></span>
+      <span class="headline-tab" data-target="headline2"></span>
+      <span class="headline-tab" data-target="headline3"></span>
+      <span class="headline-tab" data-target="headline4"></span>
     </div>
+    <div class="tab-content headline-tab-content active" id="headline1">Headline Feed 1</div>
+    <div class="tab-content headline-tab-content" id="headline2">Headline Feed 2</div>
+    <div class="tab-content headline-tab-content" id="headline3">Headline Feed 3</div>
+    <div class="tab-content headline-tab-content" id="headline4">Headline Feed 4</div>
   </div>
+
+  <!-- Breaking section -->
+  <div class="tab-header breaking-tabs">
+    <span class="breaking-tab active" data-target="breaking-feed">Breaking</span>
+    <span class="breaking-tab" data-target="fantasy-feed">Fantasy</span>
+    <span class="breaking-tab" data-target="transactions-feed">Transactions</span>
+  </div>
+  <div class="tab-content breaking-tab-content active" id="breaking-feed">Breaking news here</div>
+  <div class="tab-content breaking-tab-content" id="fantasy-feed">Fantasy news here</div>
+  <div class="tab-content breaking-tab-content" id="transactions-feed">Transactions news here</div>
+</div>
         <!-- MLB News Section -->
         <div id="news-MLB" class="content-section" style="display: none;">
           <div class="rss-feed" id="feed-_6gzCeS4YQ4h2adTs">
@@ -2141,85 +2176,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 </script>
       
 <script>
-  // -- FEED URLs: Replace with your real feeds --
-const HEADLINES_FEED = "https://www.espn.com/espn/rss/news";
+const HEADLINES_ENDPOINT = "https://script.google.com/macros/s/AKfycbz3SXWl-5-xtv58RpA7b-3p1bEr28W7u6mu2pwyRoNkoRWITxKV8-HVyhn9uFSPgT3N_g/exec";
+
+// Backup feeds (optional if endpoint fails)
 const BREAKING_FEED = "https://www.cbssports.com/rss/headlines/";
 const FANTASY_FEED = "https://fantasynews.cbssports.com/rss/headlines/";
-const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news"; // EXAMPLE, replace as needed
+const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news";
 
-// -- Generic function to fetch and render a basic RSS feed --
-function fetchRSSFeed(url, containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  container.innerHTML = "Loading...";
-  fetch(url)
-    .then(res => res.text())
-    .then(str => {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(str, "application/xml");
-      const items = Array.from(xml.querySelectorAll("item"));
-      if (!items.length) {
-        container.innerHTML = "<p>No stories found.</p>";
-        return;
-      }
-      const ul = document.createElement("ul");
-      ul.style.margin = "0";
-      ul.style.padding = "0";
-      ul.style.listStyle = "none";
-      items.slice(0, 10).forEach(item => {
-        const li = document.createElement("li");
-        li.style.padding = "6px 0";
-        const title = item.querySelector("title")?.textContent || "";
-        const link = item.querySelector("link")?.textContent || "#";
-        li.innerHTML = `<a href="${link}" target="_blank" style="color:#212121;text-decoration:none;">${title}</a>`;
-        ul.appendChild(li);
-      });
-      container.innerHTML = "";
-      container.appendChild(ul);
-    })
-    .catch(() => {
-      container.innerHTML = "<p>Error loading feed.</p>";
-    });
-}
-
-// -- Tabs logic for Breaking/Fantasy/Transactions
-document.addEventListener("DOMContentLoaded", function() {
-  // Load default feeds
-  fetchRSSFeed(HEADLINES_FEED, "headlines-feed");
-  fetchRSSFeed(BREAKING_FEED, "breaking-feed");
-
-  const tabs = document.querySelectorAll(".news-tab");
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      tabs.forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      document.getElementById("breaking-feed").style.display = "none";
-      document.getElementById("fantasy-feed").style.display = "none";
-      document.getElementById("transactions-feed").style.display = "none";
-
-      if (tab.dataset.tab === "breaking") {
-        document.getElementById("breaking-feed").style.display = "block";
-        fetchRSSFeed(BREAKING_FEED, "breaking-feed");
-      }
-      if (tab.dataset.tab === "fantasy") {
-        document.getElementById("fantasy-feed").style.display = "block";
-        fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
-      }
-      if (tab.dataset.tab === "transactions") {
-        document.getElementById("transactions-feed").style.display = "block";
-        fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
-      }
-    });
-  });
-});
-</script>
-
-      <script>
-const endpoint = "https://script.google.com/macros/s/AKfycbz3SXWl-5-xtv58RpA7b-3p1bEr28W7u6mu2pwyRoNkoRWITxKV8-HVyhn9uFSPgT3N_g/exec";
-
+// Load JSON feeds from endpoint (ESPN, CBS, Yahoo, FOX)
 async function fetchHeadlinesBySource() {
   try {
-    const response = await fetch(endpoint);
+    const response = await fetch(HEADLINES_ENDPOINT);
     if (!response.ok) throw new Error("Network error");
     const feeds = await response.json();
 
@@ -2243,16 +2210,48 @@ async function fetchHeadlinesBySource() {
       container.innerHTML = "";
       container.appendChild(ul);
     });
-
   } catch (err) {
     console.error("Headline load failed", err);
   }
 }
 
+// Load RSS feeds directly for Breaking, Fantasy, Transactions
+function fetchRSSFeed(url, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = "Loading...";
+  fetch(url)
+    .then(res => res.text())
+    .then(str => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(str, "application/xml");
+      const items = Array.from(xml.querySelectorAll("item"));
+      if (!items.length) {
+        container.innerHTML = "<p>No stories found.</p>";
+        return;
+      }
+      const ul = document.createElement("ul");
+      ul.className = "headline-list";
+      items.slice(0, 10).forEach(item => {
+        const li = document.createElement("li");
+        const title = item.querySelector("title")?.textContent || "";
+        const link = item.querySelector("link")?.textContent || "#";
+        li.innerHTML = `<a href="${link}" target="_blank">${title}</a>`;
+        ul.appendChild(li);
+      });
+      container.innerHTML = "";
+      container.appendChild(ul);
+    })
+    .catch(() => {
+      container.innerHTML = "<p>Error loading feed.</p>";
+    });
+}
+
+// Tab logic for headline source tabs
 function setupHeadlineTabs() {
-  document.querySelectorAll(".news-tab[data-source]").forEach(tab => {
+  document.querySelectorAll(".headline-tab").forEach(tab => {
     tab.addEventListener("click", () => {
-      document.querySelectorAll(".news-tab[data-source]").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".headline-tab").forEach(t => t.classList.remove("active"));
       tab.classList.add("active");
 
       const source = tab.dataset.source;
@@ -2262,9 +2261,33 @@ function setupHeadlineTabs() {
   });
 }
 
+// Tab logic for Breaking / Fantasy / Transactions
+function setupBreakingTabs() {
+  document.querySelectorAll(".breaking-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".breaking-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      const tabId = tab.dataset.tab;
+      document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
+      document.getElementById(`${tabId}-feed`).style.display = "block";
+
+      // Fetch content if needed
+      if (tabId === "breaking") fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+      if (tabId === "fantasy") fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
+      if (tabId === "transactions") fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
+    });
+  });
+}
+
+// Initial load
 document.addEventListener("DOMContentLoaded", () => {
   fetchHeadlinesBySource();
   setupHeadlineTabs();
+  setupBreakingTabs();
+  // Set defaults
+  document.querySelector(".headline-tab.active")?.click();
+  document.querySelector(".breaking-tab.active")?.click();
 });
 </script>
 
