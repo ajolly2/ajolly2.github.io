@@ -2166,44 +2166,31 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>
-      
  <script>
-async function fetchHeadlines() {
-  const headlinesFeed = document.getElementById("headlines-feed");
+  async function fetchHeadlines() {
+    const endpoint = 'https://script.google.com/macros/s/AKfycbyBTbYrGmTp_mk1LF0fGpJuig7HC0VUiH97MM87JmZ6ph8s-qTD08df1Tw5FRunLFaG2g/exec';
+    const feedContainer = document.getElementById('headlines-feed');
+    feedContainer.innerHTML = '';
 
-  try {
-    const response = await fetch("https://script.google.com/macros/s/AKfycbz3SXWl-5-xtv58RpA7b-3p1bEr28W7u6mu2pwyRoNkoRWITxKV8-HVyhn9uFSPgT3N_g/exec");
-    if (!response.ok) throw new Error("Network response was not ok");
+    try {
+      const response = await fetch(endpoint);
+      const data = await response.json();
 
-    const data = await response.json();
-
-    if (!Array.isArray(data)) throw new Error("Invalid data format");
-
-    const ul = document.createElement("ul");
-    ul.classList.add("headline-list");
-
-    data.forEach(item => {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = item.link;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.textContent = item.title;
-      li.appendChild(a);
-      ul.appendChild(li);
-    });
-
-    headlinesFeed.innerHTML = "";
-    headlinesFeed.appendChild(ul);
-
-  } catch (error) {
-    console.error("Error loading headlines:", error);
-    headlinesFeed.innerText = "Failed to load headlines.";
+      data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'rss-item';
+        div.innerHTML = `<a href="${item.link}" target="_blank" class="rss-item-title">${item.title}</a>`;
+        feedContainer.appendChild(div);
+      });
+    } catch (err) {
+      feedContainer.innerHTML = 'Failed to load headlines';
+      console.error(err);
+    }
   }
-}
 
-document.addEventListener("DOMContentLoaded", fetchHeadlines);
+  fetchHeadlines();
 </script>
 
   </body>
 </html> 
+
