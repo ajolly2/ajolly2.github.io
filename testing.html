@@ -931,15 +931,22 @@
       padding-left: 1px; z-index: 11; border-bottom: 1px solid #1f1f1f;">News</div>
            
   <div class="news-main-container">
-    <!-- Headlines Section -->
-    <div class="news-section headlines-section">
-      <div class="news-section-header">Headlines</div>
-      <div id="headlines-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
-    <div class="headlines-tab active" data-tab="scores">ESPN</div>
-    <div class="headlines-tab" data-tab="today">CBS</div>
-    <div class="headlines-tab" data-tab="live">Yahoo</div>
-             <div class="headlines-tab" data-tab="live">FOX</div>
+   <!-- Headlines Section -->
+<div class="news-section headlines-section">
+  <div class="news-section-header">Headlines</div>
+  <div id="headlines-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
+    <div class="headlines-tab active" data-tab="espn">ESPN</div>
+    <div class="headlines-tab" data-tab="cbs">CBS</div>
+    <div class="headlines-tab" data-tab="yahoo">Yahoo</div>
+    <div class="headlines-tab" data-tab="fox">FOX</div>
   </div>
+
+  <!-- Separate containers for each tab -->
+  <div class="news-feed-content" id="espn-feed">Loading ESPN...</div>
+  <div class="news-feed-content" id="cbs-feed" style="display:none;">Loading CBS...</div>
+  <div class="news-feed-content" id="yahoo-feed" style="display:none;">Loading Yahoo...</div>
+  <div class="news-feed-content" id="fox-feed" style="display:none;">Loading FOX...</div>
+</div>
       <div class="news-feed-content" id="headlines-feed">
         Loading headlines...
       </div>
@@ -2190,5 +2197,32 @@ function setupHeadlineTabs() {
 document.addEventListener("DOMContentLoaded", setupHeadlineTabs);
 </script>
 
+    <script>function setupHeadlineTabs() {
+  const tabs = document.querySelectorAll(".headlines-tab");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      const selected = tab.dataset.tab;
+
+      // Remove active class from all tabs
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      // Hide all feeds
+      document.querySelectorAll(".news-feed-content[id$='-feed']").forEach(feed => {
+        feed.style.display = "none";
+      });
+
+      // Show selected feed
+      const target = document.getElementById(`${selected}-feed`);
+      if (target) target.style.display = "block";
+    });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  fetchHeadlinesBySource(); // Make sure this loads all 4 feeds
+  setupHeadlineTabs();      // And this enables tab toggling
+});</script>
   </body>
 </html> 
