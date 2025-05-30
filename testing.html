@@ -50,36 +50,6 @@
 <meta name="twitter:description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place." />
 <meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
     <style>
-      .news-section-header {
-  font-weight: bold;
-  font-size: 16px;
-  color: white;
-  padding: 6px 10px;
-  background-color: #111;
-  border-bottom: 1px solid #333;
-}
-
-.news-feed-content {
-  padding: 10px;
-  color: #ccc;
-  font-size: 14px;
-  line-height: 1.4;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.news-item {
-  margin-bottom: 12px;
-}
-
-.news-item a {
-  color: #0af;
-  text-decoration: none;
-}
-
-.news-item a:hover {
-  text-decoration: underline;
-}
       .column.tv-listings #live-games-container {
   margin: 0;
   padding: 0;
@@ -295,8 +265,6 @@
       /* Container for columns */
       .container {
         display: flex;
-        flex-direction row;
-        flex-wrap nowrap;
         width: 100%;
         height: calc(100% - 20px);
         justify-content: center;
@@ -305,7 +273,6 @@
         overflow: auto;
         padding: 10px 0;
       }
- 
       .column.tv-listings {
   padding: 0;
   margin: 0;
@@ -335,8 +302,6 @@
       .social {
         flex: 0 0 350px;
         background-color: #fff;
-        min-width: 280px;
-}
       }
       #menuTopBox {
         width: 165px;
@@ -930,16 +895,17 @@
 
       <!-- NEWS PANEL -->
       <div class="column news">
+        <div class="column news">
   <!-- News header -->
   <div class="news-header">News</div>
   <div class="news-main-container">
     <!-- Headlines Section -->
     <div class="news-section headlines-section">
-  <div class="news-section-header">Headlines</div>
-  <div class="news-feed-content" id="headlines-feed">
-    Loading headlines...
-  </div>
-</div>
+      <div class="news-section-header">Headlines</div>
+      <div class="news-feed-content" id="headlines-feed">
+        Loading headlines...
+      </div>
+    </div>
     <!-- Breaking/Fantasy/Transactions Tabs Section -->
     <div class="news-section breaking-section">
       <div class="news-section-header breaking-tabs-header">
@@ -2157,37 +2123,8 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>
-
-    <script>
-  async function fetchHeadlinesFeed() {
-    const feedContainer = document.getElementById('headlines-feed');
-    const url = 'https://script.google.com/macros/s/AKfycbyBTbYrGmTp_mk1LF0fGpJuig7HC0VUiH97MM87JmZ6ph8s-qTD08df1Tw5FRunLFaG2g/exec';
-
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (!Array.isArray(data) || data.length === 0) {
-        feedContainer.innerText = 'No headlines available.';
-        return;
-      }
-
-      feedContainer.innerHTML = '';
-      data.forEach(item => {
-        const el = document.createElement('div');
-        el.className = 'news-item';
-        el.innerHTML = `<a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a>`;
-        feedContainer.appendChild(el);
-      });
-    } catch (err) {
-      console.error('Error fetching headlines:', err);
-      feedContainer.innerText = 'Failed to load headlines.';
-    }
-  }
-
-  // Load feed on page load
-  document.addEventListener('DOMContentLoaded', fetchHeadlinesFeed);
-</script>
+ 
 
   </body>
 </html> 
+
