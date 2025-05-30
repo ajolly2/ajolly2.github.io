@@ -50,6 +50,19 @@
 <meta name="twitter:description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place." />
 <meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
     <style>
+.headline {
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.headline a {
+  text-decoration: none;
+  color: #ffffff;
+  transition: color 0.3s ease;
+}
+.headline a:hover {
+  color: #1e90ff;
+}
+      
       .column.tv-listings #live-games-container {
   margin: 0;
   padding: 0;
@@ -895,7 +908,6 @@
 
       <!-- NEWS PANEL -->
       <div class="column news">
-        <div class="column news">
   <!-- News header -->
   <div class="news-header">News</div>
   <div class="news-main-container">
@@ -903,8 +915,27 @@
     <div class="news-section headlines-section">
       <div class="news-section-header">Headlines</div>
       <div class="news-feed-content" id="headlines-feed">
-        Loading headlines...
-      </div>
+  Loading headlines...
+</div>
+
+<script>
+  fetch("https://script.google.com/macros/s/AKfycbyBTbYrGmTp_mk1LF0fGpJuig7HC0VUiH97MM87JmZ6ph8s-qTD08df1Tw5FRunLFaG2g/exec")
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById("headlines-feed");
+      container.innerHTML = "";
+      data.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "headline";
+        div.innerHTML = `<a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a>`;
+        container.appendChild(div);
+      });
+    })
+    .catch(err => {
+      document.getElementById("headlines-feed").innerText = "Failed to load headlines.";
+      console.error(err);
+    });
+</script>
     </div>
     <!-- Breaking/Fantasy/Transactions Tabs Section -->
     <div class="news-section breaking-section">
@@ -2123,7 +2154,25 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>
- 
+
+      <script>
+    fetch("https://script.google.com/macros/s/AKfycbyBTbYrGmTp_mk1LF0fGpJuig7HC0VUiH97MM87JmZ6ph8s-qTD08df1Tw5FRunLFaG2g/exec")
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById("news-headlines");
+        container.innerHTML = ""; // clear loading text
+        data.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "headline";
+          div.innerHTML = `<a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a>`;
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        document.getElementById("news-headlines").innerText = "Failed to load headlines.";
+        console.error(err);
+      });
+  </script>
 
   </body>
 </html> 
