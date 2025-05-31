@@ -5,7 +5,7 @@
   const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const host    = location.hostname; // e.g. "thporth.com" or "www.thporth.com"
   if ( isMobile && !host.startsWith("m.") ) {
-    // build the mobile host dynamically    
+    // build the mobile host dynamically
     const mobileHost = "m." + host.replace(/^www\./, "");
     location.replace(
       location.protocol + "//" +
@@ -50,7 +50,7 @@
 <meta name="twitter:description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place." />
 <meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
     <style>
-      .column #live-games-container {
+      .column.tv-listings #live-games-container {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -115,34 +115,6 @@
   font-size: 11px;
   color: #ccc;
 }
-
-      .headlines-tab {
-  flex: 1;
-  text-align: center;
-  font-size: 10px;
-  line-height: 18px;
-  color: #aaa;
-  cursor: pointer;
-  background-color: #2a2a2a;
-  border-right: 1px solid #1f1f1f;
-}
-
-.headlines-tab.active {
-  background-color: #3c3c3c;
-  color: #fff;
-}
-
-.headlines-content {
-  display: none;
-}
-
-#espn-feed,
-#cbs-feed,
-#yahoo-feed,
-#fox-feed {
-  padding: 10px;
-}
-
       .games-tab {
   flex: 1;
   text-align: center;
@@ -293,23 +265,15 @@
       /* Container for columns */
       .container {
         display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap !important;
         width: 100%;
         height: calc(100% - 20px);
         justify-content: center;
-        overflow: hidden;
-  white-space: nowrap;
       }
       .column {
-        flex: 1;
         overflow: auto;
         padding: 10px 0;
-          min-width: 0;  /* prevents flex columns from overflowing */
-
       }
       .column.tv-listings {
-        flex: 0 0 280px !important;
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -322,7 +286,7 @@
       .main-menu {
         background-color: #151515;
         color: white;
-        flex: 0 0 165px flex: 0 0 330px !important;;
+        flex: 0 0 165px;
         font-size: 11px;
         padding: 0;
       }
@@ -331,12 +295,12 @@
         background-color: #151515;
       }
       .news {
-  flex: 0 0 300px !important; /* reduced to accommodate 110px Standings panel */
+  flex: 0 0 370px; /* reduced to accommodate 110px Standings panel */
   background-color: #fafaf9;
   padding: 0;
 }
       .social {
-  flex: 0 0 250px !important;
+        flex: 0 0 350px;
         background-color: #fff;
       }
       #menuTopBox {
@@ -902,7 +866,7 @@
 <div class="divider"></div>
 
 <!-- ─── TV-LISTINGS COLUMN ───────────────────────────────────────────────────────── -->
-<div class="column tv-listings" style="flex: 0 0 200px; background-color: #1f1f1f;">
+<div class="column tv-listings" style="flex: 0 0 250px; background-color: #1f1f1f;">
   <div id="games-header" style="
       position: sticky; top: 0; width: 100%; height: 18px;
       background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif;
@@ -929,30 +893,19 @@
 <div class="divider"></div>
 
 
-     <!-- NEWS PANEL -->
-<div class="column news">
+      <!-- NEWS PANEL -->
+      <div class="column news">
+        <div class="column news">
   <!-- News header -->
-  <div class="news-header" style="position: sticky; top: 0; width: 100%; height: 18px;
-      background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif;
-      font-size: 10px; display: flex; align-items: center;
-      padding-left: 1px; z-index: 11; border-bottom: 1px solid #1f1f1f;">News</div>
-           
+  <div class="news-header">News</div>
   <div class="news-main-container">
     <!-- Headlines Section -->
     <div class="news-section headlines-section">
       <div class="news-section-header">Headlines</div>
-      <div id="headlines-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
-        <div class="headlines-tab active" data-source="espn">ESPN</div>
-        <div class="headlines-tab" data-source="cbs">CBS</div>
-        <div class="headlines-tab" data-source="yahoo">Yahoo</div>
-        <div class="headlines-tab" data-source="fox">FOX</div>
+      <div class="news-feed-content" id="headlines-feed">
+        Loading headlines...
       </div>
-      <div class="news-feed-content" id="espn-feed">Loading ESPN...</div>
-      <div class="news-feed-content" id="cbs-feed" style="display:none;">Loading CBS...</div>
-      <div class="news-feed-content" id="yahoo-feed" style="display:none;">Loading Yahoo...</div>
-      <div class="news-feed-content" id="fox-feed" style="display:none;">Loading FOX...</div>
     </div>
-
     <!-- Breaking/Fantasy/Transactions Tabs Section -->
     <div class="news-section breaking-section">
       <div class="news-section-header breaking-tabs-header">
@@ -964,9 +917,8 @@
       <div class="news-feed-content" id="fantasy-feed" style="display:none;">Loading fantasy news...</div>
       <div class="news-feed-content" id="transactions-feed" style="display:none;">Loading transactions...</div>
     </div>
-  </div> <!-- closes .news-main-container -->
-
-</div> <!-- closes .column.news -->
+  </div>
+</div>
         <!-- MLB News Section -->
         <div id="news-MLB" class="content-section" style="display: none;">
           <div class="rss-feed" id="feed-_6gzCeS4YQ4h2adTs">
@@ -1209,7 +1161,7 @@
       <div class="divider"></div>
 
       <!-- SOCIAL PANEL -->
-      <div class="column social" style="padding: 0; margin: 0; flex: 0 0 250px;">
+      <div class="column social" style="padding: 0; margin: 0;">
         <div
           id="socialHeader"
           style="position: sticky; top: 0; width: 100%; height: 18px; background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif; font-size: 10px; display: flex; align-items: center; padding-left: 10px; z-index: 11;"
@@ -2105,134 +2057,80 @@ document.addEventListener("DOMContentLoaded", async () => {
    
 </script>
 <script>
-  // Feed URLs
-  const BREAKING_FEED = "https://www.cbssports.com/rss/headlines/";
-  const FANTASY_FEED = "https://fantasynews.cbssports.com/rss/headlines/";
-  const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news";
+  // -- FEED URLs: Replace with your real feeds --
+const HEADLINES_FEED = "https://www.espn.com/espn/rss/news";
+const BREAKING_FEED = "https://www.cbssports.com/rss/headlines/";
+const FANTASY_FEED = "https://fantasynews.cbssports.com/rss/headlines/";
+const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news"; // EXAMPLE, replace as needed
 
-  // Generic RSS fetch/render
-  function fetchRSSFeed(url, containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    container.innerHTML = "Loading...";
-    fetch(url)
-      .then(res => res.text())
-      .then(str => {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(str, "application/xml");
-        const items = Array.from(xml.querySelectorAll("item"));
-        if (!items.length) {
-          container.innerHTML = "<p>No stories found.</p>";
-          return;
-        }
-        const ul = document.createElement("ul");
-        ul.style.margin = "0";
-        ul.style.padding = "0";
-        ul.style.listStyle = "none";
-        items.slice(0, 10).forEach(item => {
-          const li = document.createElement("li");
-          li.style.padding = "6px 0";
-          const title = item.querySelector("title")?.textContent || "";
-          const link = item.querySelector("link")?.textContent || "#";
-          li.innerHTML = `<a href="${link}" target="_blank" style="color:#212121;text-decoration:none;">${title}</a>`;
-          ul.appendChild(li);
-        });
-        container.innerHTML = "";
-        container.appendChild(ul);
-      })
-      .catch(() => {
-        container.innerHTML = "<p>Error loading feed.</p>";
+// -- Generic function to fetch and render a basic RSS feed --
+function fetchRSSFeed(url, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = "Loading...";
+  fetch(url)
+    .then(res => res.text())
+    .then(str => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(str, "application/xml");
+      const items = Array.from(xml.querySelectorAll("item"));
+      if (!items.length) {
+        container.innerHTML = "<p>No stories found.</p>";
+        return;
+      }
+      const ul = document.createElement("ul");
+      ul.style.margin = "0";
+      ul.style.padding = "0";
+      ul.style.listStyle = "none";
+      items.slice(0, 10).forEach(item => {
+        const li = document.createElement("li");
+        li.style.padding = "6px 0";
+        const title = item.querySelector("title")?.textContent || "";
+        const link = item.querySelector("link")?.textContent || "#";
+        li.innerHTML = `<a href="${link}" target="_blank" style="color:#212121;text-decoration:none;">${title}</a>`;
+        ul.appendChild(li);
       });
-  }
+      container.innerHTML = "";
+      container.appendChild(ul);
+    })
+    .catch(() => {
+      container.innerHTML = "<p>Error loading feed.</p>";
+    });
+}
 
-  // Breaking/Fantasy/Transactions Tabs
-  document.addEventListener("DOMContentLoaded", function () {
-    fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+// -- Tabs logic for Breaking/Fantasy/Transactions
+document.addEventListener("DOMContentLoaded", function() {
+  // Load default feeds
+  fetchRSSFeed(HEADLINES_FEED, "headlines-feed");
+  fetchRSSFeed(BREAKING_FEED, "breaking-feed");
 
-    const tabs = document.querySelectorAll(".news-tab");
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        tabs.forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
+  const tabs = document.querySelectorAll(".news-tab");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById("breaking-feed").style.display = "none";
+      document.getElementById("fantasy-feed").style.display = "none";
+      document.getElementById("transactions-feed").style.display = "none";
 
-        document.getElementById("breaking-feed").style.display = "none";
-        document.getElementById("fantasy-feed").style.display = "none";
-        document.getElementById("transactions-feed").style.display = "none";
-
-        if (tab.dataset.tab === "breaking") {
-          document.getElementById("breaking-feed").style.display = "block";
-          fetchRSSFeed(BREAKING_FEED, "breaking-feed");
-        }
-        if (tab.dataset.tab === "fantasy") {
-          document.getElementById("fantasy-feed").style.display = "block";
-          fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
-        }
-        if (tab.dataset.tab === "transactions") {
-          document.getElementById("transactions-feed").style.display = "block";
-          fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
-        }
-      });
+      if (tab.dataset.tab === "breaking") {
+        document.getElementById("breaking-feed").style.display = "block";
+        fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+      }
+      if (tab.dataset.tab === "fantasy") {
+        document.getElementById("fantasy-feed").style.display = "block";
+        fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
+      }
+      if (tab.dataset.tab === "transactions") {
+        document.getElementById("transactions-feed").style.display = "block";
+        fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
+      }
     });
   });
-
-  // Headlines Tabs from Google Apps Script backend
-  const endpoint = "https://script.google.com/macros/s/AKfycbz3SXWl-5-xtv58RpA7b-3p1bEr28W7u6mu2pwyRoNkoRWITxKV8-HVyhn9uFSPgT3N_g/exec";
-
-  async function fetchHeadlinesBySource() {
-    try {
-      const response = await fetch(endpoint);
-      if (!response.ok) throw new Error("Network error");
-      const feeds = await response.json();
-
-      ["espn", "cbs", "yahoo", "fox"].forEach(source => {
-        const container = document.getElementById(`${source}-feed`);
-        if (!container) return;
-        const ul = document.createElement("ul");
-        ul.className = "headline-list";
-
-        (feeds[source] || []).forEach(item => {
-          const li = document.createElement("li");
-          const a = document.createElement("a");
-          a.href = item.link;
-          a.textContent = item.title;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-          li.appendChild(a);
-          ul.appendChild(li);
-        });
-
-        container.innerHTML = "";
-        container.appendChild(ul);
-      });
-    } catch (err) {
-      console.error("Headline load failed", err);
-    }
-  }
-
-  function setupHeadlineTabs() {
-    document.querySelectorAll(".headlines-tab").forEach(tab => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".headlines-tab").forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-
-        // Hide only the headlines feeds
-        document.querySelectorAll(".news-feed-content[id$='-feed']").forEach(el => {
-          if (["espn", "cbs", "yahoo", "fox"].includes(el.id.replace("-feed", ""))) {
-            el.style.display = "none";
-          }
-        });
-
-        const source = tab.dataset.source;
-        const feed = document.getElementById(`${source}-feed`);
-        if (feed) feed.style.display = "block";
-      });
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    fetchHeadlinesBySource();
-    setupHeadlineTabs();
-  });
+});
 </script>
+ 
+
   </body>
 </html> 
+
