@@ -71,6 +71,7 @@
   line-height: 18px;
   margin-bottom: 16px;
 }
+	    
 
 /* the wrapper around all the rows for a league */
 .games-list {}
@@ -115,6 +116,33 @@
   font-size: 11px;
   color: #ccc;
 }
+       .headlines-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 10px;
+  line-height: 18px;
+  color: #aaa;
+  cursor: pointer;
+  background-color: #2a2a2a;
+  border-right: 1px solid #1f1f1f;
+}
+
+.headlines-tab.active {
+  background-color: #3c3c3c;
+  color: #fff;
+}
+
+.headlines-content {
+  display: none;
+}
+
+#espn-feed,
+#cbs-feed,
+#yahoo-feed,
+#fox-feed {
+  padding: 10px;
+}
+
       .games-tab {
   flex: 1;
   text-align: center;
@@ -894,18 +922,29 @@
 
 
       <!-- NEWS PANEL -->
-      <div class="column news">
-        <div class="column news">
+<div class="column news">
   <!-- News header -->
-  <div class="news-header">News</div>
+  <div class="news-header" style="position: sticky; top: 0; width: 100%; height: 18px;
+      background-color: #3c3c3c; font-family: Helvetica, Arial, sans-serif;
+      font-size: 10px; display: flex; align-items: center;
+      padding-left: 1px; z-index: 11; border-bottom: 1px solid #1f1f1f;">News</div>
+           
   <div class="news-main-container">
     <!-- Headlines Section -->
     <div class="news-section headlines-section">
       <div class="news-section-header">Headlines</div>
-      <div class="news-feed-content" id="headlines-feed">
-        Loading headlines...
+      <div id="headlines-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
+        <div class="headlines-tab active" data-source="espn">ESPN</div>
+        <div class="headlines-tab" data-source="cbs">CBS</div>
+        <div class="headlines-tab" data-source="yahoo">Yahoo</div>
+        <div class="headlines-tab" data-source="fox">FOX</div>
       </div>
+      <div class="news-feed-content" id="espn-feed">Loading ESPN...</div>
+      <div class="news-feed-content" id="cbs-feed" style="display:none;">Loading CBS...</div>
+      <div class="news-feed-content" id="yahoo-feed" style="display:none;">Loading Yahoo...</div>
+      <div class="news-feed-content" id="fox-feed" style="display:none;">Loading FOX...</div>
     </div>
+
     <!-- Breaking/Fantasy/Transactions Tabs Section -->
     <div class="news-section breaking-section">
       <div class="news-section-header breaking-tabs-header">
@@ -917,8 +956,7 @@
       <div class="news-feed-content" id="fantasy-feed" style="display:none;">Loading fantasy news...</div>
       <div class="news-feed-content" id="transactions-feed" style="display:none;">Loading transactions...</div>
     </div>
-  </div>
-</div>
+  </div> <!-- closes .news-main-container -->
         <!-- MLB News Section -->
         <div id="news-MLB" class="content-section" style="display: none;">
           <div class="rss-feed" id="feed-_6gzCeS4YQ4h2adTs">
@@ -1757,6 +1795,44 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 });
     </script>
 
+	    <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1) Grab all four .headlines-tab elements
+    const headlineTabs = document.querySelectorAll(".headlines-tab");
+
+    // 2) For each tab, attach a click listener
+    headlineTabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        // a) Remove “active” from every tab
+        headlineTabs.forEach(t => t.classList.remove("active"));
+        // b) Give “active” to the one we clicked
+        tab.classList.add("active");
+
+        // c) Hide all four feed containers:
+        document.querySelectorAll(
+          "#espn-feed, #cbs-feed, #yahoo-feed, #fox-feed"
+        ).forEach(div => {
+          div.style.display = "none";
+        });
+
+        // d) Read data-source (e.g. “espn” or “cbs”)
+        const source = tab.getAttribute("data-source"); 
+        // e) Show exactly that feed container
+        const feedDiv = document.getElementById(source + "-feed");
+        if (feedDiv) {
+          feedDiv.style.display = "block";
+        }
+      });
+    });
+
+    // 3) On initial page load, ensure ESPN is visible and the rest are hidden:
+    document.getElementById("espn-feed").style.display = "block";
+    document.getElementById("cbs-feed").style.display = "none";
+    document.getElementById("yahoo-feed").style.display = "none";
+    document.getElementById("fox-feed").style.display = "none";
+  });
+</script>
+
 <!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
 <div id="live-games-container"></div>
 
@@ -2133,4 +2209,3 @@ document.addEventListener("DOMContentLoaded", function() {
 
   </body>
 </html> 
-
