@@ -50,6 +50,16 @@
 <meta name="twitter:description" content="Get the latest sports news, social buzz, and live scores for NFL, NBA, MLB, and more — all in one place." />
 <meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
     <style>
+	    #headlines-tabs {
+  display: flex;
+  height: 18px;
+  background-color: #2a2a2a;
+
+  /* the “sticky” behavior you asked for: */
+  position: sticky;
+  top: 18px;      /* sits directly below the 18px-high “Headlines” header */
+  z-index: 10;    /* ensures the tabs sit above the feed as you scroll */
+}
       .column.tv-listings #live-games-container {
   margin: 0;
   padding: 0;
@@ -933,7 +943,7 @@
     <!-- Headlines Section -->
     <div class="news-section headlines-section">
       <div class="news-section-header">Headlines</div>
-      <div id="headlines-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
+      <div id="headlines-tabs">
         <div class="headlines-tab active" data-source="espn">ESPN</div>
         <div class="headlines-tab" data-source="cbs">CBS</div>
         <div class="headlines-tab" data-source="yahoo">Yahoo</div>
