@@ -1496,16 +1496,17 @@ tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-s
             });
         }
 
-        // Fetch feeds for Home panel using feedMap
-        const feedMap = {
-          ESPN: "https://www.espn.com/espn/rss/news",
-          CBS: "https://rss.app/feeds/oVrPZDHkkJB8bEKG.xml",
-          FOX: "https://rss.app/feeds/KzC1hdnt93oattSD.xml",
-          Yahoo: "https://rss.app/feeds/3BSRBZ6GJrUbB5PC.xml"
-        };
-        Object.entries(feedMap).forEach(([key, url]) => {
-          fetchFeed(`#feed-${key} .feed-content`, url);
-        });
+        // ─── Updated “Headlines” feedMap ───
+const feedMap = {
+  espn: "https://www.espn.com/espn/rss/news",
+  cbs:  "https://rss.app/feeds/oVrPZDHkkJB8bEKG.xml",
+  fox:  "https://rss.app/feeds/KzC1hdnt93oattSD.xml",
+  yahoo:"https://rss.app/feeds/3BSRBZ6GJrUbB5PC.xml"
+};
+Object.entries(feedMap).forEach(([source, url]) => {
+  // Notice we now pass "#espn-feed", "#cbs-feed", etc., instead of "#feed-ESPN .feed-content"
+  fetchFeed(`#${source}-feed`, url);
+});
 
         // Fetch custom feeds for existing sections
         fetchFeed(
