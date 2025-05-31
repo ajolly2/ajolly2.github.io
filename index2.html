@@ -1795,6 +1795,44 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 });
     </script>
 
+	    <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1) Grab all four .headlines-tab elements
+    const headlineTabs = document.querySelectorAll(".headlines-tab");
+
+    // 2) For each tab, attach a click listener
+    headlineTabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        // a) Remove “active” from every tab
+        headlineTabs.forEach(t => t.classList.remove("active"));
+        // b) Give “active” to the one we clicked
+        tab.classList.add("active");
+
+        // c) Hide all four feed containers:
+        document.querySelectorAll(
+          "#espn-feed, #cbs-feed, #yahoo-feed, #fox-feed"
+        ).forEach(div => {
+          div.style.display = "none";
+        });
+
+        // d) Read data-source (e.g. “espn” or “cbs”)
+        const source = tab.getAttribute("data-source"); 
+        // e) Show exactly that feed container
+        const feedDiv = document.getElementById(source + "-feed");
+        if (feedDiv) {
+          feedDiv.style.display = "block";
+        }
+      });
+    });
+
+    // 3) On initial page load, ensure ESPN is visible and the rest are hidden:
+    document.getElementById("espn-feed").style.display = "block";
+    document.getElementById("cbs-feed").style.display = "none";
+    document.getElementById("yahoo-feed").style.display = "none";
+    document.getElementById("fox-feed").style.display = "none";
+  });
+</script>
+
 <!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
 <div id="live-games-container"></div>
 
