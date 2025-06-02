@@ -2250,6 +2250,58 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
  
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // 1) Grab all four tab elements
+    const headlineTabs = document.querySelectorAll(".headlines-tab");
+    // 2) In-order array of source names
+    const sources = ["espn", "cbs", "yahoo", "fox"];
 
+    // 3) Click‐handler: toggle active class and show/hide correct feed
+    headlineTabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        // a) Remove “active” from every tab
+        headlineTabs.forEach(t => t.classList.remove("active"));
+        // b) Give “active” to the clicked tab
+        tab.classList.add("active");
+
+        // c) Hide all four feeds
+        document
+          .querySelectorAll("#espn-feed, #cbs-feed, #yahoo-feed, #fox-feed")
+          .forEach(div => (div.style.display = "none"));
+
+        // d) Show the feed whose ID matches data-source + “-feed”
+        const source = tab.getAttribute("data-source"); // “espn” / “cbs” / etc.
+        const feedDiv = document.getElementById(source + "-feed");
+        if (feedDiv) feedDiv.style.display = "block";
+      });
+    });
+
+    // 4) On page‐load, show ESPN by default; hide the others
+    document.getElementById("espn-feed").style.display = "block";
+    document.getElementById("cbs-feed").style.display = "none";
+    document.getElementById("yahoo-feed").style.display = "none";
+    document.getElementById("fox-feed").style.display = "none";
+
+    // 5) Auto-advance when reaching the bottom of a feed
+    sources.forEach((src, idx) => {
+      const feedEl = document.getElementById(src + "-feed");
+      if (!feedEl) return;
+      feedEl.addEventListener("scroll", () => {
+        // if scrolled to bottom of this feed:
+        if (feedEl.scrollTop + feedEl.clientHeight >= feedEl.scrollHeight) {
+          const nextIdx = idx + 1;
+          if (nextIdx < sources.length) {
+            // “Click” the next tab in the array
+            const nextTab = document.querySelector(
+              `.headlines-tab[data-source="${sources[nextIdx]}"]`
+            );
+            if (nextTab) nextTab.click();
+          }
+        }
+      });
+    });
+  });
+</script>
   </body>
 </html> 
