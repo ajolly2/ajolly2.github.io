@@ -2115,9 +2115,9 @@ const seenDisplayTimes = new Set();
   if (!matchup || !statusRaw) return;
 
   const [home, away] = matchup.split(" vs. ").map(t => t.trim());
-  const status = statusRaw.toLowerCase();
-  const dateStr = (sheetDate || '').split(' ')[0]; // Use sheet date (yyyy-mm-dd)
-  // Instead of using UTC, build YYYY-MM-DD from local time:
+const status = statusRaw.toLowerCase();
+const dateStr = (sheetDate || '').split(' ')[0]; // Use sheet date (yyyy-mm-dd)
+// Instead of using UTC, build YYYY-MM-DD from local time:
 const nowLocal      = new Date();
 const yyyy          = nowLocal.getFullYear();
 const mm            = String(nowLocal.getMonth() + 1).padStart(2, '0');
@@ -2148,35 +2148,31 @@ if (status.includes("final") || status === 'f') {
   displayTime = ""; // fallback if no time/status
 }
 
-// Use abbreviations if available
-const homeAbbr = TEAM_ABBR[home] || home;
-const awayAbbr = TEAM_ABBR[away] || away;
+// ── REPLACED: build vertical stack of mascots instead of "vs." ──
 
-// Determine if we should show the score
-let showScore = false;
-if (
-  /(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)
-  || (score && score !== "0–0" && (status !== "scheduled" && status !== "pre"))
-) {
-  showScore = true;
-}
+// 1) Extract just the mascot (last word) from each full team name:
+const getMascot = fullName => {
+  const parts = fullName.split(" ");
+  return parts[parts.length - 1];
+};
+const homeMascot = getMascot(home);
+const awayMascot = getMascot(away);
 
-const matchupDisplay = showScore
-  ? `${homeAbbr} ${score} ${awayAbbr}`
-  : `${homeAbbr} vs. ${awayAbbr}`;
-
-const isLiveOrFinal = displayTime === "F" || /(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status);
-const showTime = isLiveOrFinal || !seenDisplayTimes.has(displayTime) ? displayTime : "";
-if (!isLiveOrFinal) seenDisplayTimes.add(displayTime);
-
+// 2) Build the game‐row with away on top, home below:
 const row = document.createElement("div");
 row.className = "game-row";
 row.innerHTML = `
-  <div class="game-time${displayTime === "F" ? ' game-time-final' : isLiveOrFinal ? ' live' : ''}">${showTime}</div>
-  <div class="game-matchup">${matchupDisplay}</div>
+  <div class="game-time${displayTime === "F" ? ' game-time-final' : (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status) ? ' live' : '')}">
+    ${displayTime}
+  </div>
+  <div class="game-teams">
+    <div class="team">${awayMascot}</div>
+    <div class="team">${homeMascot}</div>
+  </div>
   <div class="game-channel"></div>
 `;
- // SCORES: only yesterday, only finals
+
+// ── push into the correct section as before ──
 if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
   sections.scores.push(row);
 }
@@ -2194,16 +2190,15 @@ else if (dateStr === todayDateStr && !(status.includes('final') || status === 'f
 }
 });
 
-    Object.entries(sections).forEach(([key, rows]) => {
-      if (!rows.length) return;
-      const leagueBox = document.createElement("div");
-      leagueBox.className = "league-section";
-      const displayName = LEAGUE_DISPLAY_NAMES[league] || league;
-      leagueBox.innerHTML = `<div class="league-header">${displayName}</div>`;
-rows.forEach(r => leagueBox.appendChild(r));
-      containers[key].appendChild(leagueBox);
-    });
-  });
+Object.entries(sections).forEach(([key, rows]) => {
+  if (!rows.length) return;
+  const leagueBox = document.createElement("div");
+  leagueBox.className = "league-section";
+  const displayName = LEAGUE_DISPLAY_NAMES[league] || league;
+  leagueBox.innerHTML = `<div class="league-header">${displayName}</div>`;
+  rows.forEach(r => leagueBox.appendChild(r));
+  containers[key].appendChild(leagueBox);
+});
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
