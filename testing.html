@@ -2340,55 +2340,68 @@ document.addEventListener("DOMContentLoaded", function() {
  
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // 1) Grab all four tab elements
-    const headlineTabs = document.querySelectorAll(".headlines-tab");
-    // 2) In-order array of source names
+    // (A) Collect all four tab elements and define their order
+    const tabs    = Array.from(document.querySelectorAll(".headlines-tab"));
     const sources = ["espn", "cbs", "yahoo", "fox"];
 
-    // 3) Click‐handler: toggle active class and show/hide correct feed
-    headlineTabs.forEach(tab => {
+    // (B) Helper: activate exactly one source (tab + feed), and reattach its scroll watcher
+    function activateSource(src) {
+      // 1. Toggle “active” class on tabs
+      tabs.forEach(t => t.classList.toggle(
+        "active",
+        t.getAttribute("data-source") === src
+      ));
+
+      // 2. Hide all four feed‐divs, then show only the chosen one
+      sources.forEach(s => {
+        const div = document.getElementById(s + "-feed");
+        if (div) div.style.display = (s === src) ? "block" : "none";
+      });
+
+      // 3. After switching, attach (or reattach) the scroll watcher to the newly visible feed
+      attachScrollWatcher(src);
+    }
+
+    // (C) Click-handler for each tab: activate the clicked source
+    tabs.forEach(tab => {
       tab.addEventListener("click", () => {
-        // a) Remove “active” from every tab
-        headlineTabs.forEach(t => t.classList.remove("active"));
-        // b) Give “active” to the clicked tab
-        tab.classList.add("active");
-
-        // c) Hide all four feeds
-        document
-          .querySelectorAll("#espn-feed, #cbs-feed, #yahoo-feed, #fox-feed")
-          .forEach(div => (div.style.display = "none"));
-
-        // d) Show the feed whose ID matches data-source + “-feed”
-        const source = tab.getAttribute("data-source"); // “espn” / “cbs” / etc.
-        const feedDiv = document.getElementById(source + "-feed");
-        if (feedDiv) feedDiv.style.display = "block";
+        const src = tab.getAttribute("data-source"); // “espn” / “cbs” / etc.
+        activateSource(src);
       });
     });
 
-    // 4) On page‐load, show ESPN by default; hide the others
-    document.getElementById("espn-feed").style.display = "block";
-    document.getElementById("cbs-feed").style.display = "none";
-    document.getElementById("yahoo-feed").style.display = "none";
-    document.getElementById("fox-feed").style.display = "none";
+    // (D) On initial load, show only ESPN
+    activateSource("espn");
 
-    // 5) Auto-advance when reaching the bottom of a feed
-    sources.forEach((src, idx) => {
+    // (E) Keep track of which feeds already have a scroll listener
+    const scrollListeners = {};
+
+    // (F) Function to attach a “scroll to bottom” watcher on a feed
+    function attachScrollWatcher(src) {
       const feedEl = document.getElementById(src + "-feed");
-      if (!feedEl) return;
-      feedEl.addEventListener("scroll", () => {
-        // if scrolled to bottom of this feed:
-        if (feedEl.scrollTop + feedEl.clientHeight >= feedEl.scrollHeight) {
+      // If there's no such element or it's already been wired, do nothing
+      if (!feedEl || scrollListeners[src]) return;
+
+      // Our “bottom check” allows a 1px tolerance
+      const onScroll = () => {
+        if (feedEl.scrollHeight - feedEl.scrollTop - feedEl.clientHeight <= 1) {
+          const idx = sources.indexOf(src);
           const nextIdx = idx + 1;
           if (nextIdx < sources.length) {
-            // “Click” the next tab in the array
             const nextTab = document.querySelector(
               `.headlines-tab[data-source="${sources[nextIdx]}"]`
             );
             if (nextTab) nextTab.click();
           }
         }
-      });
-    });
+      };
+
+      feedEl.addEventListener("scroll", onScroll);
+      scrollListeners[src] = onScroll;
+    }
+
+    // (G) Finally, attach the scroll watcher to “espn” (our default)
+    attachScrollWatcher("espn");
   });
 </script>
   </body>
