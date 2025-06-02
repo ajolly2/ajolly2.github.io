@@ -153,6 +153,30 @@
   padding: 10px;
 }
 
+	    /* ─── ESPN Feed Entries Styling ─── */
+#espn-feed ul {
+  list-style: none;      /* remove bullets */
+  margin: 0;
+  padding: 0;
+}
+
+#espn-feed ul li {
+  /* 0.5em bottom margin + 1em line-height makes 1.5em “line” gap */
+  margin-bottom: 0.5em;
+}
+
+#espn-feed ul li a {
+  color: black;          /* black text, not blue */
+  text-decoration: none; /* no underline */
+  line-height: 1;        /* single‐spaced within wrapped text */
+  word-break: break-word;/* allow wrapping mid‐word if needed */
+}
+
+#espn-feed ul li a:visited {
+  color: lightgray;      /* clicked links become light gray */
+}
+	    
+
       .games-tab {
   flex: 1;
   text-align: center;
