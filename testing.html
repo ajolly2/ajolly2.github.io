@@ -2308,48 +2308,17 @@ document.addEventListener("DOMContentLoaded", function() {
     const tabs    = Array.from(document.querySelectorAll(".headlines-tab"));
     const sources = ["espn", "cbs", "yahoo", "fox"];
 
-    // ── B) Function to activate (highlight) exactly one tab + feed at a time ──
-    function activateSource(src) {
-      // 1) Toggle “active” class on each tab
-      tabs.forEach(t => t.classList.toggle(
-        "active",
-        t.getAttribute("data-source") === src
-      ));
-
-      // 2) Hide all four feeds, then show only the chosen one
-      sources.forEach(s => {
-        const div = document.getElementById(s + "-feed");
-        if (div) {
-          div.style.display = (s === src) ? "block" : "none";
-        }
-      });
-
-      // 3) After switching, (re-)attach the scroll watcher to the newly visible feed
-      attachScrollWatcher(src);
-    }
-
-    // ── C) Add click listeners to each .headlines-tab ──
-    tabs.forEach(tab => {
-      tab.addEventListener("click", () => {
-        const src = tab.getAttribute("data-source"); // “espn” / “cbs” / etc.
-        activateSource(src);
-      });
-    });
-
-    // ── D) On initial load, activate ESPN by default ──
-    activateSource("espn");
-
-    // ── E) Map to keep track of which feeds already have a scroll listener ──
+    // ── B) Keep track of which feeds already have a scroll listener ──
     const scrollListeners = {};
 
-    // ── F) Attach a “scroll to bottom” watcher on a feed ──
+    // ── C) Function to attach a “scroll to bottom” watcher on a feed ──
     function attachScrollWatcher(src) {
       const feedEl = document.getElementById(src + "-feed");
-      // If element doesn’t exist or already has a listener, do nothing
+      // If there's no such element or we've already wired it, do nothing
       if (!feedEl || scrollListeners[src]) return;
 
       const onScroll = () => {
-        // Check “nearly bottom” with a 1px tolerance
+        // When scrolled to (or within 1px of) bottom, auto‐advance:
         if (feedEl.scrollHeight - feedEl.scrollTop - feedEl.clientHeight <= 1) {
           const idx     = sources.indexOf(src);
           const nextIdx = idx + 1;
@@ -2366,8 +2335,36 @@ document.addEventListener("DOMContentLoaded", function() {
       scrollListeners[src] = onScroll;
     }
 
-    // ── G) Finally, attach the scroll watcher to “espn” (our default) ──
-    attachScrollWatcher("espn");
+    // ── D) Function to activate (highlight) exactly one tab + feed ──
+    function activateSource(src) {
+      // 1) Toggle “active” class on tabs
+      tabs.forEach(t => t.classList.toggle(
+        "active",
+        t.getAttribute("data-source") === src
+      ));
+
+      // 2) Hide all four feed‐divs, then show only the chosen one
+      sources.forEach(s => {
+        const div = document.getElementById(s + "-feed");
+        if (div) {
+          div.style.display = (s === src) ? "block" : "none";
+        }
+      });
+
+      // 3) After switching, (re‐)attach the scroll watcher to the newly visible feed
+      attachScrollWatcher(src);
+    }
+
+    // ── E) Add click listeners to each .headlines-tab ──
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const src = tab.getAttribute("data-source"); // “espn” / “cbs” / etc.
+        activateSource(src);
+      });
+    });
+
+    // ── F) On initial load, activate ESPN by default ──
+    activateSource("espn");
   });
 </script>
   </body>
