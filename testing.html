@@ -2041,11 +2041,20 @@ const seenDisplayTimes = new Set();
   const [home, away] = matchup.split(" vs. ").map(t => t.trim());
   const status = statusRaw.toLowerCase();
   const dateStr = (sheetDate || '').split(' ')[0]; // Use sheet date (yyyy-mm-dd)
-  const now = new Date();
-  const todayDateStr = now.toISOString().slice(0,10);
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-  const yesterdayStr = yesterday.toISOString().slice(0,10);
+  // Instead of using UTC, build YYYY-MM-DD from local time:
+const nowLocal      = new Date();
+const yyyy          = nowLocal.getFullYear();
+const mm            = String(nowLocal.getMonth() + 1).padStart(2, '0');
+const dd            = String(nowLocal.getDate()).padStart(2, '0');
+const todayDateStr  = `${yyyy}-${mm}-${dd}`;
+
+// “Yesterday” can still be computed off that same Date object:
+const yesterday     = new Date(nowLocal);
+yesterday.setDate(nowLocal.getDate() - 1);
+const yyyyY         = yesterday.getFullYear();
+const mmY           = String(yesterday.getMonth() + 1).padStart(2, '0');
+const ddY           = String(yesterday.getDate()).padStart(2, '0');
+const yesterdayStr  = `${yyyyY}-${mmY}-${ddY}`;
 
 // display time logic
 let displayTime;
