@@ -318,7 +318,7 @@
   }
 
   /* ────────────────────────────────────────────────────────── */
-  /*                   News Column (Unified Scroll)               */
+  /*                   News Column (Split Scroll Areas)          */
   /* ────────────────────────────────────────────────────────── */
 
   /* 1) Keep “News” bar pinned at the top: */
@@ -337,18 +337,36 @@
     border-bottom: 1px solid #1f1f1f;
   }
 
-  /* 2) Entire news area scrolls as one: */
+  /* 2) Structure: headlines-section (60%) on top, breaking-section (40%) below */
   .news-main-container {
-    /* fill remaining height under “News” bar */
-    height: calc(100% - 18px);
-    overflow-y: auto;
-    background: #fafaf9;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 18px); /* Full column height minus “News” bar */
   }
 
-  /* 3) “Headlines” header pinned below “News” */
-  .news-section-header {
+  .headlines-section {
+    flex: 0 0 60%;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 2px solid #d4d4d4;
+    min-height: 120px;
+    max-height: 60%;
+    overflow: hidden;
+  }
+
+  .breaking-section {
+    flex: 1 1 40%;
+    display: flex;
+    flex-direction: column;
+    min-height: 80px;
+    max-height: 40%;
+    overflow: hidden;
+  }
+
+  /* 3) “Headlines” header pinned at top of headlines-section (no gap under “News”): */
+  .headlines-section .news-section-header {
     position: sticky;
-    top: 18px; /* below 18px‐high “News” bar */
+    top: 0; /* directly under the “News” bar (no extra gap) */
     z-index: 29;
     background: #3c3c3c;
     color: #fff;
@@ -363,10 +381,10 @@
     letter-spacing: 0.5px;
   }
 
-  /* 4) ESPN │ CBS │ Yahoo │ FOX tabs pinned under “Headlines” */
+  /* 4) ESPN │ CBS │ Yahoo │ FOX tabs pinned below “Headlines”: */
   #headlines-tabs {
     position: sticky;
-    top: 36px; /* 18 (“News”) + 18 (“Headlines”) */
+    top: 18px; /* 18px (“Headlines”) under the “News” bar */
     z-index: 28;
     display: flex;
     height: 18px;
@@ -394,13 +412,11 @@
     color: #fff;
   }
 
-  /* 5) Feed panes have no nested scrollbar—scrolling is managed by .news-main-container */
-  #espn-feed,
-  #cbs-feed,
-  #yahoo-feed,
-  #fox-feed {
-    padding: 10px;
-    overflow: visible;
+  /* 5) Each feed area within headlines-section scrolls independently */
+  .headlines-section .news-feed-content {
+    flex: 1 1 auto; /* fill remaining area under header and tabs */
+    overflow-y: auto;
+    padding: 0 10px;
     background: #fafaf9;
     font-size: 11px;
     color: #111;
@@ -428,10 +444,10 @@
     color: lightgray;
   }
 
-  /* 6) “Breaking” header pinned under ESPN/CBS/Yahoo/FOX if scrolled that far */
+  /* 6) “Breaking” header pinned at top of breaking-section */
   .breaking-section .news-section-header {
     position: sticky;
-    top: 36px; /* same offset as #headlines-tabs */
+    top: 0; /* directly at top of breaking-section (under headlines-section) */
     z-index: 27;
     background: #3c3c3c;
     color: #fff;
@@ -449,7 +465,7 @@
   /* 7) Breaking │ Fantasy │ Transactions tabs pinned under “Breaking” header */
   .breaking-tabs-header {
     position: sticky;
-    top: 54px; /* 18 (“News”) + 18 (“Headlines”) + 18 (“headlines tabs”) */
+    top: 18px; /* just under the 18px‐high “Breaking” header */
     z-index: 26;
     display: flex;
     gap: 0;
@@ -485,23 +501,14 @@
     border-bottom: 2px solid #dc143c;
   }
 
-  /* 8) Breaking/Fantasy/Transactions content panes no longer scroll individually */
-  .breaking-section .news-feed-content,
-  .headlines-section .news-feed-content {
-    overflow: visible;
-    padding-left: 10px;
-    padding-right: 10px;
+  /* 8) Each feed area within breaking-section scrolls independently */
+  .breaking-section .news-feed-content {
+    flex: 1 1 auto; /* fill remaining area under header and tabs */
+    overflow-y: auto;
+    padding: 0 10px;
     background: #fafaf9;
     font-size: 11px;
     color: #111;
-  }
-
-  .headlines-section .news-feed-content {
-    margin-top: 0;
-  }
-
-  .breaking-section .news-feed-content {
-    margin-top: 0;
   }
 
   /* ────────────────────────────────────────────────────────── */
