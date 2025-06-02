@@ -573,11 +573,17 @@
     background: none;
   }
 
-  .game-matchup {
-    padding-left: 10px;
-    font-size: 11px;
-    color: #ccc;
-  }
+  .game-teams {
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+  font-size: 11px;
+  color: #ccc;
+}
+
+.game-teams .team {
+  line-height: 1.2;
+}
 
   .game-channel {
     text-align: right;
@@ -2161,8 +2167,14 @@ const awayMascot = getMascot(away);
 // 2) Build the game‐row with away on top, home below:
 const row = document.createElement("div");
 row.className = "game-row";
+
+// Replace the old “.game-matchup” line with two‐line “.game-teams”:
 row.innerHTML = `
-  <div class="game-time${displayTime === "F" ? ' game-time-final' : (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status) ? ' live' : '')}">
+  <div class="game-time${displayTime === 'F'
+      ? ' game-time-final'
+      : (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)
+          ? ' live'
+          : '')}">
     ${displayTime}
   </div>
   <div class="game-teams">
@@ -2171,6 +2183,7 @@ row.innerHTML = `
   </div>
   <div class="game-channel"></div>
 `;
+
 
 // ── push into the correct section as before ──
 if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
