@@ -2186,23 +2186,42 @@ awayLine += ` ${awayScore}`;          // appends “ 6”
 homeLine += ` ${homeScore}`;          // appends “ 4”
         }
 
-        // ── Now create the .game-row exactly as requested ──
-        const row = document.createElement("div");
-        row.className = "game-row";
-        row.innerHTML = `
-          <div class="game-time${displayTime === 'F'
-            ? ' game-time-final'
-            : (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)
-                ? ' live'
-                : '')}">
-            ${showTime}
-          </div>
-          <div class="game-teams">
-            <div class="team">${awayLine}</div>
-            <div class="team">${homeLine}</div>
-          </div>
-          <div class="game-channel"></div>
-        `;
+   // ── Now create the .game-row exactly as requested ──
+
+// (1) Split the raw “score” (e.g. "6–4" or "7-3") into awayScore/homeScore:
+let awayScore = "", homeScore = "";
+if (score && score.includes("–")) {
+  [awayScore, homeScore] = score.split("–").map(s => s.trim());
+} else if (score && score.includes("-")) {
+  [awayScore, homeScore] = score.split("-").map(s => s.trim());
+}
+
+// (2) Build the row with two stacked lines: away on top, home below.
+//     Each team‐row uses flex to put the team name on the left and its score on the right.
+const row = document.createElement("div");
+row.className = "game-row";
+row.innerHTML = `
+  <div class="game-time${displayTime === 'F'
+    ? ' game-time-final'
+    : (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)
+        ? ' live'
+        : '')}">
+    ${showTime}
+  </div>
+
+  <div class="game-teams">
+    <div class="team-row" style="display: flex; justify-content: space-between; font-size: 11px; color: #ccc;">
+      <span>${awayLine}</span>
+      <span>${awayScore}</span>
+    </div>
+    <div class="team-row" style="display: flex; justify-content: space-between; font-size: 11px; color: #ccc;">
+      <span>${homeLine}</span>
+      <span>${homeScore}</span>
+    </div>
+  </div>
+
+  <div class="game-channel"></div>
+`;
 
         // ── Push into the correct section (Scores / Today / Live) ──
         if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
