@@ -2131,8 +2131,7 @@ function renderGamesByTab(byLeague) {
         const [, , matchup, statusRaw, score, startRaw, sheetDate] = cols;
         if (!matchup || !statusRaw) return;
 
-        // Split “HOME vs. AWAY”
-        const [away, home] = matchup.split(" vs. ").map(t => t.trim());
+       const [away, home] = matchup.split(" vs. ").map(t => t.trim());
 
         const status = statusRaw.toLowerCase();
         const dateStr = (sheetDate || "").split(' ')[0]; // “YYYY-MM-DD” from sheet
@@ -2171,57 +2170,42 @@ function renderGamesByTab(byLeague) {
           : "";
         if (!isLiveOrFinal) seenDisplayTimes.add(displayTime);
 
-        // ── Build two‐line “mascot” + score strings ──
-        // Mascot = last word of team name
+        // ── Extract just the “mascot” (last word) from each team name ──
         const awayMascot = away.split(' ').slice(-1)[0];
         const homeMascot = home.split(' ').slice(-1)[0];
 
-        let awayLine = awayMascot;
-        let homeLine = homeMascot;
-        if (showScore) {
-          const parts = score.split(/\s*-\s*/); 
-const awayScore = parts[0]?.trim();   // “6”
-const homeScore = parts[1]?.trim();   // “4”
-awayLine += ` ${awayScore}`;          // appends “ 6”
-homeLine += ` ${homeScore}`;          // appends “ 4”
+        // ── Split the raw “score” into awayScore/homeScore, accounting for either “–” or “-” ──
+        let awayScore = "", homeScore = "";
+        if (score && score.includes("–")) {
+          [awayScore, homeScore] = score.split("–").map(s => s.trim());
+        } else if (score && score.includes("-")) {
+          [awayScore, homeScore] = score.split("-").map(s => s.trim());
         }
 
-   // ── Now create the .game-row exactly as requested ──
+        // ── Now create the .game-row exactly as requested ──
+        const row = document.createElement("div");
+        row.className = "game-row";
 
-// (1) Split the raw “score” (e.g. "6–4" or "7-3") into awayScore/homeScore:
-let awayScore = "", homeScore = "";
-if (score && score.includes("–")) {
-  [awayScore, homeScore] = score.split("–").map(s => s.trim());
-} else if (score && score.includes("-")) {
-  [awayScore, homeScore] = score.split("-").map(s => s.trim());
-}
-
-// (2) Build the row with two stacked lines: away on top, home below.
-//     Each team‐row uses flex to put the team name on the left and its score on the right.
-// ── Now create the .game-row exactly as requested ──
-const row = document.createElement("div");
-row.className = "game-row";
-
-row.innerHTML = `
-  <div class="game-time${displayTime === 'F'
-    ? ' game-time-final'
-    : (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)
-        ? ' live'
-        : '')}">
-    ${showTime}
-  </div>
-  <div class="game-teams">
-    <div class="team-row" style="display:flex; justify-content:space-between; font-size:11px; color:#ccc;">
-      <span>${away}</span>
-      <span>${awayScore}</span>
-    </div>
-    <div class="team-row" style="display:flex; justify-content:space-between; font-size:11px; color:#ccc;">
-      <span>${home}</span>
-      <span>${homeScore}</span>
-    </div>
-  </div>
-  <div class="game-channel"></div>
-`;
+        row.innerHTML = `
+          <div class="game-time${displayTime === 'F'
+            ? ' game-time-final'
+            : (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)
+                ? ' live'
+                : '')}">
+            ${showTime}
+          </div>
+          <div class="game-teams">
+            <div class="team-row" style="display:flex; justify-content:space-between; font-size:11px; color:#ccc;">
+              <span>${awayMascot}</span>
+              <span>${awayScore}</span>
+            </div>
+            <div class="team-row" style="display:flex; justify-content:space-between; font-size:11px; color:#ccc;">
+              <span>${homeMascot}</span>
+              <span>${homeScore}</span>
+            </div>
+          </div>
+          <div class="game-channel"></div>
+        `;
 
         // ── Push into the correct section (Scores / Today / Live) ──
         if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
