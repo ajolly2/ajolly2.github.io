@@ -2198,6 +2198,7 @@ if (score && score.includes("–")) {
 
 // (2) Build the row with two stacked lines: away on top, home below.
 //     Each team‐row uses flex to put the team name on the left and its score on the right.
+// ── Now create the .game-row exactly as requested ──
 const row = document.createElement("div");
 row.className = "game-row";
 row.innerHTML = `
@@ -2208,18 +2209,16 @@ row.innerHTML = `
         : '')}">
     ${showTime}
   </div>
-
   <div class="game-teams">
-    <div class="team-row" style="display: flex; justify-content: space-between; font-size: 11px; color: #ccc;">
+    <div class="team-row" style="display:flex; justify-content:space-between; font-size:11px; color:#ccc;">
       <span>${awayLine}</span>
       <span>${awayScore}</span>
     </div>
-    <div class="team-row" style="display: flex; justify-content: space-between; font-size: 11px; color: #ccc;">
+    <div class="team-row" style="display:flex; justify-content:space-between; font-size:11px; color:#ccc;">
       <span>${homeLine}</span>
       <span>${homeScore}</span>
     </div>
   </div>
-
   <div class="game-channel"></div>
 `;
 
