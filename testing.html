@@ -2132,7 +2132,7 @@ function renderGamesByTab(byLeague) {
         if (!matchup || !statusRaw) return;
 
         // Split “HOME vs. AWAY”
-        const [home, away] = matchup.split(" vs. ").map(t => t.trim());
+        const [away, home] = matchup.split(" vs. ").map(t => t.trim());
 
         const status = statusRaw.toLowerCase();
         const dateStr = (sheetDate || "").split(' ')[0]; // “YYYY-MM-DD” from sheet
@@ -2201,6 +2201,7 @@ if (score && score.includes("–")) {
 // ── Now create the .game-row exactly as requested ──
 const row = document.createElement("div");
 row.className = "game-row";
+
 row.innerHTML = `
   <div class="game-time${displayTime === 'F'
     ? ' game-time-final'
@@ -2211,11 +2212,11 @@ row.innerHTML = `
   </div>
   <div class="game-teams">
     <div class="team-row" style="display:flex; justify-content:space-between; font-size:11px; color:#ccc;">
-      <span>${awayLine}</span>
+      <span>${away}</span>
       <span>${awayScore}</span>
     </div>
     <div class="team-row" style="display:flex; justify-content:space-between; font-size:11px; color:#ccc;">
-      <span>${homeLine}</span>
+      <span>${home}</span>
       <span>${homeScore}</span>
     </div>
   </div>
