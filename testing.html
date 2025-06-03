@@ -2095,145 +2095,160 @@ async function fetchAllGames() {
 }
 
 function renderGamesByTab(byLeague) {
-  const containers = {
-    scores: document.getElementById("tv-listings-scores"),
-    today: document.getElementById("tv-listings-today"),
-    live: document.getElementById("tv-listings-live")
-  };
+    const containers = {
+      scores: document.getElementById("tv-listings-scores"),
+      today:  document.getElementById("tv-listings-today"),
+      live:   document.getElementById("tv-listings-live")
+    };
 
-  Object.values(containers).forEach(c => (c.innerHTML = ""));
+    // Clear previous content
+    Object.values(containers).forEach(c => (c.innerHTML = ""));
 
-  const now = new Date();
-  const todayDateStr = now.toLocaleDateString("en-CA");
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-  const yesterdayStr = yesterday.toLocaleDateString("en-CA");
+    // Compute today’s date string and yesterday’s date string (in “YYYY-MM-DD”)
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm   = String(now.getMonth() + 1).padStart(2, '0');
+    const dd   = String(now.getDate()).padStart(2, '0');
+    const todayDateStr = `${yyyy}-${mm}-${dd}`;
 
-  leagueOrder.forEach(league => {
-    const games = (byLeague[league] || []);
-    const sections = { scores: [], today: [], live: [] };
-// One Set per league to track display times already shown
-const seenDisplayTimes = new Set();
-    const seenTimes = new Set();
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    const yyyyY  = yesterday.getFullYear();
+    const mmY    = String(yesterday.getMonth() + 1).padStart(2, '0');
+    const ddY    = String(yesterday.getDate()).padStart(2, '0');
+    const yesterdayStr = `${yyyyY}-${mmY}-${ddY}`;
 
-    games.forEach(cols => {
-  const [, , matchup, statusRaw, score, startRaw, sheetDate] = cols;
-  if (!matchup || !statusRaw) return;
+    // For each league in the order you fetched
+    leagueOrder.forEach(league => {
+      const games = byLeague[league] || [];
+      const sections = { scores: [], today: [], live: [] };
+      const seenDisplayTimes = new Set();
 
-  const [home, away] = matchup.split(" vs. ").map(t => t.trim());
-const status = statusRaw.toLowerCase();
-const dateStr = (sheetDate || '').split(' ')[0]; // Use sheet date (yyyy-mm-dd)
-// Instead of using UTC, build YYYY-MM-DD from local time:
-const nowLocal      = new Date();
-const yyyy          = nowLocal.getFullYear();
-const mm            = String(nowLocal.getMonth() + 1).padStart(2, '0');
-const dd            = String(nowLocal.getDate()).padStart(2, '0');
-const todayDateStr  = `${yyyy}-${mm}-${dd}`;
+      games.forEach(cols => {
+        // cols array: [ <something>, <something>, matchup, statusRaw, score, startRaw, sheetDate ]
+        const [, , matchup, statusRaw, score, startRaw, sheetDate] = cols;
+        if (!matchup || !statusRaw) return;
 
-// “Yesterday” can still be computed off that same Date object:
-const yesterday     = new Date(nowLocal);
-yesterday.setDate(nowLocal.getDate() - 1);
-const yyyyY         = yesterday.getFullYear();
-const mmY           = String(yesterday.getMonth() + 1).padStart(2, '0');
-const ddY           = String(yesterday.getDate()).padStart(2, '0');
-const yesterdayStr  = `${yyyyY}-${mmY}-${ddY}`;
+        // Split “HOME vs. AWAY”
+        const [home, away] = matchup.split(" vs. ").map(t => t.trim());
 
-// display time logic
-let displayTime;
-if (status.includes("final") || status === 'f') {
-  displayTime = "F";
-} else if (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)) {
-  displayTime = statusRaw;
-} else if (startRaw) {
-  // Use improved parseTimeToLocal for Safari compatibility
-  const localDate = parseTimeToLocal(startRaw);
-  displayTime = localDate
-    ? localDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
-    : startRaw;
-} else {
-  displayTime = ""; // fallback if no time/status
-}
+        const status = statusRaw.toLowerCase();
+        const dateStr = (sheetDate || "").split(' ')[0]; // “YYYY-MM-DD” from sheet
 
-// ── REPLACED: build vertical stack of mascots instead of "vs." ──
+        // ── Determine displayTime (similar to before) ──
+        let displayTime;
+        if (status.includes("final") || status === 'f') {
+          displayTime = "F";
+        } else if (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)) {
+          displayTime = statusRaw;
+        } else if (startRaw) {
+          const localDate = parseTimeToLocal(startRaw);
+          displayTime = localDate
+            ? localDate.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+            : startRaw;
+        } else {
+          displayTime = "";
+        }
 
-// 1) Extract just the mascot (last word) from each full team name:
-const getMascot = fullName => {
-  const parts = fullName.split(" ");
-  return parts[parts.length - 1];
-};
-const homeMascot = getMascot(home);
-const awayMascot = getMascot(away);
+        // Decide if we show the numeric score:
+        let showScore = false;
+        if (
+          /(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)
+          || (score && score !== "0–0" && status !== "scheduled" && status !== "pre")
+        ) {
+          showScore = true;
+        }
 
-// 2) Build the game‐row with away on top, home below:
-const row = document.createElement("div");
-row.className = "game-row";
+        // Only show the time once per unique displayTime unless it’s live/final
+        const isLiveOrFinal =
+          displayTime === "F"
+          || /(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status);
 
-// Replace the old “.game-matchup” line with two‐line “.game-teams”:
-row.innerHTML = `
-  <div class="game-time${displayTime === 'F'
-      ? ' game-time-final'
-      : (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)
-          ? ' live'
-          : '')}">
-    ${displayTime}
-  </div>
-  <div class="game-teams">
-    <div class="team">${awayMascot}</div>
-    <div class="team">${homeMascot}</div>
-  </div>
-  <div class="game-channel"></div>
-`;
+        const showTime = isLiveOrFinal || !seenDisplayTimes.has(displayTime)
+          ? displayTime
+          : "";
+        if (!isLiveOrFinal) seenDisplayTimes.add(displayTime);
 
+        // ── Build two‐line “mascot” + score strings ──
+        // Mascot = last word of team name
+        const awayMascot = away.split(' ').slice(-1)[0];
+        const homeMascot = home.split(' ').slice(-1)[0];
 
-// ── push into the correct section as before ──
-if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
-  sections.scores.push(row);
-}
-// TODAY: today, final games
-else if (dateStr === todayDateStr && (status.includes('final') || status === 'f')) {
-  sections.today.push(row);
-}
-// LIVE: today + "in progress"/live
-else if (dateStr === todayDateStr && /in progress|half|inning/.test(status)) {
-  sections.live.push(row);
-}
-// TODAY: today, not final and not live
-else if (dateStr === todayDateStr && !(status.includes('final') || status === 'f')) {
-  sections.today.push(row);
-}
-});
+        let awayLine = awayMascot;
+        let homeLine = homeMascot;
+        if (showScore) {
+          const [awayScore, homeScore] = score.split('–');
+          awayLine += ` ${awayScore}`;
+          homeLine += ` ${homeScore}`;
+        }
 
-Object.entries(sections).forEach(([key, rows]) => {
-  if (!rows.length) return;
-  const leagueBox = document.createElement("div");
-  leagueBox.className = "league-section";
-  const displayName = LEAGUE_DISPLAY_NAMES[league] || league;
-  leagueBox.innerHTML = `<div class="league-header">${displayName}</div>`;
-  rows.forEach(r => leagueBox.appendChild(r));
-  containers[key].appendChild(leagueBox);
-});
-}
+        // ── Now create the .game-row exactly as requested ──
+        const row = document.createElement("div");
+        row.className = "game-row";
+        row.innerHTML = `
+          <div class="game-time${displayTime === 'F'
+            ? ' game-time-final'
+            : (/(in progress|half|inning|top|bot|mid|\d+(st|nd|rd|th))/i.test(status)
+                ? ' live'
+                : '')}">
+            ${showTime}
+          </div>
+          <div class="game-teams">
+            <div class="team">${awayLine}</div>
+            <div class="team">${homeLine}</div>
+          </div>
+          <div class="game-channel"></div>
+        `;
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await loadLeagueOrder();
-  const data = await fetchAllGames();
-  renderGamesByTab(data);
+        // ── Push into the correct section (Scores / Today / Live) ──
+        if (dateStr === yesterdayStr && (status.includes('final') || status === 'f')) {
+          sections.scores.push(row);
+        }
+        else if (dateStr === todayDateStr && (status.includes('final') || status === 'f')) {
+          sections.today.push(row);
+        }
+        else if (dateStr === todayDateStr && /in progress|half|inning/.test(status)) {
+          sections.live.push(row);
+        }
+        else if (dateStr === todayDateStr && !(status.includes('final') || status === 'f')) {
+          sections.today.push(row);
+        }
+      }); // end games.forEach
 
-  const tabs = document.querySelectorAll(".games-tab");
-  const boxes = document.querySelectorAll(".games-content");
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      tabs.forEach(t => t.classList.remove("active"));
-      boxes.forEach(b => b.style.display = "none");
-      tab.classList.add("active");
-      const target = tab.dataset.tab;
-      document.getElementById("tv-listings-" + target).style.display = "block";
+      // ── Finally, for this league, append the rows under a league‐header box ──
+      Object.entries(sections).forEach(([key, rows]) => {
+        if (!rows.length) return;
+        const leagueBox = document.createElement("div");
+        leagueBox.className = "league-section";
+        const displayName = LEAGUE_DISPLAY_NAMES[league] || league;
+        leagueBox.innerHTML = `<div class="league-header">${displayName}</div>`;
+        rows.forEach(r => leagueBox.appendChild(r));
+        containers[key].appendChild(leagueBox);
+      });
+    }); // end leagueOrder.forEach
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    await loadLeagueOrder();
+    const allData = await fetchAllGames();
+    renderGamesByTab(allData);
+
+    // ── Tab click logic remains unchanged ──
+    const tabs = document.querySelectorAll(".games-tab");
+    const boxes = document.querySelectorAll(".games-content");
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        boxes.forEach(b => b.style.display = "none");
+        tab.classList.add("active");
+        const target = tab.dataset.tab;
+        document.getElementById("tv-listings-" + target).style.display = "block";
+      });
     });
-  });
 
-  // Activate default tab (today)
-  document.querySelector(".games-tab[data-tab='today']")?.click();
-});
+    // Activate the “Today” tab by default:
+    document.querySelector(".games-tab[data-tab='today']")?.click();
+  });
    
 </script>
 <script>
