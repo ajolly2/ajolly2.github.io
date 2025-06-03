@@ -2179,9 +2179,11 @@ function renderGamesByTab(byLeague) {
         let awayLine = awayMascot;
         let homeLine = homeMascot;
         if (showScore) {
-          const [awayScore, homeScore] = score.split('–');
-          awayLine += ` ${awayScore}`;
-          homeLine += ` ${homeScore}`;
+          const parts = score.split(/\s*-\s*/); 
+const awayScore = parts[0]?.trim();   // “6”
+const homeScore = parts[1]?.trim();   // “4”
+awayLine += ` ${awayScore}`;          // appends “ 6”
+homeLine += ` ${homeScore}`;          // appends “ 4”
         }
 
         // ── Now create the .game-row exactly as requested ──
