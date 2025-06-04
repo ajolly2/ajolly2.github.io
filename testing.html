@@ -699,6 +699,51 @@
     font-style: normal;
   }
 </style>
+	  <style>
+  /* Responsive layout override */
+  @media (max-width: 1024px) {
+    .container {
+      flex-direction: column;
+      height: auto;
+    }
+
+    .column {
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: 0 0 auto !important;
+      padding: 10px 0;
+      overflow: visible !important;
+    }
+
+    .divider {
+      height: 10px;
+      width: 100%;
+    }
+
+    .news-main-container,
+    .headlines-section,
+    .breaking-section,
+    .news-feed-content {
+      max-height: none !important;
+      height: auto !important;
+    }
+
+    .news-header,
+    .news-section-header,
+    #headlines-tabs,
+    .breaking-tabs-header,
+    .news-tab,
+    .games-tab,
+    #games-tabs,
+    #games-header,
+    #socialHeader {
+      position: static !important;
+    }
+  }
+</style>
+
+<!-- Add this snippet above closing </head> or integrate into your existing <style> section -->
+
   </head>
   <body>
         <div id="topBar"></div>
