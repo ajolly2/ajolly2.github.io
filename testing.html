@@ -1682,9 +1682,9 @@ tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-s
         // ─── Updated “Headlines” feedMap ───
 const feedMap = {
   espn: "https://www.espn.com/espn/rss/news",
-  cbs:  "https://rss.app/feeds/oVrPZDHkkJB8bEKG.xml",
-  fox:  "https://rss.app/feeds/KzC1hdnt93oattSD.xml",
-  yahoo:"https://rss.app/feeds/3BSRBZ6GJrUbB5PC.xml"
+  cbs:  "https://www.cbssports.com/rss/headlines/l",
+  fox:  "https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmuj2lUhuRhQaafhBjAJqaPU244mlTDK1i&size=30",
+  yahoo:"https://sports.yahoo.com/general/news/rss/"
 };
 Object.entries(feedMap).forEach(([source, url]) => {
   // Notice we now pass "#espn-feed", "#cbs-feed", etc., instead of "#feed-ESPN .feed-content"
