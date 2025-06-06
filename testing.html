@@ -1713,40 +1713,6 @@ Object.entries(feedMap).forEach(([source, url]) => {
   // Notice we now pass "#espn-feed", "#cbs-feed", etc., instead of "#feed-ESPN .feed-content"
   fetchFeed(`#${source}-feed`, url);
 });
-  // 1) Wait until all RSS items have been injected into #breaking-feed,
-  //    then intercept clicks on any <a> inside it:
-  document.addEventListener("DOMContentLoaded", () => {
-    const breakingContainer = document.getElementById("breaking-feed");
-    if (!breakingContainer) return;
-
-    breakingContainer.addEventListener("click", async (evt) => {
-      // Only act if the user clicked a link (<a>):
-      const anchor = evt.target.closest("a");
-      if (!anchor || !breakingContainer.contains(anchor)) return;
-
-      evt.preventDefault(); // stop the default “go to NewsNow” behavior
-      const newsNowUrl = anchor.href;
-
-      try {
-        // 2) Fetch the NewsNow page HTML
-        const resp = await fetch(newsNowUrl, { redirect: "follow" });
-        const html  = await resp.text();
-
-        // 3) Parse out the <link rel="canonical"> tag, if present
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        const linkElem = doc.querySelector("link[rel=canonical]");
-
-        // 4) If we found a canonical href, open it; otherwise fallback to original
-        const finalUrl = linkElem?.href || newsNowUrl;
-        window.open(finalUrl, "_blank");
-      } catch (err) {
-        // If anything goes wrong (e.g. fetch failure), just open the original link
-        window.open(newsNowUrl, "_blank");
-      }
-    });
-  });
-
-
 
         // Fetch custom feeds for existing sections
         fetchFeed(
@@ -2651,6 +2617,63 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
     // Fallback in case feed injection is delayed
     setTimeout(removeNearDuplicateHeadlines, 3000);
   });
+</script>
+
+	    <!-- put this right before the closing </body> tag -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const breakingContainer = document.getElementById("breaking-feed");
+  if (!breakingContainer) return;
+
+  // We're using AllOrigins as a free CORS proxy to fetch NewsNow HTML
+  const corsProxy = "https://api.allorigins.win/raw?url=";
+
+  breakingContainer.addEventListener("click", function(evt) {
+    const anchor = evt.target.closest("a");
+    if (!anchor || !breakingContainer.contains(anchor)) return;
+
+    evt.preventDefault(); // stop the default NewsNow redirect
+    const newsNowUrl = anchor.href;
+
+    fetch(corsProxy + encodeURIComponent(newsNowUrl))
+      .then(response => response.text())
+      .then(html => {
+        // parse the fetched HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        let finalUrl = null;
+
+        // 1) first look for a meta refresh tag: <meta http-equiv="refresh" content="0;URL=...">
+        const metaRefresh = doc.querySelector('meta[http-equiv="refresh"]');
+        if (metaRefresh) {
+          const content = metaRefresh.getAttribute("content") || "";
+          const match = content.match(/url=(.*)/i);
+          if (match && match[1]) {
+            finalUrl = match[1].trim();
+          }
+        }
+
+        // 2) if no meta‐refresh, fall back to <link rel="canonical">
+        if (!finalUrl) {
+          const linkCanonical = doc.querySelector('link[rel="canonical"]');
+          if (linkCanonical && linkCanonical.href) {
+            finalUrl = linkCanonical.href;
+          }
+        }
+
+        // 3) open whichever we found (otherwise fallback to the original)
+        if (finalUrl) {
+          window.open(finalUrl, "_blank");
+        } else {
+          window.open(newsNowUrl, "_blank");
+        }
+      })
+      .catch(() => {
+        // if fetch fails for any reason, just open the original NewsNow URL
+        window.open(newsNowUrl, "_blank");
+      });
+  });
+});
 </script>
 
 	   
