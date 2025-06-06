@@ -2370,7 +2370,7 @@ function fetchRSSFeed(url, containerId) {
       ul.style.margin = "0";
       ul.style.padding = "0";
       ul.style.listStyle = "none";
-      items.slice(0, 10).forEach(item => {
+      items.forEach(item => {
         const li = document.createElement("li");
         li.style.padding = "6px 0";
         const title = item.querySelector("title")?.textContent || "";
