@@ -1386,7 +1386,7 @@
         ><strong>Social</strong>
         </div>
         <!-- Single dynamic container for social feeds -->
-       <div id="social-feed-container-rss">
+       <div id="my-rss-widget">
   <!-- RSS.app embed: -->
   <rssapp-feed id="FPxevhdc3HmbTqUF"></rssapp-feed>
   <script src="https://widget.rss.app/v1/feed.js" type="text/javascript" async></script>
@@ -2493,6 +2493,107 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
   }
 
   loadSocialFeed();
+</script>
+
+	    <script>
+  /**
+   * Turn a raw headline into a normalized array of words.
+   *  - Lowercase
+   *  - Remove punctuation
+   *  - Split on whitespace
+   *  - Filter out empty tokens
+   */
+  function headlineToWordArray(str) {
+    return str
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")   // strip any non‐alphanumeric (keeps letters/numbers/spaces)
+      .split(/\s+/)              // split on whitespace
+      .filter(word => word.length > 0);
+  }
+
+  /**
+   * Compute Jaccard similarity of two arrays of words:
+   *    |Intersection(words1, words2)| / |Union(words1, words2)|
+   */
+  function jaccardSimilarity(wordsA, wordsB) {
+    const setA = new Set(wordsA);
+    const setB = new Set(wordsB);
+    let intersectionCount = 0;
+    for (let w of setA) {
+      if (setB.has(w)) intersectionCount++;
+    }
+    const unionCount = setA.size + setB.size - intersectionCount;
+    if (unionCount === 0) return 0;
+    return intersectionCount / unionCount;
+  }
+
+  /**
+   * Remove any post element whose headline is “too similar” to one already kept.
+   * We keep track of word‐sets of all headlines we’ve accepted, then for each new one
+   * we measure its Jaccard similarity against all “seen” sets. If any overlap ≥ threshold, we remove it.
+   */
+  function removeNearDuplicateHeadlines() {
+    const container = document.getElementById("my-rss-widget");
+    if (!container) return;
+
+    // Grab every <a> under #my-rss-widget (RSS.app normally puts each item in an <a>).
+    const links = Array.from(container.querySelectorAll("a"));
+
+    // Array of word‐sets we have accepted so far
+    const seenWordSets = [];
+    // Threshold of Jaccard similarity above which we consider two headlines “duplicates”
+    const SIMILARITY_THRESHOLD = 0.65;
+
+    links.forEach(link => {
+      const rawText = link.textContent || "";
+      const words = headlineToWordArray(rawText);
+      // Compare against each seen word‐set:
+      let isDuplicate = false;
+      for (let seenWords of seenWordSets) {
+        const similarity = jaccardSimilarity(words, seenWords);
+        if (similarity >= SIMILARITY_THRESHOLD) {
+          isDuplicate = true;
+          break;
+        }
+      }
+
+      if (isDuplicate) {
+        // Remove this entire “item.” Climb up until you hit a direct child of #my-rss-widget:
+        let el = link;
+        while (el && el.parentElement && el.parentElement.id !== "my-rss-widget") {
+          el = el.parentElement;
+        }
+        if (el && el.parentElement === container) {
+          container.removeChild(el);
+        }
+      } else {
+        // Not a duplicate: add this word‐array to seenWordSets
+        seenWordSets.push(words);
+      }
+    });
+  }
+
+  /**
+   * Observe #my-rss-widget until at least one <a> appears, then run the fuzzy dedupe.
+   * Also run a fallback after 3 seconds in case feed loads slowly.
+   */
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("my-rss-widget");
+    if (!container) return;
+
+    const observer = new MutationObserver((mutations, obs) => {
+      // If at least one <a> is present, RSS.app has rendered items
+      if (container.querySelector("a")) {
+        removeNearDuplicateHeadlines();
+        obs.disconnect();
+      }
+    });
+
+    observer.observe(container, { childList: true, subtree: true });
+
+    // Fallback in case feed injection is delayed
+    setTimeout(removeNearDuplicateHeadlines, 3000);
+  });
 </script>
 
   </body>
