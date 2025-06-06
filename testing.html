@@ -2621,60 +2621,70 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
 
 	    <!-- put this right before the closing </body> tag -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const breakingContainer = document.getElementById("breaking-feed");
-  if (!breakingContainer) return;
+  document.addEventListener("DOMContentLoaded", () => {
+    const breakingContainer = document.getElementById("breaking-feed");
+    if (!breakingContainer) return;
 
-  // We're using AllOrigins as a free CORS proxy to fetch NewsNow HTML
-  const corsProxy = "https://api.allorigins.win/raw?url=";
+    breakingContainer.addEventListener("click", async (evt) => {
+      // Only proceed if a link (<a>) was clicked inside #breaking-feed
+      const anchor = evt.target.closest("a");
+      if (!anchor || !breakingContainer.contains(anchor)) return;
+      evt.preventDefault();
 
-  breakingContainer.addEventListener("click", function(evt) {
-    const anchor = evt.target.closest("a");
-    if (!anchor || !breakingContainer.contains(anchor)) return;
+      const newsNowUrl = anchor.href;
+      try {
+        // 1) Fetch the NewsNow page HTML
+        const resp = await fetch(newsNowUrl, { redirect: "follow" });
+        const html = await resp.text();
+        const doc = new DOMParser().parseFromString(html, "text/html");
 
-    evt.preventDefault(); // stop the default NewsNow redirect
-    const newsNowUrl = anchor.href;
-
-    fetch(corsProxy + encodeURIComponent(newsNowUrl))
-      .then(response => response.text())
-      .then(html => {
-        // parse the fetched HTML
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-        let finalUrl = null;
-
-        // 1) first look for a meta refresh tag: <meta http-equiv="refresh" content="0;URL=...">
+        // 2) Look for a <meta http-equiv="refresh"> redirect
         const metaRefresh = doc.querySelector('meta[http-equiv="refresh"]');
         if (metaRefresh) {
           const content = metaRefresh.getAttribute("content") || "";
-          const match = content.match(/url=(.*)/i);
+          // “content” is often like “0; URL=https://…”
+          const match = content.match(/URL=(.*)/i);
           if (match && match[1]) {
-            finalUrl = match[1].trim();
+            window.open(match[1], "_blank");
+            return;
           }
         }
 
-        // 2) if no meta‐refresh, fall back to <link rel="canonical">
-        if (!finalUrl) {
-          const linkCanonical = doc.querySelector('link[rel="canonical"]');
-          if (linkCanonical && linkCanonical.href) {
-            finalUrl = linkCanonical.href;
+        // 3) Fallback: check for <link rel="canonical">
+        const linkCanonical = doc.querySelector('link[rel="canonical"]');
+        if (linkCanonical && linkCanonical.href) {
+          window.open(linkCanonical.href, "_blank");
+          return;
+        }
+
+        // 4) Fallback: inspect any <script> blocks for a JS redirect
+        const scripts = Array.from(doc.querySelectorAll("script"));
+        for (const s of scripts) {
+          const txt = s.textContent || "";
+          // look for window.location.href = "…";
+          let m = txt.match(/window\.location\.href\s*=\s*['"](.*?)['"]/);
+          if (m && m[1]) {
+            window.open(m[1], "_blank");
+            return;
+          }
+          // look for location.replace("…");
+          m = txt.match(/location\.replace\s*\(\s*['"](.*?)['"]/);
+          if (m && m[1]) {
+            window.open(m[1], "_blank");
+            return;
           }
         }
 
-        // 3) open whichever we found (otherwise fallback to the original)
-        if (finalUrl) {
-          window.open(finalUrl, "_blank");
-        } else {
-          window.open(newsNowUrl, "_blank");
-        }
-      })
-      .catch(() => {
-        // if fetch fails for any reason, just open the original NewsNow URL
+        // 5) If none of the above, just open the NewsNow URL as a last resort
         window.open(newsNowUrl, "_blank");
-      });
+      } catch (err) {
+        // On fetch/parse error, open the original link
+        window.open(newsNowUrl, "_blank");
+      }
+    });
   });
-});
 </script>
+
 
 	   
 
