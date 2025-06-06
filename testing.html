@@ -1694,20 +1694,20 @@ tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-s
         }
 
         // ─── Updated “Headlines” feedMap ───
+const feedMap = {
+  // ESPN still works directly, but you can point it at rss.app if you like:
+  espn:  "https://www.espn.com/espn/rss/news",
 
-	      function getProxiedUrl(originalUrl) {
-  return "https://api.allorigins.win/raw?url=" + encodeURIComponent(originalUrl);
-}
-	      const feedMap = {
-  // ESPN already allows CORS, but you can proxy it too if you want:
-  espn:  getProxiedUrl("https://www.espn.com/espn/rss/news"),
+  // CBS through rss.app instead of AllOrigins
+  cbs:   "https://rss.app/feeds/qQ90C7XC0oUECOLP.xml",
 
-  // CBS, FOX, Yahoo all get routed through AllOrigins so the browser sees
-  // them as same-origin and doesn’t block the fetch.
-  cbs:   getProxiedUrl("https://www.cbssports.com/rss/headlines/"),
-  yahoo: getProxiedUrl("https://sports.yahoo.com/general/news/rss/"),
-  fox:   getProxiedUrl("https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmuj2lUhuRhQaafhBjAJqaPU244mlTDK1i&size=30")
+  // Yahoo through rss.app
+  yahoo: "https://rss.app/feeds/OvSpAK6PF8gmF37d.xml",
+
+  // FOX through rss.app
+  fox:   "https://rss.app/feeds/gqwmnxZNc8bSqdto.xml"
 };
+
 
 Object.entries(feedMap).forEach(([source, url]) => {
   // Notice we now pass "#espn-feed", "#cbs-feed", etc., instead of "#feed-ESPN .feed-content"
