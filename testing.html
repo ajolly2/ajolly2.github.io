@@ -2619,5 +2619,91 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
   });
 </script>
 
+	    <script>
+  // Helper: follows any redirects (NewsNow → ultimate URL)
+  async function resolveNewsNowRedirect(newsNowLink) {
+    try {
+      const resp = await fetch(newsNowLink, { method: "GET", redirect: "follow" });
+      return resp.url;
+    } catch (err) {
+      console.warn("Could not resolve redirect for", newsNowLink, err);
+      return newsNowLink;
+    }
+  }
+
+  // Main: fetch the RSS, parse <item> tags, and inject direct links into #breaking-feed
+  async function loadBreakingFeedDirectly() {
+    const container = document.getElementById("breaking-feed");
+    if (!container) {
+      console.error("No element found with ID “breaking-feed”.");
+      return;
+    }
+    container.textContent = "Loading…";
+
+    // Replace with your actual RSS URL if different
+    const NEWSNOW_RSS_URL = "https://rss.app/feeds/XcFXtVdyCBGtIC6O.xml";
+
+    let xmlText;
+    try {
+      const response = await fetch(NEWSNOW_RSS_URL);
+      xmlText = await response.text();
+    } catch (e) {
+      container.innerHTML = "<p style='color:red;'>Error fetching the feed.</p>";
+      console.error(e);
+      return;
+    }
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlText, "application/xml");
+    const items = Array.from(doc.querySelectorAll("item"));
+
+    if (!items.length) {
+      container.innerHTML = "<p>No items found in the feed.</p>";
+      return;
+    }
+
+    const ul = document.createElement("ul");
+    ul.style.listStyle = "none";
+    ul.style.padding = "0";
+    ul.style.margin = "0";
+
+    for (let item of items) {
+      const titleEl = item.querySelector("title");
+      const linkEl  = item.querySelector("link");
+      if (!titleEl || !linkEl) continue;
+
+      const titleText   = titleEl.textContent.trim();
+      const newsNowLink = linkEl.textContent.trim();
+
+      // Create a placeholder <li> while we resolve
+      const li = document.createElement("li");
+      li.style.marginBottom = "0.5em";
+      li.textContent = "…";
+      ul.appendChild(li);
+
+      // Follow the NewsNow redirect to get the final URL
+      let finalUrl = await resolveNewsNowRedirect(newsNowLink);
+
+      // Build the actual <a> and replace the placeholder
+      li.innerHTML = "";
+      const a = document.createElement("a");
+      a.href = finalUrl;
+      a.textContent = titleText;
+      a.target = "_blank";
+      a.style.color = "#212121";
+      a.style.textDecoration = "none";
+      a.style.fontSize = "14px";
+      a.style.lineHeight = "1.2";
+
+      li.appendChild(a);
+    }
+
+    container.innerHTML = "";
+    container.appendChild(ul);
+  }
+
+  document.addEventListener("DOMContentLoaded", loadBreakingFeedDirectly);
+</script>
+
   </body>
 </html> 
