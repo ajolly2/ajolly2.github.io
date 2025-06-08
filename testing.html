@@ -2178,48 +2178,57 @@ function renderGamesByTab(byLeague) {
     today:  document.getElementById("tv-listings-today"),
     live:   document.getElementById("tv-listings-live")
   };
-  // clear old content
+  // Clear old content
   Object.values(containers).forEach(c => c.innerHTML = "");
 
-  // date strings
+  // Prepare date strings
   const now = new Date();
   const yyyy = now.getFullYear();
-  const mm   = String(now.getMonth() + 1).padStart(2,'0');
-  const dd   = String(now.getDate()).padStart(2,'0');
+  const mm   = String(now.getMonth() + 1).padStart(2, '0');
+  const dd   = String(now.getDate()).padStart(2, '0');
   const todayStr     = `${yyyy}-${mm}-${dd}`;
   const yesterday    = new Date(now.getTime() - 864e5);
   const yyyyY = yesterday.getFullYear();
-  const mmY   = String(yesterday.getMonth() + 1).padStart(2,'0');
-  const ddY   = String(yesterday.getDate()).padStart(2,'0');
+  const mmY   = String(yesterday.getMonth() + 1).padStart(2, '0');
+  const ddY   = String(yesterday.getDate()).padStart(2, '0');
   const yesterdayStr = `${yyyyY}-${mmY}-${ddY}`;
 
+  // Loop through each league in your desired order
   leagueOrder.forEach(league => {
     const games = byLeague[league] || [];
     const sections = { scores: [], today: [], live: [] };
-    const seenDisplayTimes = new Set();
 
     games.forEach(cols => {
       const [, , matchup, statusRaw, score, startRaw, sheetDate] = cols;
       if (!matchup) return;
-      // split matchups
-      let [away, home] = matchup.split(" vs. ").map(t => t.trim());
 
-      // decide displayTime exactly as before...
-      const dt = new Date(); // you'll have startRaw parsing logic here
-      // ... but we'll skip that detail for brevity ...
-      // assume you compute `displayTime` and decide `showSection` (scores/today/live)
+      // Split teams
+      let [away, home] = matchup.split(" vs. ").map(s => s.trim());
 
-      // ── split score into awayScore/homeScore ──
-      let awayScore="", homeScore="";
-      if (score.includes("–")) {
-        [awayScore, homeScore] = score.split("–").map(s=>s.trim());
-      } else if (score.includes("-")) {
-        [awayScore, homeScore] = score.split("-").map(s=>s.trim());
+      // Compute displayTime
+      let displayTime;
+      if (/final|F/i.test(statusRaw)) {
+        displayTime = 'F';
+      } else if (/in progress|half|inning/i.test(statusRaw)) {
+        displayTime = statusRaw;
+      } else {
+        const localDt = parseTimeToLocal(startRaw);
+        displayTime = localDt
+          ? localDt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+          : startRaw;
       }
-      const aNum = parseInt(awayScore,10)||0;
-      const hNum = parseInt(homeScore,10)||0;
 
-      // ── choose full name for NCAABaseball & NCAASoftball ──
+      // Split score into awayScore/homeScore
+      let awayScore = "", homeScore = "";
+      if (score.includes("–")) {
+        [awayScore, homeScore] = score.split("–").map(s => s.trim());
+      } else if (score.includes("-")) {
+        [awayScore, homeScore] = score.split("-").map(s => s.trim());
+      }
+      const aNum = parseInt(awayScore, 10) || 0;
+      const hNum = parseInt(homeScore, 10) || 0;
+
+      // Choose full names for college baseball & softball, mascots otherwise
       let awayText, homeText;
       if (league === 'NCAABaseball' || league === 'NCAASoftball') {
         awayText = away;
@@ -2229,7 +2238,7 @@ function renderGamesByTab(byLeague) {
         homeText = home.split(' ').slice(-1)[0];
       }
 
-      // ── highlight winners ──
+      // Highlight winners
       const awayNameHTML = aNum > hNum
         ? `<span class="winner">${awayText}</span>`
         : `<span>${awayText}</span>`;
@@ -2237,19 +2246,26 @@ function renderGamesByTab(byLeague) {
         ? `<span class="winner">${homeText}</span>`
         : `<span>${homeText}</span>`;
 
-      // ── build your row exactly as before ──
+      // Build the row
       const row = document.createElement("div");
       row.className = "game-row";
       row.innerHTML = `
-        <div class="game-time">${displayTime}</div>
+        <div class="game-time${displayTime==='F' ? ' game-time-final'
+           : (/in progress|half|inning/i.test(statusRaw) ? ' live' : '')}">
+          ${displayTime}
+        </div>
         <div class="game-teams">
-          <div class="team-row">${awayNameHTML}<span>${awayScore}</span></div>
-          <div class="team-row">${homeNameHTML}<span>${homeScore}</span></div>
+          <div class="team-row" style="display:flex;justify-content:space-between;">
+            ${awayNameHTML}<span>${awayScore}</span>
+          </div>
+          <div class="team-row" style="display:flex;justify-content:space-between;">
+            ${homeNameHTML}<span>${homeScore}</span>
+          </div>
         </div>
         <div class="game-channel"></div>
       `;
 
-      // ── push into correct section ──
+      // Decide which section to append to
       if (sheetDate === yesterdayStr && /final|F/i.test(statusRaw)) {
         sections.scores.push(row);
       } else if (sheetDate === todayStr && /final|F/i.test(statusRaw)) {
@@ -2261,18 +2277,17 @@ function renderGamesByTab(byLeague) {
       }
     });
 
-    // append each non-empty section under its league header
+    // Append each league block if it has rows
     Object.entries(sections).forEach(([key, rows]) => {
       if (!rows.length) return;
-      const box = document.createElement("div");
-      box.className = "league-section";
-      box.innerHTML = `<div class="league-header">${league}</div>`;
-      rows.forEach(r => box.appendChild(r));
-      containers[key].appendChild(box);
+      const leagueBox = document.createElement("div");
+      leagueBox.className = "league-section";
+      leagueBox.innerHTML = `<div class="league-header">${league}</div>`;
+      rows.forEach(r => leagueBox.appendChild(r));
+      containers[key].appendChild(leagueBox);
     });
   });
 }
-
 
   document.addEventListener("DOMContentLoaded", async () => {
     await loadLeagueOrder();
