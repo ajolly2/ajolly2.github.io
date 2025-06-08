@@ -2246,34 +2246,37 @@ function renderGamesByTab(byLeague) {
           : "";
         if (!isLiveOrFinal) seenDisplayTimes.add(displayTime);
 
-        // ── Extract just the “mascot” (last word) from each team name ──
-        const awayMascot = away.split(' ').slice(-1)[0];
-        const homeMascot = home.split(' ').slice(-1)[0];
+       // ── Choose display text: full name for NCAABaseball & NCAASoftball, mascot otherwise ──
+let awayText, homeText;
+if (league === 'NCAABaseball' || league === 'NCAASoftball') {
+  awayText = away;   // e.g. "North Carolina"
+  homeText = home;   // e.g. "West Virginia"
+} else {
+  awayText = away.split(' ').slice(-1)[0];  // e.g. "Warriors"
+  homeText = home.split(' ').slice(-1)[0];
+}
 
-        // ── Split the raw “score” into awayScore/homeScore, accounting for either “–” or “-” ──
-        let awayScore = "", homeScore = "";
-        if (score && score.includes("–")) {
-          [awayScore, homeScore] = score.split("–").map(s => s.trim());
-        } else if (score && score.includes("-")) {
-          [awayScore, homeScore] = score.split("-").map(s => s.trim());
-        }
+// ── Split the raw “score” into awayScore/homeScore ──
+let awayScore = "", homeScore = "";
+if (score && score.includes("–")) {
+  [awayScore, homeScore] = score.split("–").map(s => s.trim());
+} else if (score && score.includes("-")) {
+  [awayScore, homeScore] = score.split("-").map(s => s.trim());
+}
 
-        // ── Now create the .game-row exactly as requested ──
-        const row = document.createElement("div");
-        row.className = "game-row";
-
-       // parse scores into ints (or 0 if blank)
+// parse scores into ints (or 0 if blank)
 const aNum = parseInt(awayScore, 10) || 0;
 const hNum = parseInt(homeScore, 10) || 0;
 
-// build two inline spans, adding “winner” when appropriate
+// ── Build the HTML with winner highlighting ──
 const awayNameHTML = aNum > hNum
-  ? `<span class="winner">${awayMascot}</span>`
-  : `<span>${awayMascot}</span>`;
+  ? `<span class="winner">${awayText}</span>`
+  : `<span>${awayText}</span>`;
 
 const homeNameHTML = hNum > aNum
-  ? `<span class="winner">${homeMascot}</span>`
-  : `<span>${homeMascot}</span>`;
+  ? `<span class="winner">${homeText}</span>`
+  : `<span>${homeText}</span>`;
+
 
 row.innerHTML = `
   <div class="game-time${displayTime==='F'
