@@ -2178,36 +2178,38 @@ function renderGamesByTab(byLeague) {
     today:  document.getElementById("tv-listings-today"),
     live:   document.getElementById("tv-listings-live")
   };
+  // clear existing
   Object.values(containers).forEach(c => c.innerHTML = "");
 
+  // build today / yesterday strings
   const now = new Date();
-  const yyyy = now.getFullYear();
-  const mm   = String(now.getMonth()+1).padStart(2,'0');
-  const dd   = String(now.getDate()).padStart(2,'0');
-  const todayStr     = `${yyyy}-${mm}-${dd}`;
-  const yesterday    = new Date(now.getTime()-864e5);
-  const yyyyY = yesterday.getFullYear();
-  const mmY   = String(yesterday.getMonth()+1).padStart(2,'0');
-  const ddY   = String(yesterday.getDate()).padStart(2,'0');
-  const yesterdayStr = `${yyyyY}-${mmY}-${ddY}`;
+  const yyyy = now.getFullYear(),
+        mm   = String(now.getMonth()+1).padStart(2,'0'),
+        dd   = String(now.getDate()).padStart(2,'0'),
+        todayStr = `${yyyy}-${mm}-${dd}`;
+  const yesterday = new Date(now.getTime()-864e5);
+  const yyyyY = yesterday.getFullYear(),
+        mmY   = String(yesterday.getMonth()+1).padStart(2,'0'),
+        ddY   = String(yesterday.getDate()).padStart(2,'0'),
+        yesterdayStr = `${yyyyY}-${mmY}-${ddY}`;
 
   leagueOrder.forEach(league => {
-    const games = byLeague[league] || [];
+    const rows = byLeague[league] || [];
     const sections = { scores: [], today: [], live: [] };
     const seenDisplayTimes = new Set();
 
-    games.forEach(cols => {
+    rows.forEach(cols => {
       const [, , matchup, statusRaw, score, startRaw, sheetDate] = cols;
       if (!matchup) return;
 
       // split teams
       let [away, home] = matchup.split(" vs. ").map(s=>s.trim());
 
-      // compute displayTime
+      // 1) compute displayTime, now catching Top/Bot for live baseball
       let displayTime;
-      if (/final|F/i.test(statusRaw)) {
+      if (/^f(inal)?$/i.test(statusRaw)) {
         displayTime = 'F';
-      } else if (/in progress|half|inning/i.test(statusRaw)) {
+      } else if (/(in progress|top|bot|half|inning)/i.test(statusRaw)) {
         displayTime = statusRaw;
       } else {
         const localDt = parseTimeToLocal(startRaw);
@@ -2216,25 +2218,25 @@ function renderGamesByTab(byLeague) {
           : startRaw;
       }
 
-      // only show time once per unique value, except live/final
+      // 2) only show each time once (unless live or final)
       const isLiveOrFinal = displayTime==='F'
-        || /in progress|half|inning/i.test(statusRaw);
+        || /(in progress|top|bot|half|inning)/i.test(statusRaw);
       const showTime = isLiveOrFinal || !seenDisplayTimes.has(displayTime)
         ? displayTime
         : '';
       if (!isLiveOrFinal) seenDisplayTimes.add(displayTime);
 
-      // split score
+      // 3) split scores
       let awayScore="", homeScore="";
       if (score.includes("–")) {
         [awayScore,homeScore] = score.split("–").map(s=>s.trim());
       } else if (score.includes("-")) {
         [awayScore,homeScore] = score.split("-").map(s=>s.trim());
       }
-      const aNum = parseInt(awayScore,10)||0;
-      const hNum = parseInt(homeScore,10)||0;
+      const aNum = parseInt(awayScore,10)||0,
+            hNum = parseInt(homeScore,10)||0;
 
-      // choose full name for baseball/softball
+      // 4) full names for NCAA Baseball/Softball
       let awayText, homeText;
       if (league==='NCAABaseball' || league==='NCAASoftball') {
         awayText = away;
@@ -2244,7 +2246,7 @@ function renderGamesByTab(byLeague) {
         homeText = home.split(' ').slice(-1)[0];
       }
 
-      // highlight winners
+      // 5) highlight winners
       const awayNameHTML = aNum>hNum
         ? `<span class="winner">${awayText}</span>`
         : `<span>${awayText}</span>`;
@@ -2252,13 +2254,13 @@ function renderGamesByTab(byLeague) {
         ? `<span class="winner">${homeText}</span>`
         : `<span>${homeText}</span>`;
 
-      // build row
+      // 6) build the row
       const row = document.createElement("div");
       row.className = "game-row";
       row.innerHTML = `
         <div class="game-time${showTime==='F'
           ? ' game-time-final'
-          : (/in progress|half|inning/i.test(statusRaw) 
+          : (/(in progress|top|bot|half|inning)/i.test(statusRaw)
              ? ' live' : '')}">
           ${showTime}
         </div>
@@ -2273,29 +2275,30 @@ function renderGamesByTab(byLeague) {
         <div class="game-channel"></div>
       `;
 
-      // route to correct section
-      if (sheetDate===yesterdayStr && /final|F/i.test(statusRaw)) {
+      // 7) route to the right section
+      if (sheetDate===yesterdayStr && /^F|final$/i.test(statusRaw)) {
         sections.scores.push(row);
-      } else if (sheetDate===todayStr && /final|F/i.test(statusRaw)) {
+      } else if (sheetDate===todayStr && /^F|final$/i.test(statusRaw)) {
         sections.today.push(row);
-      } else if (sheetDate===todayStr && /in progress|half|inning/i.test(statusRaw)) {
+      } else if (sheetDate===todayStr && /(in progress|top|bot|half|inning)/i.test(statusRaw)) {
         sections.live.push(row);
       } else if (sheetDate===todayStr) {
         sections.today.push(row);
       }
     });
 
-    // append league block
-    Object.entries(sections).forEach(([key, rows]) => {
-      if (!rows.length) return;
+    // append league blocks
+    Object.entries(sections).forEach(([key, list]) => {
+      if (!list.length) return;
       const box = document.createElement("div");
       box.className = "league-section";
       box.innerHTML = `<div class="league-header">${league}</div>`;
-      rows.forEach(r => box.appendChild(r));
+      list.forEach(r=>box.appendChild(r));
       containers[key].appendChild(box);
     });
   });
 }
+
 
 
   document.addEventListener("DOMContentLoaded", async () => {
