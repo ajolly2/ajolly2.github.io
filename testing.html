@@ -62,6 +62,31 @@
     background-color: #151515;
     color: white;
   }
+	   /* ───────────── News-Only Centering & Fixed Header ───────────── */
+.news-only .container {
+  display: flex;
+  justify-content: center;
+}
+.news-only .column.news {
+  margin: 0 auto;
+  max-width: 800px; /* or whatever width you like */
+}
+
+/* fix the header at the very top of the viewport */
+#resp-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 200;     /* same as your other z-indices */
+  background: #151515; /* or match your header bg */
+}
+
+/* push all page content down so it isn’t hidden under the fixed header */
+body.news-only {
+  padding-top: 50px; /* match your #resp-header height */
+}
+
 
   ul,
   li {
@@ -716,8 +741,8 @@
 	  <style>
 		  /* ───────────── Header Styling ───────────── */
 #resp-header {
-  display: none;
-  position: sticky;
+  display: flex;              /* ensure it shows */
+  position: fixed;            /* pin it to the viewport */
   top: 0; left: 0; right: 0;
   height: 50px;
   background: #151515;
@@ -726,6 +751,7 @@
   align-items: center;
   justify-content: space-between;
 }
+
 #resp-header img#header-logo {
   height: 30px;
 }
@@ -869,8 +895,8 @@
 <!-- Add this snippet above closing </head> or integrate into your existing <style> section -->
 
   </head>
-  <body>
-	  <header id="resp-header">
+  <body class=="news-only">
+	  <header id="resp-header" class="site-header">
   <button id="menu-toggle" aria-label="Open menu">
     <span class="hamburger"></span>
   </button>
