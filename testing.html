@@ -714,75 +714,126 @@
   }
 </style>
 	  <style>
- /* ────────────────────────────────────────────────────────── */
-/*    3-column layout at 1024px and below (Menu | Games | News) */
-/* ────────────────────────────────────────────────────────── */
-/* ────────────────────────────────────────────────────────── */
-/*   1) Three-column “shrink but stay visible” at ≤1024px   */
-/* ────────────────────────────────────────────────────────── */
-@media (max-width: 1024px) {
+		  /* ───────────── Header Styling ───────────── */
+#resp-header {
+  display: none;
+  position: sticky;
+  top: 0; left: 0; right: 0;
+  height: 50px;
+  background: #151515;
+  z-index: 200;
+  padding: 0 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+#resp-header img#header-logo {
+  height: 30px;
+}
+#resp-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+#resp-header .hamburger {
+  display: block;
+  width: 24px; height: 2px;
+  background: white;
+  position: relative;
+}
+#resp-header .hamburger::before,
+#resp-header .hamburger::after {
+  content: "";
+  position: absolute;
+  width: 24px; height: 2px;
+  background: white;
+}
+#resp-header .hamburger::before { top: -6px; }
+#resp-header .hamburger::after  { top:  6px; }
+
+/* ───────────── Overlay Panels ───────────── */
+.column.main-menu.open,
+.column.tv-listings.open {
+  position: absolute;
+  top: 50px; /* header height */
+  background: #151515;
+  z-index: 150;
+  height: calc(100vh - 50px);
+  overflow-y: auto;
+}
+.column.main-menu.open {
+  left: 0;
+  width: 250px;
+}
+.column.tv-listings.open {
+  right: 0;
+  width: 250px;
+}
+
+/* ───────────── 1100px+ “all four” view ───────────── */
+@media (min-width: 1101px) {
+  .column.tv-listings { flex: 0 1 calc(250px - 50px); min-width:200px; }
+  .column.news        { flex: 0 1 calc(370px - 50px); min-width:320px; word-wrap:break-word; }
+}
+
+/* ───────────── 900px–1100px “show header + 3 cols” ───────────── */
+@media (max-width: 1100px) {
+  /* show header */
+  #resp-header { display: flex; }
+  /* hide main-menu panel */
+  .column.main-menu { display: none; }
+  /* standard row of the three remaining columns */
   .container {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;   /* allow a tiny bit of scroll if you go below the min-widths */
-    height: auto;
+    display: flex !important;
+    flex-direction: row !important;
+    height: auto !important;
+    overflow-x: auto;
   }
-
-  /* reset everything to its natural flex so we can individually tune each panel */
-  .column {
+  .column.tv-listings,
+  .column.news,
+  .column.social {
+    display: block;
     flex: 0 0 auto !important;
-    width: auto !important;
-    max-width: none !important;
-  }
-
-  /* Menu must never shrink off-screen */
-  .column.main-menu {
-    flex: 0 0 165px;
-    min-width: 165px;
-  }
-
-  /* Games can shrink from 250px down to 200px */
-  .column.tv-listings {
-    flex: 0 1 250px;
+    width: 250px;
     min-width: 200px;
   }
+  /* hide any other dividers or columns */
+  .column:not(.tv-listings):not(.news):not(.social),
+  .divider { display: none; }
+}
 
-  /* News can shrink from 370px down to 70px */
-  .column.news {
-    flex: 0 1 370px;
-    min-width: 70px;
-    /* allow headlines to wrap */
-    word-wrap: break-word;
+/* ───────────── 700px–900px “hide games” ───────────── */
+@media (max-width: 900px) {
+  /* hide games column */
+  .column.tv-listings { display: none !important; }
+  /* “Games” button already in header to toggle it */
+  #resp-header button#games-toggle { display: inline-block; }
+
+  /* the two visible columns sit side-by-side */
+  .container {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto;
   }
-
-  /* hide every other column (Social, Standings, etc.) and all of the divider bars */
-  .column:not(.main-menu):not(.tv-listings):not(.news),
-  .divider {
-    display: none !important;
+  .column.news,
+  .column.social {
+    display: block !important;
+    flex: 0 0 50%;
+    min-width: 150px;
   }
 }
 
-/* ────────────────────────────────────────────────────────── */
-/*   2) Full vertical stack at ≤768px                      */
-/* ────────────────────────────────────────────────────────── */
-@media (max-width: 768px) {
+/* ───────────── ≤500px “stack news+social” ───────────── */
+@media (max-width: 700px) {
   .container {
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    height: auto;
+    display: flex !important;
+    flex-direction: column !important;
   }
-
-  .column {
-    flex: 0 0 auto !important;
+  .column.news,
+  .column.social {
     width: 100% !important;
-    max-width: 100% !important;
-    /* restore any panels we hid above */
-    display: block !important;
-  }
-
-  .divider {
-    display: none !important;
+    min-width: 0;
   }
 }
 
@@ -793,6 +844,14 @@
 
   </head>
   <body>
+	  <header id="resp-header">
+  <button id="menu-toggle" aria-label="Open menu">
+    <span class="hamburger"></span>
+  </button>
+  <img src="https://www.thporth.com/thporth_AllSportsNews_logo-white.png"
+       alt="THPORTH" id="header-logo"/>
+  <button id="games-toggle">Games</button>
+</header>
         <div id="topBar"></div>
     <div id="topDivider"></div>
     <div class="container">
@@ -2698,7 +2757,18 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
     });
   });
 </script>
+<script>
+	// ───────────── Toggle Logic ─────────────
+document.getElementById('menu-toggle').addEventListener('click', () => {
+  document.querySelector('.column.main-menu')
+          .classList.toggle('open');
+});
+document.getElementById('games-toggle').addEventListener('click', () => {
+  document.querySelector('.column.tv-listings')
+          .classList.toggle('open');
+});
 
+</script>
 
 	   
 
