@@ -714,46 +714,36 @@
   }
 </style>
 	  <style>
-  /* Responsive layout override */
-  @media (max-width: 1024px) {
-    .container {
-      flex-direction: column;
-      height: auto;
-    }
-
-    .column {
-      width: 100% !important;
-      max-width: 100% !important;
-      flex: 0 0 auto !important;
-      padding: 10px 0;
-      overflow: visible !important;
-    }
-
-    .divider {
-      height: 10px;
-      width: 100%;
-    }
-
-    .news-main-container,
-    .headlines-section,
-    .breaking-section,
-    .news-feed-content {
-      max-height: none !important;
-      height: auto !important;
-    }
-
-    .news-header,
-    .news-section-header,
-    #headlines-tabs,
-    .breaking-tabs-header,
-    .news-tab,
-    .games-tab,
-    #games-tabs,
-    #games-header,
-    #socialHeader {
-      position: static !important;
-    }
+ /* ────────────────────────────────────────────────────────── */
+/*    3-column layout at 1024px and below (Menu | Games | News) */
+/* ────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  /* keep them in a row, allow horizontal scroll if needed */
+  .container {
+    flex-direction: row;
+    overflow-x: auto;
+    height: auto;
   }
+
+  /* reset every column back to its natural flex */
+  .column {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  /* size our three panels to their desktop widths */
+  .column.main-menu    { flex: 0 0 165px; }
+  .column.tv-listings  { flex: 0 0 250px; }
+  .column.news         { flex: 0 0 370px; }
+
+  /* hide every other panel & all the divider bars */
+  .column:not(.main-menu):not(.tv-listings):not(.news),
+  .divider {
+    display: none !important;
+  }
+}
+
 </style>
 
 <!-- Add this snippet above closing </head> or integrate into your existing <style> section -->
