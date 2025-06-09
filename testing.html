@@ -811,28 +811,42 @@
 }
 
 /* ───────────── 700px–900px “hide games” ───────────── */
+/* ───────────── ≤900px “news 80% + social below” ───────────── */
 @media (max-width: 900px) {
-  /* games panel hidden until toggled */
-  .column.tv-listings { display: none !important; }
-
-  /* show the Games toggle button in the header */
+  /* hide games column */
+  .column.tv-listings {
+    display: none !important;
+  }
+  /* header’s Games–toggle stays visible */
   #resp-header button#games-toggle {
     display: inline-block;
   }
 
-  /* news + social side-by-side */
+  /* now stack News above Social */
   .container {
     display: flex !important;
-    flex-direction: row !important;
-    overflow-x: auto;
+    flex-direction: column !important;
+    overflow-x: hidden;
   }
-  .column.news,
+
+  /* News takes 80% width */
+  .column.news {
+    display: block !important;
+    flex: 0 0 auto !important;
+    width: 80% !important;
+    min-width: 0;
+  }
+
+  /* Social below at full width */
   .column.social {
     display: block !important;
-    flex: 0 0 50%;
-    min-width: 150px;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 0;
+    margin-top: 10px;
   }
 }
+
 
 /* ───────────── ≤700px “stack news+social” ───────────── */
 @media (max-width: 700px) {
