@@ -717,32 +717,75 @@
  /* ────────────────────────────────────────────────────────── */
 /*    3-column layout at 1024px and below (Menu | Games | News) */
 /* ────────────────────────────────────────────────────────── */
+/* ────────────────────────────────────────────────────────── */
+/*   1) Three-column “shrink but stay visible” at ≤1024px   */
+/* ────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  /* keep them in a row, allow horizontal scroll if needed */
   .container {
+    display: flex;
     flex-direction: row;
-    overflow-x: auto;
+    overflow-x: auto;   /* allow a tiny bit of scroll if you go below the min-widths */
     height: auto;
   }
 
-  /* reset every column back to its natural flex */
+  /* reset everything to its natural flex so we can individually tune each panel */
   .column {
     flex: 0 0 auto !important;
     width: auto !important;
     max-width: none !important;
   }
 
-  /* size our three panels to their desktop widths */
-  .column.main-menu    { flex: 0 0 165px; }
-  .column.tv-listings  { flex: 0 0 250px; }
-  .column.news         { flex: 0 0 370px; }
+  /* Menu must never shrink off-screen */
+  .column.main-menu {
+    flex: 0 0 165px;
+    min-width: 165px;
+  }
 
-  /* hide every other panel & all the divider bars */
+  /* Games can shrink from 250px down to 200px */
+  .column.tv-listings {
+    flex: 0 1 250px;
+    min-width: 200px;
+  }
+
+  /* News can shrink from 370px down to 70px */
+  .column.news {
+    flex: 0 1 370px;
+    min-width: 70px;
+    /* allow headlines to wrap */
+    word-wrap: break-word;
+  }
+
+  /* hide every other column (Social, Standings, etc.) and all of the divider bars */
   .column:not(.main-menu):not(.tv-listings):not(.news),
   .divider {
     display: none !important;
   }
 }
+
+/* ────────────────────────────────────────────────────────── */
+/*   2) Full vertical stack at ≤768px                      */
+/* ────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    height: auto;
+  }
+
+  .column {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    /* restore any panels we hid above */
+    display: block !important;
+  }
+
+  .divider {
+    display: none !important;
+  }
+}
+
 
 </style>
 
