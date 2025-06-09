@@ -771,19 +771,23 @@
   width: 250px;
 }
 
-/* ───────────── 1100px+ “all four” view ───────────── */
-@media (min-width: 1101px) {
-  .column.tv-listings { flex: 0 1 calc(250px - 50px); min-width:200px; }
-  .column.news        { flex: 0 1 calc(370px - 50px); min-width:320px; word-wrap:break-word; }
+/* ─── always honor “open” toggles, even under the smaller-screen hide rules ─── */
+.column.main-menu.open {
+  display: block !important;
+}
+.column.tv-listings.open {
+  display: block !important;
 }
 
 /* ───────────── 900px–1100px “show header + 3 cols” ───────────── */
 @media (max-width: 1100px) {
   /* show header */
   #resp-header { display: flex; }
-  /* hide main-menu panel */
+
+  /* hide main-menu panel until toggled */
   .column.main-menu { display: none; }
-  /* standard row of the three remaining columns */
+
+  /* keep the three content columns in a row */
   .container {
     display: flex !important;
     flex-direction: row !important;
@@ -798,19 +802,25 @@
     width: 250px;
     min-width: 200px;
   }
-  /* hide any other dividers or columns */
+
+  /* hide anything else (dividers, other columns) */
   .column:not(.tv-listings):not(.news):not(.social),
-  .divider { display: none; }
+  .divider {
+    display: none;
+  }
 }
 
 /* ───────────── 700px–900px “hide games” ───────────── */
 @media (max-width: 900px) {
-  /* hide games column */
+  /* games panel hidden until toggled */
   .column.tv-listings { display: none !important; }
-  /* “Games” button already in header to toggle it */
-  #resp-header button#games-toggle { display: inline-block; }
 
-  /* the two visible columns sit side-by-side */
+  /* show the Games toggle button in the header */
+  #resp-header button#games-toggle {
+    display: inline-block;
+  }
+
+  /* news + social side-by-side */
   .container {
     display: flex !important;
     flex-direction: row !important;
@@ -824,8 +834,9 @@
   }
 }
 
-/* ───────────── ≤500px “stack news+social” ───────────── */
+/* ───────────── ≤700px “stack news+social” ───────────── */
 @media (max-width: 700px) {
+  /* everything stacks vertically */
   .container {
     display: flex !important;
     flex-direction: column !important;
@@ -836,6 +847,7 @@
     min-width: 0;
   }
 }
+
 
 
 </style>
@@ -2758,17 +2770,21 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
   });
 </script>
 <script>
-	// ───────────── Toggle Logic ─────────────
-document.getElementById('menu-toggle').addEventListener('click', () => {
-  document.querySelector('.column.main-menu')
-          .classList.toggle('open');
-});
-document.getElementById('games-toggle').addEventListener('click', () => {
-  document.querySelector('.column.tv-listings')
-          .classList.toggle('open');
-});
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn  = document.getElementById('menu-toggle');
+    const gamesBtn = document.getElementById('games-toggle');
+    const menuCol  = document.querySelector('.column.main-menu');
+    const gamesCol = document.querySelector('.column.tv-listings');
 
+    menuBtn.addEventListener('click', () => {
+      menuCol.classList.toggle('open');
+    });
+    gamesBtn.addEventListener('click', () => {
+      gamesCol.classList.toggle('open');
+    });
+  });
 </script>
+
 
 	   
 
