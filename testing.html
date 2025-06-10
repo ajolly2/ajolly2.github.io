@@ -713,18 +713,11 @@
     font-style: normal;
   }
 </style>
-	 <style>
-  /* ────────────────────────────────────────────────────────── */
-  /*                       Header & Toggles                    */
-  /* ────────────────────────────────────────────────────────── */
-/* ────────────────────────────────────────────────────────── */
-/*                      Responsive Styles                    */
-/* ────────────────────────────────────────────────────────── */
-
-/* Base: hide header & Games button */
+	  <style>
+		  /* ───────────── Header Styling ───────────── */
 #resp-header {
   display: none;
-  position: fixed;
+  position: sticky;
   top: 0; left: 0; right: 0;
   height: 50px;
   background: #151515;
@@ -733,90 +726,131 @@
   align-items: center;
   justify-content: space-between;
 }
-#games-toggle {
-  display: none;
+#resp-header img#header-logo {
+  height: 30px;
+}
+#resp-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+#resp-header .hamburger {
+  display: block;
+  width: 24px; height: 2px;
+  background: white;
+  position: relative;
+}
+#resp-header .hamburger::before,
+#resp-header .hamburger::after {
+  content: "";
+  position: absolute;
+  width: 24px; height: 2px;
+  background: white;
+}
+#resp-header .hamburger::before { top: -6px; }
+#resp-header .hamburger::after  { top:  6px; }
+
+/* ───────────── Overlay Panels ───────────── */
+.column.main-menu.open,
+.column.tv-listings.open {
+  position: absolute;
+  top: 50px; /* header height */
+  background: #151515;
+  z-index: 150;
+  height: calc(100vh - 50px);
+  overflow-y: auto;
+}
+.column.main-menu.open {
+  left: 0;
+  width: 250px;
+}
+.column.tv-listings.open {
+  right: 0;
+  width: 250px;
 }
 
-/* Center News-only layout */
-.news-only .container {
-  display: flex;
-  justify-content: center;
+/* ─── always honor “open” toggles, even under the smaller-screen hide rules ─── */
+.column.main-menu.open {
+  display: block !important;
 }
-.news-only .column.news {
-  margin: 0 auto;
-  max-width: 800px;
-}
-body.news-only {
-  padding-top: 50px;
+.column.tv-listings.open {
+  display: block !important;
 }
 
 /* ───────────── 900px–1100px “show header + 3 cols” ───────────── */
 @media (max-width: 1100px) {
-  /* show + fix header */
-  #resp-header {
-    display: flex;
-  }
+  /* show header */
+  #resp-header { display: flex; }
 
-  /* push all content below the fixed header */
-  body {
-    padding-top: 50px !important;
-  }
+  /* hide main-menu panel until toggled */
+  .column.main-menu { display: none; }
 
-  /* hide main-menu until toggled */
-  .column.main-menu {
-    display: none;
-  }
-
-  /* horizontal scroll for three columns */
+  /* keep the three content columns in a row */
   .container {
     display: flex !important;
     flex-direction: row !important;
     height: auto !important;
-    overflow-x: auto !important;
+    overflow-x: auto;
   }
   .column.tv-listings,
   .column.news,
   .column.social {
-    display: block !important;
+    display: block;
     flex: 0 0 auto !important;
-    width: 250px !important;
-    min-width: 200px !important;
+    width: 250px;
+    min-width: 200px;
   }
 
-  /* hide other columns/dividers */
+  /* hide anything else (dividers, other columns) */
   .column:not(.tv-listings):not(.news):not(.social),
   .divider {
-    display: none !important;
+    display: none;
   }
 }
 
-/* ───────────── ≤900px “hide games + show Games toggle” ───────────── */
+/* ───────────── 700px–900px “hide games” ───────────── */
+/* ───────────── ≤900px “news 80% + social below” ───────────── */
 @media (max-width: 900px) {
+  /* hide games column */
   .column.tv-listings {
     display: none !important;
   }
-  #games-toggle {
-    display: inline-block !important;
+  /* header’s Games–toggle stays visible */
+  #resp-header button#games-toggle {
+    display: inline-block;
   }
 
+  /* now stack News above Social */
   .container {
     display: flex !important;
     flex-direction: column !important;
-    overflow-x: hidden !important;
+    overflow-x: hidden;
   }
+
+  /* News takes 80% width */
   .column.news {
+    display: block !important;
+    flex: 0 0 auto !important;
     width: 80% !important;
-    min-width: 0 !important;
+    min-width: 0;
   }
+
+  /* Social below at full width */
   .column.social {
+    display: block !important;
+    flex: 0 0 auto !important;
     width: 100% !important;
-    min-width: 0 !important;
-    margin-top: 10px !important;
+    min-width: 0;
+    margin-top: 10px;
   }
 }
 
-/* ───────────── ≤700px “stack news+social full-width” ───────────── */
+
+/* ───────────── ≤700px “stack news+social” ───────────── */
 @media (max-width: 700px) {
+  /* everything stacks vertically */
   .container {
     display: flex !important;
     flex-direction: column !important;
@@ -824,13 +858,13 @@ body.news-only {
   .column.news,
   .column.social {
     width: 100% !important;
-    min-width: 0 !important;
+    min-width: 0;
   }
 }
 
-  
-</style>
 
+
+</style>
 
 <!-- Add this snippet above closing </head> or integrate into your existing <style> section -->
 
