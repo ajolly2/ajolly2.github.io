@@ -2440,6 +2440,57 @@ function renderGamesByTab(byLeague) {
 
     // Activate the “Today” tab by default:
     document.querySelector(".games-tab[data-tab='today']")?.click();
+
+	  <script>
+  // ── Insert MLB Live Scores from raw_flash.json ──
+  async function fetchMLBLive() {
+    const url = 'https://api.flashlive.io/raw_flash.json';  // your FlashLive endpoint
+    try {
+      const res = await fetch(url);
+      const { games } = await res.json();
+
+      // Filter to only MLB games
+      const mlbGames = games.filter(g => g.league === 'MLB');
+
+      // Grab the Today container
+      const todayContainer = document.getElementById('tv-listings-today');
+      // Clear existing content (if any)
+      todayContainer.innerHTML = '';
+
+      // Group by date if you like, or show all for today
+      mlbGames.forEach(game => {
+        const div = document.createElement('div');
+        div.className = 'game-row';  // reuse your styling
+        // Format time (assumes ISO timestamp in game.start_time)
+        const t = new Date(game.start_time).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+        div.innerHTML = `
+          <div class="game-time">${t}</div>
+          <div class="game-teams">
+            <div style="display:flex;justify-content:space-between;">
+              <span>${game.away_team}</span><span>${game.away_score}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span>${game.home_team}</span><span>${game.home_score}</span>
+            </div>
+          </div>
+          <div class="game-channel">${game.status}</div>
+        `;
+        todayContainer.appendChild(div);
+      });
+    } catch (e) {
+      console.error('MLB JSON fetch error', e);
+    }
+  }
+
+  // Run it once on page load, and bind to the Today tab click
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchMLBLive();
+
+    document.querySelector('.games-tab[data-tab="today"]')
+      .addEventListener('click', fetchMLBLive);
+  });
+</script>
+
   });
    
 </script>
