@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MLB Live Scores (Live API via GitHub Pages)</title>
+  <title>MLB Live Scores (via raw.githubusercontent)</title>
   <style>
     body { font-family: sans-serif; background: #151515; color: #eee; padding: 1rem; }
     h1 { font-size: 1.5rem; margin-bottom: 1rem; }
@@ -26,8 +26,8 @@
   <div id="games">Loading…</div>
 
   <script>
-    // Fetch the JSON that our GitHub Actions workflow keeps up-to-date
-    const apiUrl = 'https://ajolly2.github.io/livesoccertv-scraper/data/raw_flash.json';
+    // Directly fetch the JSON you committed to data/raw_flash.json on main
+    const apiUrl = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/raw_flash.json';
 
     fetch(apiUrl)
       .then(res => {
@@ -38,14 +38,14 @@
         const container = document.getElementById('games');
         container.innerHTML = '';
 
-        // data.games should now contain the live-updated games array
-        if (!data.games || data.games.length === 0) {
+        // The file you committed has a top-level "games" array
+        const games = data.games || [];
+        if (games.length === 0) {
           container.textContent = 'No games found.';
           return;
         }
 
-        data.games.forEach(game => {
-          // Determine if the game is live by checking the status string
+        games.forEach(game => {
           const isLive = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(game.status);
           const displayTime = isLive
             ? game.status
