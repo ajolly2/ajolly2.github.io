@@ -2,83 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MLB Live Scores (Raw Flash)</title>
+  <title>MLB Live Scores – Debug Raw Flash</title>
   <style>
-    body { font-family: sans-serif; background: #151515; color: #eee; padding: 1rem; }
-    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
-    #debug { font-size: 0.9rem; color: #ccc; margin-bottom: 1rem; }
-    #games { display: flex; flex-direction: column; gap: .5rem; }
-    .game {
-      display: grid;
-      grid-template-columns: 80px 1fr 60px;
-      gap: .5rem;
-      padding: .5rem;
-      border-bottom: 1px solid #444;
-      align-items: center;
-    }
-    .time { color: #ccc; }
-    .teams {}
-    .score { text-align: right; font-weight: bold; }
+    body { font-family: monospace; background: #151515; color: #eee; padding: 1rem; }
+    h1 { margin-bottom: .5rem; }
+    pre { background: #222; padding: .5rem; margin: .5rem 0; white-space: pre-wrap; }
     .error { color: #f66; }
   </style>
 </head>
 <body>
-  <h1>MLB Live Scores</h1>
-  <div id="debug">Initializing…</div>
-  <div id="games"></div>
-
+  <h1>Inspect first 5 games</h1>
+  <div id="output">Loading…</div>
   <script>
     const URL = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/raw_flash.json';
-    const debug = document.getElementById('debug');
-    const container = document.getElementById('games');
-
-    async function refresh() {
-      try {
-        debug.textContent = `Fetching… ${new Date().toLocaleTimeString()}`;
-        const res = await fetch(URL);
-        if (!res.ok) throw new Error(res.statusText);
-        const data = await res.json();
-        const all = data.games || [];
-        const today = new Date().toISOString().slice(0,10);  // YYYY-MM-DD
-
-        // Filter for MLB games today
-        const mlb = all.filter(g =>
-          g.league === 'MLB' &&
-          (g.start_time || '').slice(0,10) === today
-        );
-
-        debug.textContent = `Found ${mlb.length} MLB games today`;
-
-        container.innerHTML = '';
-        if (!mlb.length) {
-          container.textContent = 'No games today.';
+    fetch(URL)
+      .then(r=> r.ok ? r.json() : Promise.reject(r.status))
+      .then(data => {
+        const o = document.getElementById('output');
+        if (!Array.isArray(data.games)) {
+          o.innerHTML = '<div class="error">No `data.games` array found.</div>';
           return;
         }
-
-        mlb.forEach(g => {
-          const isLive = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(g.status);
-          const time   = isLive
-            ? g.status
-            : new Date(g.start_time).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-
-          const row = document.createElement('div');
-          row.className = 'game';
-          row.innerHTML = `
-            <div class="time">${time}</div>
-            <div class="teams">${g.away_team} @ ${g.home_team}</div>
-            <div class="score">${g.away_score}–${g.home_score}</div>
-          `;
-          container.appendChild(row);
+        o.innerHTML = '';
+        data.games.slice(0,5).forEach((g,i) => {
+          const snippet = {
+            league: g.league,
+            start_time: g.start_time,
+            status: g.status,
+            away_team: g.away_team,
+            home_team: g.home_team
+          };
+          const pre = document.createElement('pre');
+          pre.textContent = `#${i+1} ` + JSON.stringify(snippet, null, 2);
+          o.appendChild(pre);
         });
-      } catch (err) {
-        debug.textContent = `Error: ${err.message}`;
-        console.error(err);
-      }
-    }
-
-    // initial + poll every 60s
-    refresh();
-    setInterval(refresh, 60_000);
+      })
+      .catch(err => {
+        document.getElementById('output').innerHTML = `<div class="error">Error: ${err}</div>`;
+      });
   </script>
 </body>
 </html>
