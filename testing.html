@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MLB Live Scores (Flattened EVENTS)</title>
+  <title>MLB Live Scores (Near–Real Time)</title>
   <style>
     body { font-family: sans-serif; background: #151515; color: #eee; padding: 1rem; }
     h1 { font-size: 1.5rem; margin-bottom: 1rem; }
@@ -24,45 +24,42 @@
 </head>
 <body>
   <h1>MLB Live Scores</h1>
-  <div id="debug">Loading…</div>
+  <div id="debug">Initializing…</div>
   <div id="games"></div>
 
   <script>
-    const apiUrl = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/flash_mlb_payload.json';
-    const dbg = document.getElementById('debug');
+    const url = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/flash_mlb_payload.json';
+    const debug = document.getElementById('debug');
     const container = document.getElementById('games');
 
-    fetch(apiUrl)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then(data => {
-        // 1) Pull out every event from each DATA entry
-        const allEvents = (data.DATA || []).flatMap(t => t.EVENTS || []);
-        dbg.textContent = `Found ${allEvents.length} total events.`;
+    async function update() {
+      try {
+        debug.textContent = `Updating… ${new Date().toLocaleTimeString()}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(res.statusText);
+        const payload = await res.json();
+        const events = payload.DATA || [];
 
-        if (!allEvents.length) {
-          container.textContent = 'No games found.';
+        debug.textContent = `Found ${events.length} MLB games`;
+
+        container.innerHTML = '';
+        if (!events.length) {
+          container.textContent = 'No games today.';
           return;
         }
 
-        container.innerHTML = '';
-        allEvents.forEach(evt => {
-          // Use the fields you saw in the payload
-          const startUnix = evt.START_TIME || evt.START_UTIME;
-          const statusTag = evt.STAGE || evt.STAGE_TYPE || '';
-          const isLive    = statusTag !== 'SCHEDULED' && statusTag !== 'FINISHED';
-          const display   = isLive
-            ? statusTag
-            : (startUnix
-                ? new Date(startUnix * 1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
-                : '');
+        events.forEach(evt => {
+          const ts     = (evt.START_TIME || evt.START_UTIME) * 1000;
+          const status = evt.STAGE || evt.STAGE_TYPE || '';
+          const isLive = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(status);
+          const display = isLive
+            ? status
+            : new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-          const awayName    = evt.AWAY_NAME       || '';
-          const homeName    = evt.HOME_NAME       || '';
-          const awayScore   = evt.AWAY_SCORE_CURRENT  || evt.AWAY_SCORE_FULL || '';
-          const homeScore   = evt.HOME_SCORE_CURRENT  || evt.HOME_SCORE_PART_1  || '';
+          const awayName  = evt.AWAY_NAME  || '';
+          const homeName  = evt.HOME_NAME  || '';
+          const awayScore = evt.AWAY_SCORE_CURRENT || evt.AWAY_SCORE_FULL || 0;
+          const homeScore = evt.HOME_SCORE_CURRENT || evt.HOME_SCORE_PART_1 || 0;
 
           const row = document.createElement('div');
           row.className = 'game';
@@ -73,12 +70,15 @@
           `;
           container.appendChild(row);
         });
-      })
-      .catch(err => {
-        dbg.textContent = '';
-        container.innerHTML = `<div class="error">Error: ${err.message}</div>`;
-        console.error(err);
-      });
+      } catch (e) {
+        debug.textContent = `Error: ${e.message}`;
+        console.error(e);
+      }
+    }
+
+    // initial load + poll every 60 seconds
+    update();
+    setInterval(update, 60_000);
   </script>
 </body>
 </html>
