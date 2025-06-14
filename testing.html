@@ -28,28 +28,16 @@
   <div id="games"></div>
 
   <script>
-    const apiUrl = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/raw_flash.json';
+    // THIS is the MLB-only payload that updates every 15 minutes
+    const apiUrl = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/flash_mlb_payload.json';
 
     fetch(apiUrl)
-      .then(res => {
-        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-        return res.json();
+      .then(r => {
+        if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+        return r.json();
       })
-      .then(data => {
-        // 1) Grab the full array
-        const all = data.games || [];
-        // 2) Build today's date string in YYYY-MM-DD (UTC)
-        const today = new Date().toISOString().slice(0,10);
-        // 3) Filter to games that start today (UTC date match)
-        const games = all.filter(g => {
-          if (!g.start_time) return false;
-          return g.start_time.slice(0,10) === today;
-        });
-
-        // Debug line
-        document.getElementById('debug').textContent =
-          `Found ${games.length} MLB games on ${today}.`;
-
+      .then(games => {
+        document.getElementById('debug').textContent = `Found ${games.length} MLB games today.`;
         const container = document.getElementById('games');
         container.innerHTML = '';
 
@@ -58,14 +46,15 @@
           return;
         }
 
-        // Render each game
         games.forEach(game => {
           const status = game.status || '';
           const start  = game.start_time || '';
           const isLive = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(status);
           const displayTime = isLive
             ? status
-            : new Date(start).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+            : (start
+                ? new Date(start).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+                : '');
 
           const awayScore = game.away_score ?? '';
           const homeScore = game.home_score ?? '';
