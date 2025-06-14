@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MLB Live Scores (Near–Real Time)</title>
+  <title>MLB Live Scores (Raw Flash)</title>
   <style>
     body { font-family: sans-serif; background: #151515; color: #eee; padding: 1rem; }
     h1 { font-size: 1.5rem; margin-bottom: 1rem; }
@@ -28,57 +28,57 @@
   <div id="games"></div>
 
   <script>
-    const url = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/flash_mlb_payload.json';
+    const URL = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/raw_flash.json';
     const debug = document.getElementById('debug');
     const container = document.getElementById('games');
 
-    async function update() {
+    async function refresh() {
       try {
-        debug.textContent = `Updating… ${new Date().toLocaleTimeString()}`;
-        const res = await fetch(url);
+        debug.textContent = `Fetching… ${new Date().toLocaleTimeString()}`;
+        const res = await fetch(URL);
         if (!res.ok) throw new Error(res.statusText);
-        const payload = await res.json();
-        const events = payload.DATA || [];
+        const data = await res.json();
+        const all = data.games || [];
+        const today = new Date().toISOString().slice(0,10);  // YYYY-MM-DD
 
-        debug.textContent = `Found ${events.length} MLB games`;
+        // Filter for MLB games today
+        const mlb = all.filter(g =>
+          g.league === 'MLB' &&
+          (g.start_time || '').slice(0,10) === today
+        );
+
+        debug.textContent = `Found ${mlb.length} MLB games today`;
 
         container.innerHTML = '';
-        if (!events.length) {
+        if (!mlb.length) {
           container.textContent = 'No games today.';
           return;
         }
 
-        events.forEach(evt => {
-          const ts     = (evt.START_TIME || evt.START_UTIME) * 1000;
-          const status = evt.STAGE || evt.STAGE_TYPE || '';
-          const isLive = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(status);
-          const display = isLive
-            ? status
-            : new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-          const awayName  = evt.AWAY_NAME  || '';
-          const homeName  = evt.HOME_NAME  || '';
-          const awayScore = evt.AWAY_SCORE_CURRENT || evt.AWAY_SCORE_FULL || 0;
-          const homeScore = evt.HOME_SCORE_CURRENT || evt.HOME_SCORE_PART_1 || 0;
+        mlb.forEach(g => {
+          const isLive = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(g.status);
+          const time   = isLive
+            ? g.status
+            : new Date(g.start_time).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 
           const row = document.createElement('div');
           row.className = 'game';
           row.innerHTML = `
-            <div class="time">${display}</div>
-            <div class="teams">${awayName} @ ${homeName}</div>
-            <div class="score">${awayScore}–${homeScore}</div>
+            <div class="time">${time}</div>
+            <div class="teams">${g.away_team} @ ${g.home_team}</div>
+            <div class="score">${g.away_score}–${g.home_score}</div>
           `;
           container.appendChild(row);
         });
-      } catch (e) {
-        debug.textContent = `Error: ${e.message}`;
-        console.error(e);
+      } catch (err) {
+        debug.textContent = `Error: ${err.message}`;
+        console.error(err);
       }
     }
 
-    // initial load + poll every 60 seconds
-    update();
-    setInterval(update, 60_000);
+    // initial + poll every 60s
+    refresh();
+    setInterval(refresh, 60_000);
   </script>
 </body>
 </html>
