@@ -2,92 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MLB Live Scores (Debugging)</title>
+  <title>MLB Live Scores (Inspect Payload)</title>
   <style>
-    body { font-family: sans-serif; background: #151515; color: #eee; padding: 1rem; }
-    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
-    #debug { font-size: 0.9rem; color: #ccc; margin-bottom: 1rem; }
-    #games { display: flex; flex-direction: column; gap: .5rem; }
-    .game {
-      display: grid; grid-template-columns: 80px 1fr 60px; gap: .5rem;
-      padding: .5rem; border-bottom: 1px solid #444; align-items: center;
-    }
-    .time { color: #ccc; }
-    .score { text-align: right; font-weight: bold; }
+    body { font-family: monospace; background: #151515; color: #eee; padding: 1rem; }
+    pre { background: #222; padding: .5rem; margin: .5rem 0; white-space: pre-wrap; }
     .error { color: #f66; }
   </style>
 </head>
 <body>
-  <h1>MLB Live Scores</h1>
-  <div id="debug">Starting fetch…</div>
-  <div id="games"></div>
+  <h1>Inspecting flash_mlb_payload.json</h1>
+  <div id="output">Loading…</div>
 
   <script>
     const apiUrl = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/flash_mlb_payload.json';
-    const dbg = document.getElementById('debug');
-    const gamesContainer = document.getElementById('games');
-
-    // Kick off
-    dbg.textContent = `Fetching from ${apiUrl}`;
+    const out = document.getElementById('output');
 
     fetch(apiUrl)
       .then(r => {
-        dbg.textContent = `Response status: ${r.status}`;
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })
       .then(data => {
-        // Show top‐level keys
-        const keys = Object.keys(data).join(', ');
-        dbg.textContent = `Got JSON; top‐level keys: ${keys}`;
-
-        // Attempt to find an array
-        let games = [];
-        if (Array.isArray(data)) {
-          games = data;
-          dbg.textContent += ` → data is array length ${games.length}`;
-        } else if (Array.isArray(data.games)) {
-          games = data.games;
-          dbg.textContent += ` → data.games length ${games.length}`;
-        } else if (Array.isArray(data.DATA)) {
-          games = data.DATA;
-          dbg.textContent += ` → data.DATA length ${games.length}`;
-        } else {
-          dbg.textContent += ' → no known array found';
-        }
-
-        // Render or message
-        if (!games.length) {
-          gamesContainer.textContent = 'No games found in payload.';
+        if (!Array.isArray(data.DATA) || data.DATA.length === 0) {
+          out.textContent = 'No DATA array or it is empty.';
           return;
         }
 
-        gamesContainer.innerHTML = '';
-        games.forEach(g => {
-          const status    = g.STATUS || g.status || '';
-          const start     = g.START_TIME || g.start_time || '';
-          const away      = g.AWAY_TEAM  || g.away_team  || '';
-          const home      = g.HOME_TEAM  || g.home_team  || '';
-          const awayScore = g.AWAY_SCORE || g.away_score || '';
-          const homeScore = g.HOME_SCORE || g.home_score || '';
-
-          const isLive = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(status);
-          const display = isLive
-            ? status
-            : (start ? new Date(start).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '');
-
-          const div = document.createElement('div');
-          div.className = 'game';
-          div.innerHTML = `
-            <div class="time">${display}</div>
-            <div class="teams">${away} @ ${home}</div>
-            <div class="score">${awayScore}–${homeScore}</div>
-          `;
-          gamesContainer.appendChild(div);
-        });
+        // Show keys of first DATA entry
+        const first = data.DATA[0];
+        out.innerHTML = '<h2>First DATA[0] keys:</h2><pre>' +
+          JSON.stringify(Object.keys(first), null, 2) +
+          '</pre><h2>Full DATA[0] object:</h2><pre>' +
+          JSON.stringify(first, null, 2) +
+          '</pre>';
       })
       .catch(err => {
-        dbg.textContent = `Fetch/error: ${err.message}`;
+        out.innerHTML = `<div class="error">Error: ${err.message}</div>`;
         console.error(err);
       });
   </script>
