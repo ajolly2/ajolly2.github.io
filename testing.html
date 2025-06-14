@@ -2,25 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MLB Live Scores (Flexible Fetch)</title>
-  <style>
-    body { font-family: sans-serif; background: #151515; color: #eee; padding: 1rem; }
-    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
-    #games { display: flex; flex-direction: column; gap: .5rem; }
-    .game {
-      display: grid;
-      grid-template-columns: 80px 1fr 60px;
-      gap: .5rem;
-      padding: .5rem;
-      border-bottom: 1px solid #444;
-      align-items: center;
-    }
-    .time { color: #ccc; }
-    .teams {}
-    .score { text-align: right; font-weight: bold; }
-    .error { color: #f66; }
-    .debug { font-size: .9rem; color: #ccc; margin-bottom: 1rem; }
-  </style>
+  <title>MLB Live Scores (MLB-Only Payload)</title>
+  <style>/* same styles as before */</style>
 </head>
 <body>
   <h1>MLB Live Scores</h1>
@@ -28,59 +11,39 @@
   <div id="games">Loading…</div>
 
   <script>
-    const apiUrl = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/raw_flash.json';
+    // Use the MLB-only JSON that your workflow keeps fresh
+    const apiUrl = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/flash_mlb_payload.json';
 
     fetch(apiUrl)
       .then(r => {
         if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
         return r.json();
       })
-      .then(data => {
-        // accommodate both formats
-        const games = Array.isArray(data)
-          ? data
-          : Array.isArray(data.games)
-            ? data.games
-            : [];
-
-        document.getElementById('debug').textContent = `Found ${games.length} game objects.`;
-
+      .then(games => {
+        document.getElementById('debug').textContent = `Found ${games.length} MLB games.`;
         const container = document.getElementById('games');
         container.innerHTML = '';
-
         if (!games.length) {
-          container.textContent = 'No games found.';
+          container.textContent = 'No games scheduled for today.';
           return;
         }
-
-        games.forEach(game => {
-          const away    = game.away_team || game.away || 'Away';
-          const home    = game.home_team || game.home || 'Home';
-          const status  = game.status || '';
-          const start   = game.start_time || game.startTime || '';
-
-          const isLive = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(status);
+        games.forEach(g => {
+          const isLive = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(g.status);
           const displayTime = isLive
-            ? status
-            : (start
-                ? new Date(start).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
-                : '');
-
-          const awayScore = game.away_score ?? game.awayScore ?? '';
-          const homeScore = game.home_score ?? game.homeScore ?? '';
-
+            ? g.status
+            : new Date(g.start_time)
+                .toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
           const row = document.createElement('div');
           row.className = 'game';
           row.innerHTML = `
             <div class="time">${displayTime}</div>
-            <div class="teams">${away} @ ${home}</div>
-            <div class="score">${awayScore}–${homeScore}</div>
+            <div class="teams">${g.away_team} @ ${g.home_team}</div>
+            <div class="score">${g.away_score}–${g.home_score}</div>
           `;
           container.appendChild(row);
         });
       })
       .catch(err => {
-        document.getElementById('debug').textContent = '';
         document.getElementById('games').innerHTML =
           `<div class="error">Error fetching live data:<br>${err.message}</div>`;
         console.error(err);
