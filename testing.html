@@ -1,73 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <title>MLB Live Scores</title>
   <style>
     body { font-family: sans-serif; background: #151515; color: #eee; padding: 1rem; }
-    h1 { margin-bottom: 1rem; }
-    #debug { font-size: .9rem; color: #ccc; margin-bottom: 1rem; }
+    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+    #debug { font-size: 0.9rem; color: #ccc; margin-bottom: 1rem; }
     #games { display: flex; flex-direction: column; gap: .5rem; }
     .game {
       display: grid;
       grid-template-columns: 80px 1fr 60px;
-      padding: .5rem; border-bottom: 1px solid #444; align-items: center;
+      gap: .5rem;
+      padding: .5rem;
+      border-bottom: 1px solid #444;
+      align-items: center;
     }
     .time { color: #ccc; }
+    .teams {}
     .score { text-align: right; font-weight: bold; }
+    .error { color: #f66; }
   </style>
 </head>
 <body>
   <h1>MLB Live Scores</h1>
-  <div id="debug">Loading…</div>
+  <div id="debug">Initializing…</div>
   <div id="games"></div>
 
   <script>
-    const URL = 
-      'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/flash_mlb_payload.json';
-    const dbg = document.getElementById('debug');
-    const gamesEl = document.getElementById('games');
+    // 1) Point at your raw_flash.json (an array of objects)
+    const URL = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/raw_flash.json';
+    const debug = document.getElementById('debug');
+    const container = document.getElementById('games');
+
+    // 2) Utility: is same YYYY-MM-DD
+    function isToday(iso) {
+      const d = new Date(iso);
+      const today = new Date();
+      return d.getFullYear()===today.getFullYear() &&
+             d.getMonth()===today.getMonth() &&
+             d.getDate()===today.getDate();
+    }
 
     async function refresh() {
       try {
-        dbg.textContent = `Updating… ${new Date().toLocaleTimeString()}`;
+        debug.textContent = `Fetching… ${new Date().toLocaleTimeString()}`;
         const res = await fetch(URL);
         if (!res.ok) throw new Error(res.statusText);
-        const { DATA: events } = await res.json();  // now always an array
-        dbg.textContent = `Found ${events.length} MLB games`;
+        const all = await res.json();
 
-        gamesEl.innerHTML = '';
-        if (!events.length) {
-          gamesEl.textContent = 'No games today.';
+        // 3) Filter: only MLB & today
+        const todayGames = all.filter(g =>
+          g.league === 'MLB' && isToday(g.start_time)
+        );
+
+        debug.textContent = `Found ${todayGames.length} MLB game${todayGames.length!==1?'s':''} today`;
+
+        container.innerHTML = '';
+        if (!todayGames.length) {
+          container.textContent = 'No games today.';
           return;
         }
 
-        events.forEach(evt => {
-          const ts    = (evt.START_TIME || evt.START_UTIME) * 1000;
-          const st    = evt.STAGE || evt.STAGE_TYPE;
-          const live  = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(st);
-          const time  = live 
-            ? st 
-            : new Date(ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+        // 4) Render each
+        todayGames.forEach(g => {
+          // determine display time or live status
+          const live = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(g.status);
+          const when = live
+            ? g.status
+            : new Date(g.start_time).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
 
-          const away  = evt.AWAY_NAME + ' (' + (evt.AWAY_SCORE_CURRENT||0) + ')';
-          const home  = evt.HOME_NAME + ' (' + (evt.HOME_SCORE_CURRENT||0) + ')';
-
-          const div = document.createElement('div');
-          div.className = 'game';
-          div.innerHTML = `
-            <div class="time">${time}</div>
-            <div class="teams">${away} @ ${home}</div>
-            <div class="score">${evt.AWAY_SCORE_CURRENT||0}–${evt.HOME_SCORE_CURRENT||0}</div>
+          const row = document.createElement('div');
+          row.className = 'game';
+          row.innerHTML = `
+            <div class="time">${when}</div>
+            <div class="teams">${g.away} @ ${g.home}</div>
+            <div class="score">${g.score_away}–${g.score_home}</div>
           `;
-          gamesEl.appendChild(div);
+          container.appendChild(row);
         });
       } catch (err) {
-        dbg.textContent = `Error: ${err.message}`;
+        debug.textContent = `Error: ${err.message}`;
         console.error(err);
       }
     }
 
+    // initial + poll every minute
     refresh();
     setInterval(refresh, 60_000);
   </script>
