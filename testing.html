@@ -28,18 +28,19 @@
   <div id="games"></div>
 
   <script>
-    // 1) Point at your raw_flash.json (an array of objects)
     const URL = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/raw_flash.json';
     const debug = document.getElementById('debug');
     const container = document.getElementById('games');
 
-    // 2) Utility: is same YYYY-MM-DD
-    function isToday(iso) {
-      const d = new Date(iso);
-      const today = new Date();
-      return d.getFullYear()===today.getFullYear() &&
-             d.getMonth()===today.getMonth() &&
-             d.getDate()===today.getDate();
+    function getISO(offset = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + offset);
+      return d.toISOString().slice(0,10);
+    }
+
+    function inRange(iso) {
+      const date = iso.slice(0,10);
+      return date === getISO(0) || date === getISO(-1);
     }
 
     async function refresh() {
@@ -49,33 +50,35 @@
         if (!res.ok) throw new Error(res.statusText);
         const all = await res.json();
 
-        // 3) Filter: only MLB & today
-        const todayGames = all.filter(g =>
-          g.league === 'MLB' && isToday(g.start_time)
-        );
+        // pick games from today or yesterday, any league
+        const games = all.filter(g => inRange(g.start_time));
 
-        debug.textContent = `Found ${todayGames.length} MLB game${todayGames.length!==1?'s':''} today`;
+        const leagues = [...new Set(games.map(g=>g.league))];
+        debug.textContent = `Found ${games.length} games across ${leagues.join(', ')}`;
 
         container.innerHTML = '';
-        if (!todayGames.length) {
-          container.textContent = 'No games today.';
+        if (!games.length) {
+          container.textContent = 'No games in the last 24 hrs.';
           return;
         }
 
-        // 4) Render each
-        todayGames.forEach(g => {
-          // determine display time or live status
+        // sort by kickoff
+        games.sort((a,b) => new Date(a.start_time) - new Date(b.start_time));
+
+        games.forEach(g => {
           const live = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(g.status);
           const when = live
             ? g.status
-            : new Date(g.start_time).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+            : new Date(g.start_time)
+                .toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
 
           const row = document.createElement('div');
           row.className = 'game';
           row.innerHTML = `
             <div class="time">${when}</div>
             <div class="teams">${g.away} @ ${g.home}</div>
-            <div class="score">${g.score_away}–${g.score_home}</div>
+            <div class="score">${g.score_away||''}–${g.score_home||''}</div>
+            <div class="league" style="font-size:.8em;color:#888;margin-left:.5em;">${g.league}</div>
           `;
           container.appendChild(row);
         });
@@ -85,7 +88,6 @@
       }
     }
 
-    // initial + poll every minute
     refresh();
     setInterval(refresh, 60_000);
   </script>
