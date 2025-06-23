@@ -2129,11 +2129,16 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 const leagueOrderURL =
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkzU6UkVdQoCIU_nF3fAH5NGOzjGbjsCcvDljVe763NopA2DYvYWwBpKCDE-jXyhLpoJaSl_-PTRt3/pub?gid=0&single=true&output=csv';
 
+// 1) Update your sheetURLs map
 const sheetURLs = {
-  /* … */
-  MLB: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?gid=355225860&single=true&output=csv',
-  /* … */
+  MLB: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkzU6UkVdQoCIU_nF3fAH5NGOzjGbjsCcvDljVe763NopA2DYvYWwBpKCDE-jXyhLpoJaSl_-PTRt3/pub?gid=1753117312&single=true&output=csv'
 };
+
+// 2) Run this in Chrome DevTools → Console:
+fetch(sheetURLs.MLB)
+  .then(r => r.text())
+  .then(txt => console.log(txt.split('\n').slice(0, 3)))
+  .catch(e => console.error(e));
 
 // FULL TEAM_ABBR — inserted exactly as provided
 const TEAM_ABBR = {
