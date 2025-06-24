@@ -2318,11 +2318,37 @@ function renderGamesByTab(byLeague) {
     const seenDisplayTimes = new Set();
 
     games.forEach(cols => {
-      const [, , matchup, statusRaw="", score="", startRaw="", sheetDate=""] = cols;
-      if (!matchup) return;
+    // ←–– this is the updated destructuring:
+    const [
+      sheetDate = "",   // “2025-06-24”
+      startRaw  = "",   // “6:35 PM”
+      away      = "",   // “Texas Rangers”
+      home      = "",   // “Baltimore Orioles”
+      statusRaw = "",   // “Final” or “Scheduled”
+      scoreRaw  = ""    // “0 – 6”
+    ] = cols;
 
-      // 4) Split teams
-      let [away, home] = matchup.split(" vs. ").map(s=>s.trim());
+    // rebuild what you need:
+    const matchup = `${away} vs. ${home}`;
+    const score   = scoreRaw.replace('–','-').trim();
+
+    // determine final/live
+    const isFinal = /^(F|Final)$/i.test(statusRaw);
+    const isLive  = /In Progress|Top|Bot/i.test(statusRaw);
+
+    // format displayTime
+    let displayTime;
+    if (isFinal) {
+      displayTime = 'F';
+    } else if (isLive) {
+      displayTime = statusRaw;
+    } else {
+      const dt = parseTimeToLocal(startRaw);
+      displayTime = dt
+        ? dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})
+        : startRaw;
+    }
+
 
       // 5) Determine if final or live
       const isFinal = /^(F|Final|Game Over)$/i.test(statusRaw.trim());
