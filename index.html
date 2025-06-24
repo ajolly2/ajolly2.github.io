@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+	  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // safe to query and manipulate DOM here
+      const gamesContainer = document.getElementById('tv-listings-today');
+      // …your games‐loader code…
+    });
+  </script>
    <script>
   const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const host    = location.hostname; // e.g. "thporth.com" or "www.thporth.com"
@@ -2736,6 +2743,63 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
     });
   });
 </script>
+<!-- … all your page markup including the three games-content divs … -->
+
+<script>
+  // Make sure this runs after your #tv-listings-* elements exist
+  document.addEventListener('DOMContentLoaded', async () => {
+    const leagueOrderURL =
+      'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkzU6UkVdQoCIU_nF3fAH5NGOzjGbjsCcvDljVe763NopA2DYvYWwBpKCDE-jXyhLpoJaSl_-PTRt3/pub?gid=0&single=true&output=csv';
+    const sheetURLs = {
+      MLB: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkzU6UkVdQoCIU_nF3fAH5NGOzjGbjsCcvDljVe763NopA2DYvYWwBpKCDE-jXyhLpoJaSl_-PTRt3/pub?gid=1753117312&single=true&output=csv'
+    };
+    const TEAM_ABBR = { /* … your map … */ };
+    const LEAGUE_DISPLAY_NAMES = { MLB: "MLB" };
+
+    async function loadLeagueOrder() {
+      try {
+        const txt = await (await fetch(leagueOrderURL)).text();
+        return txt.trim().split(/\r?\n/).map(r => r.split(",")[0]).filter(l=>sheetURLs[l]);
+      } catch {
+        return Object.keys(sheetURLs);
+      }
+    }
+
+    function parseTimeToLocal(timeStr) {
+      // …your helper…
+    }
+
+    async function fetchAllGames() {
+      const byLeague = {};
+      await Promise.all(Object.entries(sheetURLs).map(async ([league, url]) => {
+        const txt = await (await fetch(url)).text();
+        const rows = txt.trim().split(/\r?\n/).slice(1).map(r=>r.split(","));
+        if (rows.length) byLeague[league] = rows;
+      }));
+      return byLeague;
+    }
+
+    function renderGamesByTab(byLeague, leagueOrder) {
+      const containers = {
+        scores: document.getElementById("tv-listings-scores"),
+        today:  document.getElementById("tv-listings-today"),
+        live:   document.getElementById("tv-listings-live")
+      };
+      Object.values(containers).forEach(c=>c.innerHTML="");
+      /* …your loop that builds and appends .game-row elements… */
+    }
+
+    // run it all
+    const leagueOrder = await loadLeagueOrder();
+    const data = await fetchAllGames();
+    renderGamesByTab(data, leagueOrder);
+
+    // tab‐click handlers (unchanged)…
+  });
+</script>
+</body>
+</html>
+
 
 
 	   
