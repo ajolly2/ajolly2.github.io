@@ -2218,268 +2218,144 @@ const TEAM_ABBR = {
   "Copenhagen":"COP","Aberdeen":"ABE","Anderlecht":"AND","Hearts":"HEA"
 };
 
-  // ── 2) YOUR SHEET URLs ──
-  const leagueOrderURL =
-    'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkzU6UkVdQoCIU_nF3fAH5NGOzjGbjsCcvDljVe763NopA2DYvYWwBpKCDE-jXyhLpoJaSl_-PTRt3/pub?gid=0&single=true&output=csv';
-  const sheetURLs = {
-    MLB:
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkzU6UkVdQoCIU_nF3fAH5NGOzjGbjsCcvDljVe763NopA2DYvYWwBpKCDE-jXyhLpoJaSl_-PTRt3/pub?gid=1753117312&single=true&output=csv'
-  };
+  // ─── UTILS ────────────────────────────────────────────────────────
+  // get a YYYY-MM-DD string for ET today + offsetDays
+  function getETDate(offsetDays = 0) {
+    const nowET = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+    const dt = new Date(nowET);
+    dt.setDate(dt.getDate() + offsetDays);
+    const Y = dt.getFullYear();
+    const M = String(dt.getMonth()+1).padStart(2,'0');
+    const D = String(dt.getDate()).padStart(2,'0');
+    return `${Y}-${M}-${D}`;
+  }
 
-  let leagueOrder = [];
+  // fetch one day’s schedule
+  async function fetchDate(dateStr) {
+    const url = `https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=${dateStr}&hydrate=team,linescore`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(res.statusText);
+    const json = await res.json();
+    return (json.dates[0]?.games || []).map(g => ({
+      date: dateStr,
+      away: g.teams.away.team.name,
+      home: g.teams.home.team.name,
+      awayScore: g.linescore?.teams?.away?.runs ?? 0,
+      homeScore: g.linescore?.teams?.home?.runs ?? 0,
+      status: g.status.detailedState,
+      inning: g.linescore?.currentInningOrdinal || null,
+      startTime: g.gameDate
+    }));
+  }
 
-  // ── 3) LOAD LEAGUE ORDER (only include leagues you care about) ──
-  async function loadLeagueOrder() {
+  // gather yesterday, today, tomorrow
+  async function fetchAll() {
+    const dates = [ -1, 0, 1 ].map(d => getETDate(d));
+    const all = await Promise.all(dates.map(fetchDate));
+    return all.flat();
+  }
+
+  // render into the three tabs
+  function render(games) {
+    const nowET = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+    const todayStr = getETDate(0);
+    const yesterdayStr = getETDate(-1);
+
+    const containers = {
+      scores: document.getElementById("tv-listings-scores"),
+      today:  document.getElementById("tv-listings-today"),
+      live:   document.getElementById("tv-listings-live")
+    };
+    Object.values(containers).forEach(c => c.innerHTML = "");
+
+    // group by league (we only have MLB here)
+    const byDate = { scores: [], today: [], live: [] };
+
+    games.forEach(g => {
+      const isFinal = /Final|Game Over/i.test(g.status);
+      const isLive  = /In Progress|Top|Bot/i.test(g.status);
+
+      // display time or inning/F
+      let disp;
+      if (isFinal) {
+        disp = "F";
+      } else if (isLive) {
+        disp = g.inning;
+      } else {
+        const dt = new Date(g.startTime);
+        // convert ET → local
+        disp = dt.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+      }
+
+      // team codes + highlight
+      const aCode = TEAM_ABBR[g.away] || g.away.split(" ").pop();
+      const hCode = TEAM_ABBR[g.home] || g.home.split(" ").pop();
+      const aWin = g.awayScore > g.homeScore;
+      const hWin = g.homeScore > g.awayScore;
+
+      // build row
+      const row = document.createElement("div");
+      row.className = "game-row";
+      row.innerHTML = `
+        <div class="game-time${isLive? " live": isFinal?" game-time-final":""}">
+          ${disp}
+        </div>
+        <div class="game-teams">
+          <div class="team-row" style="display:flex;justify-content:space-between;">
+            <span${aWin? ' class="winner"':''}>${aCode}</span><span>${g.awayScore}</span>
+          </div>
+          <div class="team-row" style="display:flex;justify-content:space-between;">
+            <span${hWin? ' class="winner"':''}>${hCode}</span><span>${g.homeScore}</span>
+          </div>
+        </div>
+        <div class="game-channel"></div>
+      `;
+
+      // bucket
+      if (g.date === yesterdayStr && isFinal)       byDate.scores.push(row);
+      else if (g.date === todayStr && isFinal)      byDate.today.push(row);
+      else if (g.date === todayStr && isLive)       byDate.live.push(row);
+      else if (g.date === todayStr && !isFinal)     byDate.today.push(row);
+    });
+
+    // league header wrapper
+    ["scores","today","live"].forEach(tab => {
+      const list = byDate[tab];
+      if (!list.length) return;
+      const box = document.createElement("div");
+      box.className = "league-section";
+      box.innerHTML = `<div class="league-header">MLB</div>`;
+      list.forEach(r => box.appendChild(r));
+      containers[tab].appendChild(box);
+    });
+  }
+
+  // initial + polling
+  async function refresh() {
     try {
-      const txt = await (await fetch(leagueOrderURL)).text();
-      leagueOrder = txt
-        .trim()
-        .split(/\r?\n/)
-        .map(r => r.split(',')[0])
-        .filter(l => sheetURLs[l]);
-    } catch {
-      leagueOrder = Object.keys(sheetURLs);
+      const games = await fetchAll();
+      render(games);
+    } catch (e) {
+      console.error("MLB fetch error:", e);
     }
   }
 
-  // ── 4) PARSE an ET "hh:mm AM/PM" into your local Date() ──
-  function parseTimeToLocal(timeStr) {
-    // build a YYYY-MM-DD from New York today
-    const eastNow = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
-    const base = new Date(eastNow);
-    const YYYY = base.getFullYear(),
-          MM   = String(base.getMonth() + 1).padStart(2, '0'),
-          DD   = String(base.getDate()).padStart(2, '0');
+  document.addEventListener("DOMContentLoaded", () => {
+    // run once
+    refresh();
+    // and every 5 min
+    setInterval(refresh, 5*60*1000);
 
-    const [time, mod] = (timeStr||'').split(' ');
-    if (!time || !mod) return null;
-    let [h, m] = time.split(':').map(n => parseInt(n, 10));
-    if (mod==='PM' && h!==12) h += 12;
-    if (mod==='AM' && h===12) h = 0;
-
-    const iso = `${YYYY}-${MM}-${DD}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00-04:00`;
-    return new Date(iso);
-  }
-
-  // ── 5) FETCH all CSV rows for each league ──
-  async function fetchAllGames() {
-    const byLeague = {};
-    await Promise.all(
-      Object.entries(sheetURLs).map(async ([league, url]) => {
-        try {
-          const txt = await (await fetch(url)).text();
-          const rows = txt
-            .trim()
-            .split(/\r?\n/)
-            .slice(1)               // drop header row
-            .map(r => r.split(','));
-          if (rows.length) byLeague[league] = rows;
-        } catch (e) {
-          console.warn(`failed ${league}`, e);
-        }
-      })
-    );
-    return byLeague;
-  }
-
-  // ── 6) RENDER into your three tabs: SCORES / TODAY / LIVE ──
-  function renderGamesByTab(byLeague) {
-    const containers = {
-      scores: document.getElementById('tv-listings-scores'),
-      today:  document.getElementById('tv-listings-today'),
-      live:   document.getElementById('tv-listings-live')
-    };
-    Object.values(containers).forEach(c => (c.innerHTML = ''));
-
-    const now = new Date();
-    const YYYY = now.getFullYear(),
-          MM   = String(now.getMonth()+1).padStart(2,'0'),
-          DD   = String(now.getDate()).padStart(2,'0'),
-          todayStr     = `${YYYY}-${MM}-${DD}`,
-          yest         = new Date(now.getTime() - 864e5),
-          YYYYY        = yest.getFullYear(),
-          MMY          = String(yest.getMonth()+1).padStart(2,'0'),
-          DDY          = String(yest.getDate()).padStart(2,'0'),
-          yesterdayStr = `${YYYYY}-${MMY}-${DDY}`;
-
-    leagueOrder.forEach(league => {
-      const games = byLeague[league]||[];
-      const sections = { scores: [], today: [], live: [] };
-      const seenTimes = new Set();
-
-      games.forEach(cols => {
-        const [
-          sheetDate = '',
-          startRaw  = '',
-          away      = '',
-          home      = '',
-          statusRaw = '',
-          scoreRaw  = ''
-        ] = cols;
-
-        // clean up
-        const score   = scoreRaw.replace(/–/g,'-').trim(),
-              isFinal = /^(F|Final)$/i.test(statusRaw.trim()),
-              isLive  = /(In Progress|Top|Bot)/i.test(statusRaw);
-
-        // displayTime = F / “Top 5th” / local time
-        let displayTime;
-        if (isFinal)        displayTime = 'F';
-        else if (isLive)    displayTime = statusRaw;
-        else {
-          const dt = parseTimeToLocal(startRaw);
-          displayTime = dt
-            ? dt.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' })
-            : startRaw;
-        }
-
-        // avoid repeating non-live times
-        const showTime = (isFinal||isLive||!seenTimes.has(displayTime))
-          ? displayTime
-          : '';
-        if (!isFinal && !isLive) seenTimes.add(displayTime);
-
-        // split numeric scores
-        let [awayScore, homeScore] = score.split('-').map(s=>s.trim());
-        const aN = parseInt(awayScore,10)||0,
-              hN = parseInt(homeScore,10)||0;
-
-        // abbreviate
-        const awayCode = TEAM_ABBR[away]||away.split(' ').slice(-1)[0],
-              homeCode = TEAM_ABBR[home]||home.split(' ').slice(-1)[0];
-        const awayHTML = aN>hN
-          ? `<span class="winner">${awayCode}</span>` : `<span>${awayCode}</span>`;
-        const homeHTML = hN>aN
-          ? `<span class="winner">${homeCode}</span>` : `<span>${homeCode}</span>`;
-
-        // build row
-        const row = document.createElement('div');
-        row.className = 'game-row';
-        row.innerHTML = `
-          <div class="game-time${showTime==='F' ? ' game-time-final' : (isLive?' live':'')}">
-            ${showTime}
-          </div>
-          <div class="game-teams">
-            <div class="team-row" style="display:flex;justify-content:space-between;">
-              ${awayHTML}<span>${awayScore}</span>
-            </div>
-            <div class="team-row" style="display:flex;justify-content:space-between;">
-              ${homeHTML}<span>${homeScore}</span>
-            </div>
-          </div>
-          <div class="game-channel"></div>
-        `;
-
-        // bucket by date + status
-        if      (sheetDate===yesterdayStr && isFinal) sections.scores.push(row);
-        else if (sheetDate===todayStr     && isFinal) sections.today .push(row);
-        else if (sheetDate===todayStr     && isLive ) sections.live  .push(row);
-        else if (sheetDate===todayStr)                sections.today .push(row);
-      });
-
-      // append each non-empty section
-      Object.entries(sections).forEach(([tab, list]) => {
-        if (!list.length) return;
-        const box = document.createElement('div');
-        box.className = 'league-section';
-        box.innerHTML = `<div class="league-header">${league}</div>`;
-        list.forEach(r => box.appendChild(r));
-        containers[tab].appendChild(box);
-      });
-    });
-  }
-
-  // ── 7) BOOTSTRAP ONCE DOM IS READY ──
-  document.addEventListener('DOMContentLoaded', async () => {
-    await loadLeagueOrder();
-    const data = await fetchAllGames();
-    renderGamesByTab(data);
-    // default to TODAY tab
-    document.querySelector('.games-tab[data-tab="today"]')?.click();
-
-    // tab‐click behavior
-    document.querySelectorAll('.games-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.games-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.games-content').forEach(c => c.style.display = 'none');
-        tab.classList.add('active');
-        document.getElementById('tv-listings-' + tab.dataset.tab).style.display = 'block';
-      });
-    });
+    // tab switching (if not already wired)
+    const tabs  = document.querySelectorAll(".games-tab");
+    const panes = document.querySelectorAll(".games-content");
+    tabs.forEach(t=>t.addEventListener("click",()=>{
+      tabs.forEach(x=>x.classList.remove("active"));
+      panes.forEach(p=>p.style.display="none");
+      t.classList.add("active");
+      document.getElementById("tv-listings-"+t.dataset.tab).style.display="block";
+    }));
   });
-</script>
-<script>
-  // -- FEED URLs: Replace with your real feeds --
-const HEADLINES_FEED = "https://www.espn.com/espn/rss/news";
-const BREAKING_FEED = "https://rss.app/feeds/XcFXtVdyCBGtIC6O.xml";
-const FANTASY_FEED = "https://fantasynews.cbssports.com/rss/headlines/";
-const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news"; // EXAMPLE, replace as needed
-
-// -- Generic function to fetch and render a basic RSS feed --
-function fetchRSSFeed(url, containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  container.innerHTML = "Loading...";
-  fetch(url)
-    .then(res => res.text())
-    .then(str => {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(str, "application/xml");
-      const items = Array.from(xml.querySelectorAll("item"));
-      if (!items.length) {
-        container.innerHTML = "<p>No stories found.</p>";
-        return;
-      }
-      const ul = document.createElement("ul");
-      ul.style.margin = "0";
-      ul.style.padding = "0";
-      ul.style.listStyle = "none";
-      items.forEach(item => {
-        const li = document.createElement("li");
-        li.style.padding = "6px 0";
-        const title = item.querySelector("title")?.textContent || "";
-        const link = item.querySelector("link")?.textContent || "#";
-        li.innerHTML = `<a href="${link}" target="_blank" style="color:#212121;text-decoration:none;">${title}</a>`;
-        ul.appendChild(li);
-      });
-      container.innerHTML = "";
-      container.appendChild(ul);
-    })
-    .catch(() => {
-      container.innerHTML = "<p>Error loading feed.</p>";
-    });
-}
-
-// -- Tabs logic for Breaking/Fantasy/Transactions
-document.addEventListener("DOMContentLoaded", function() {
-  // Load default feeds
-  fetchRSSFeed(HEADLINES_FEED, "headlines-feed");
-  fetchRSSFeed(BREAKING_FEED, "breaking-feed");
-
-  const tabs = document.querySelectorAll(".news-tab");
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      tabs.forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      document.getElementById("breaking-feed").style.display = "none";
-      document.getElementById("fantasy-feed").style.display = "none";
-      document.getElementById("transactions-feed").style.display = "none";
-
-      if (tab.dataset.tab === "breaking") {
-        document.getElementById("breaking-feed").style.display = "block";
-        fetchRSSFeed(BREAKING_FEED, "breaking-feed");
-      }
-      if (tab.dataset.tab === "fantasy") {
-        document.getElementById("fantasy-feed").style.display = "block";
-        fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
-      }
-      if (tab.dataset.tab === "transactions") {
-        document.getElementById("transactions-feed").style.display = "block";
-        fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
-      }
-    });
-  });
-});
 </script>
  
 <script>
