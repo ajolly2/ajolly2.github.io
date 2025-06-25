@@ -2126,235 +2126,168 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 <div id="live-games-container"></div>
 
 <script>
-// FULL TEAM_ABBR — inserted exactly as provided
-const TEAM_ABBR = {
-  "Arizona Diamondbacks":"ARI","Atlanta Braves":"ATL","Baltimore Orioles":"BAL","Boston Red Sox":"BOS",
-  "Chicago White Sox":"CHW","Chicago Cubs":"CHC","Cincinnati Reds":"CIN","Cleveland Guardians":"CLE",
-  "Colorado Rockies":"COL","Detroit Tigers":"DET","Houston Astros":"HOU","Kansas City Royals":"KC",
-  "Los Angeles Angels":"LAA","Los Angeles Dodgers":"LAD","Miami Marlins":"MIA","Milwaukee Brewers":"MIL",
-  "Minnesota Twins":"MIN","New York Yankees":"NYY","New York Mets":"NYM","Athletics":"ATH",
-  "Philadelphia Phillies":"PHI","Pittsburgh Pirates":"PIT","San Diego Padres":"SD","San Francisco Giants":"SF",
-  "Seattle Mariners":"SEA","St. Louis Cardinals":"STL","Tampa Bay Rays":"TB","Texas Rangers":"TEX",
-  "Toronto Blue Jays":"TOR","Washington Nationals":"WSH",
+  // — full mapping of team names → 3-letter codes
+  const TEAM_ABBR = {
+    "Arizona Diamondbacks":"ARI","Atlanta Braves":"ATL","Baltimore Orioles":"BAL","Boston Red Sox":"BOS",
+    "Chicago White Sox":"CHW","Chicago Cubs":"CHC","Cincinnati Reds":"CIN","Cleveland Guardians":"CLE",
+    "Colorado Rockies":"COL","Detroit Tigers":"DET","Houston Astros":"HOU","Kansas City Royals":"KC",
+    "Los Angeles Angels":"LAA","Los Angeles Dodgers":"LAD","Miami Marlins":"MIA","Milwaukee Brewers":"MIL",
+    "Minnesota Twins":"MIN","New York Yankees":"NYY","New York Mets":"NYM","Athletics":"ATH",
+    "Philadelphia Phillies":"PHI","Pittsburgh Pirates":"PIT","San Diego Padres":"SD","San Francisco Giants":"SF",
+    "Seattle Mariners":"SEA","St. Louis Cardinals":"STL","Tampa Bay Rays":"TB","Texas Rangers":"TEX",
+    "Toronto Blue Jays":"TOR","Washington Nationals":"WSH"
+  };
 
-  "Atlanta Hawks":"ATL","Boston Celtics":"BOS","Brooklyn Nets":"BKN","Charlotte Hornets":"CHA",
-  "Chicago Bulls":"CHI","Cleveland Cavaliers":"CLE","Dallas Mavericks":"DAL","Denver Nuggets":"DEN",
-  "Detroit Pistons":"DET","Golden State Warriors":"GSW","Houston Rockets":"HOU","Indiana Pacers":"IND",
-  "LA Clippers":"LAC","Los Angeles Lakers":"LAL","Memphis Grizzlies":"MEM","Miami Heat":"MIA",
-  "Milwaukee Bucks":"MIL","Minnesota Timberwolves":"MIN","New Orleans Pelicans":"NOP","New York Knicks":"NYK",
-  "Oklahoma City Thunder":"OKC","Orlando Magic":"ORL","Philadelphia 76ers":"PHI","Phoenix Suns":"PHX",
-  "Portland Trail Blazers":"POR","Sacramento Kings":"SAC","San Antonio Spurs":"SAS","Toronto Raptors":"TOR",
-  "Utah Jazz":"UTA","Washington Wizards":"WAS",
-
-  "Atlanta Dream":"ATL","Chicago Sky":"CHI","Connecticut Sun":"CON","Dallas Wings":"DAL",
-  "Indiana Fever":"IND","Las Vegas Aces":"LVA","Los Angeles Sparks":"LA","Minnesota Lynx":"MIN",
-  "New York Liberty":"NY","Phoenix Mercury":"PHX","Seattle Storm":"SEA","Washington Mystics":"WAS",
-  "Golden State Valkyries":"GSV",
-
-  "Anaheim Ducks":"ANA","Arizona Coyotes":"ARI","Boston Bruins":"BOS","Buffalo Sabres":"BUF",
-  "Calgary Flames":"CGY","Carolina Hurricanes":"CAR","Chicago Blackhawks":"CHI","Colorado Avalanche":"COL",
-  "Columbus Blue Jackets":"CBJ","Dallas Stars":"DAL","Detroit Red Wings":"DET","Edmonton Oilers":"EDM",
-  "Florida Panthers":"FLA","Los Angeles Kings":"LAK","Minnesota Wild":"MIN","Montreal Canadiens":"MTL",
-  "Nashville Predators":"NSH","New Jersey Devils":"NJD","New York Islanders":"NYI","New York Rangers":"NYR",
-  "Ottawa Senators":"OTT","Philadelphia Flyers":"PHI","Pittsburgh Penguins":"PIT","San Jose Sharks":"SJ",
-  "Seattle Kraken":"SEA","St. Louis Blues":"STL","Tampa Bay Lightning":"TB","Toronto Maple Leafs":"TOR",
-  "Vancouver Canucks":"VAN","Vegas Golden Knights":"VGK","Washington Capitals":"WSH","Winnipeg Jets":"WPG",
-
-  "Arsenal":"ARS","Atletico Madrid":"ATM","Barcelona":"BAR","Bayern Munich":"BAY",
-  "Benfica":"BEN","Borussia Dortmund":"DOR","Celtic":"CEL","Chelsea":"CHE",
-  "Club Brugge":"BRU","Feyenoord":"FEY","Galatasaray":"GAL","Inter Milan":"INT",
-  "Juventus":"JUV","Liverpool":"LIV","Manchester City":"MCI","Manchester United":"MUN",
-  "Marseille":"MAR","Napoli":"NAP","Paris Saint-Germain":"PSG","Porto":"POR",
-  "Real Madrid":"RMA","RB Leipzig":"RBL","Red Star Belgrade":"RSB","Sevilla":"SEV",
-  "Shakhtar Donetsk":"SHA","Sporting CP":"SCP","Union Berlin":"UNB","Villarreal":"VIL",
-
-  "Aston Villa":"AVL","Bournemouth":"BOU","Brentford":"BRE","Brighton & Hove Albion":"BHA",
-  "Burnley":"BUR","Crystal Palace":"CRY","Everton":"EVE","Fulham":"FUL",
-  "Leeds United":"LEE","Leicester City":"LEI","Luton Town":"LUT","Newcastle United":"NEW",
-  "Nottingham Forest":"NFO","Sheffield United":"SHU","Tottenham Hotspur":"TOT",
-  "West Ham United":"WHU","Wolverhampton Wanderers":"WOL",
-
-  "Atlanta United":"ATL","Austin FC":"ATX","Charlotte FC":"CLT","Chicago Fire":"CHI",
-  "FC Cincinnati":"CIN","Colorado Rapids":"COL","Columbus Crew":"CLB","D.C. United":"DCU",
-  "FC Dallas":"DAL","Houston Dynamo":"HOU","Inter Miami":"MIA","LA Galaxy":"LAG",
-  "Los Angeles FC":"LAFC","Minnesota United":"MIN","CF Montréal":"MTL","Nashville SC":"NSH",
-  "New England Revolution":"NE","New York City FC":"NYC","New York Red Bulls":"RBNY","Orlando City":"ORL",
-  "Philadelphia Union":"PHI","Portland Timbers":"POR","Real Salt Lake":"RSL","San Diego FC":"SD",
-  "San Jose Earthquakes":"SJ","Seattle Sounders":"SEA","Sporting Kansas City":"SKC","St. Louis City SC":"STL",
-  "Toronto FC":"TOR","Vancouver Whitecaps":"VAN",
-
-  "Alavés":"ALA","Almería":"ALM","Athletic Club":"ATH","Cádiz":"CAD","Celta Vigo":"CEL",
-  "Elche":"ELC","Espanyol":"ESP","Getafe":"GET","Girona":"GIR","Granada":"GRA","Levante":"LEV",
-  "Mallorca":"MLL","Osasuna":"OSA","Rayo Vallecano":"RAY","Real Betis":"BET",
-  "Real Sociedad":"RSO","Valencia":"VAL","Valladolid":"VLL",
-
-  "Atalanta":"ATA","Bologna":"BOL","Cagliari":"CAG","Empoli":"EMP","Fiorentina":"FIO","Genoa":"GEN",
-  "Hellas Verona":"VER","Lazio":"LAZ","Lecce":"LEC","AC Milan":"MIL","Monza":"MON","Parma":"PAR",
-  "Roma":"ROM","Salernitana":"SAL","Sampdoria":"SAM","Sassuolo":"SAS","Spezia":"SPE",
-  "Torino":"TOR","Udinese":"UDI","Venezia":"VEN",
-
-  "Augsburg":"AUG","Bayer Leverkusen":"LEV","Bochum":"BOC","Borussia Mönchengladbach":"BMG",
-  "Eintracht Frankfurt":"SGE","FC Heidenheim":"HEI","Hertha BSC":"BSC","Hoffenheim":"TSG",
-  "Mainz 05":"M05","SC Freiburg":"SCF","Schalke 04":"S04","Stuttgart":"STU",
-  "Werder Bremen":"BRE","Wolfsburg":"WOB",
-
-  "América":"AME","Atlas":"ATS","Atlético San Luis":"ASL","Cruz Azul":"CAZ","Guadalajara":"GDL",
-  "Juárez":"JUA","León":"LEO","Mazatlán":"MAZ","Monterrey":"MTY","Necaxa":"NEC","Pachuca":"PAC",
-  "Puebla":"PUE","Pumas UNAM":"UNAM","Querétaro":"QUE","Santos Laguna":"SAN","Tijuana":"TIJ",
-  "Tigres UANL":"UANL","Toluca":"TOL",
-
-  "Angel City FC":"ACFC","Bay FC":"BAY","Chicago Red Stars":"CHI","Houston Dash":"HOU",
-  "Kansas City Current":"KC","NJ/NY Gotham FC":"GOT","North Carolina Courage":"NC",
-  "Orlando Pride":"ORL","Portland Thorns FC":"POR","Racing Louisville FC":"LOU",
-  "San Diego Wave FC":"SDW","Seattle Reign FC":"SEA","Utah Royals FC":"UTA","Washington Spirit":"WAS",
-
-  "Angers":"ANG","Bordeaux":"BOR","Brest":"BRE","Clermont":"CLE","Dijon":"DIJ","Lens":"LEN",
-  "Lille":"LIL","Lorient":"LOR","Lyon":"LYO","Metz":"MET","Monaco":"MON","Montpellier":"MPL",
-  "Nantes":"NAN","Nice":"NIC","Reims":"REI","Rennes":"REN","Saint-Étienne":"STE","Strasbourg":"STR",
-  "Toulouse":"TOU","Troyes":"TRO",
-
-  "Ajax":"AJA","Fenerbahçe":"FEN","PSV Eindhoven":"PSV","Zorya Luhansk":"ZOR","Slavia Prague":"SLA",
-  "Basel":"BAS","Gent":"GEN","Molde":"MOL","LASK":"LAS","Partizan":"PAR","Trabzonspor":"TRA",
-  "Copenhagen":"COP","Aberdeen":"ABE","Anderlecht":"AND","Hearts":"HEA"
-};
-
-  // ─── UTILS ────────────────────────────────────────────────────────
-  // get a YYYY-MM-DD string for ET today + offsetDays
-  function getETDate(offsetDays = 0) {
-    const nowET = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
-    const dt = new Date(nowET);
-    dt.setDate(dt.getDate() + offsetDays);
-    const Y = dt.getFullYear();
-    const M = String(dt.getMonth()+1).padStart(2,'0');
-    const D = String(dt.getDate()).padStart(2,'0');
-    return `${Y}-${M}-${D}`;
+  // Format “6:35 PM” ET → local Date()
+  function parseTimeToLocal(timeStr) {
+    const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+    const base = new Date(eastNow);
+    const Y = base.getFullYear(), M = String(base.getMonth()+1).padStart(2,'0'), D = String(base.getDate()).padStart(2,'0');
+    let [t,mod] = timeStr.split(' ');
+    if (!t||!mod) return null;
+    let [h,m] = t.split(':').map(x=>parseInt(x,10));
+    if (mod==="PM" && h!==12) h+=12;
+    if (mod==="AM" && h===12) h=0;
+    return new Date(`${Y}-${M}-${D}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00-04:00`);
   }
 
-  // fetch one day’s schedule
-  async function fetchDate(dateStr) {
-    const url = `https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=${dateStr}&hydrate=team,linescore`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(res.statusText);
-    const json = await res.json();
-    return (json.dates[0]?.games || []).map(g => ({
-      date: dateStr,
-      away: g.teams.away.team.name,
-      home: g.teams.home.team.name,
-      awayScore: g.linescore?.teams?.away?.runs ?? 0,
-      homeScore: g.linescore?.teams?.home?.runs ?? 0,
-      status: g.status.detailedState,
-      inning: g.linescore?.currentInningOrdinal || null,
-      startTime: g.gameDate
+  // Fetch schedules for an array of YYYY-MM-DD dates
+  async function fetchGamesForDates(dates) {
+    const all = [];
+    await Promise.all(dates.map(async dateStr => {
+      const url = `https://statsapi.mlb.com/api/v1/schedule?date=${dateStr}&sportId=1&hydrate=team,linescore`;
+      try {
+        const data = await fetch(url).then(r=>r.json());
+        const games = data.dates[0]?.games||[];
+        games.forEach(g => {
+          all.push({ date: dateStr, game: g });
+        });
+      } catch(e){
+        console.warn("MLB fetch error", e);
+      }
     }));
+    return all;
   }
 
-  // gather yesterday, today, tomorrow
-  async function fetchAll() {
-    const dates = [ -1, 0, 1 ].map(d => getETDate(d));
-    const all = await Promise.all(dates.map(fetchDate));
-    return all.flat();
-  }
-
-  // render into the three tabs
-  function render(games) {
-    const nowET = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
-    const todayStr = getETDate(0);
-    const yesterdayStr = getETDate(-1);
+  // Renders into your three tabs
+  function renderGames(games) {
+    const now = new Date();
+    const today = now.toISOString().slice(0,10);
+    const yesterday = new Date(now - 864e5).toISOString().slice(0,10);
 
     const containers = {
       scores: document.getElementById("tv-listings-scores"),
       today:  document.getElementById("tv-listings-today"),
       live:   document.getElementById("tv-listings-live")
     };
-    Object.values(containers).forEach(c => c.innerHTML = "");
+    Object.values(containers).forEach(c=>c.innerHTML="");
 
-    // group by league (we only have MLB here)
-    const byDate = { scores: [], today: [], live: [] };
+    const bins = { scores:[], today:[], live:[] };
+    const seen = new Set();
 
-    games.forEach(g => {
-      const isFinal = /Final|Game Over/i.test(g.status);
-      const isLive  = /In Progress|Top|Bot/i.test(g.status);
+    games.forEach(({date,game})=>{
+      const away = game.teams.away.team.name,
+            home = game.teams.home.team.name,
+            ls   = game.linescore,
+            status = game.status.detailedState;
 
-      // display time or inning/F
+      // Determine type
+      const isFinal = /Final|Game Over/i.test(status),
+            isLive  = /In Progress|Top|Bot/i.test(status);
+
+      // Display time or inning/F
       let disp;
       if (isFinal) {
         disp = "F";
       } else if (isLive) {
-        disp = g.inning;
+        // e.g. “Bot 5th”
+        disp = `${ls.inningState} ${ls.currentInning}${ls.currentInningOrdinal}`;
       } else {
-        const dt = new Date(g.startTime);
-        // convert ET → local
-        disp = dt.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
+        // scheduled
+        disp = parseTimeToLocal(game.gameDate.substr(11,8))?.toLocaleTimeString([], {hour:"numeric",minute:"2-digit"})
+               || new Date(game.gameDate).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
       }
 
-      // team codes + highlight
-      const aCode = TEAM_ABBR[g.away] || g.away.split(" ").pop();
-      const hCode = TEAM_ABBR[g.home] || g.home.split(" ").pop();
-      const aWin = g.awayScore > g.homeScore;
-      const hWin = g.homeScore > g.awayScore;
+      // only show each scheduled time once
+      if (!isFinal && !isLive) {
+        if (seen.has(disp)) disp = "";
+        else seen.add(disp);
+      }
+
+      // Scores
+      const aNum = ls.teams.away.runs,
+            hNum = ls.teams.home.runs;
+      const awayCode = TEAM_ABBR[away]||away.split(" ").pop(),
+            homeCode = TEAM_ABBR[home]||home.split(" ").pop();
+
+      const awayHTML = aNum>hNum
+        ? `<span class="winner">${awayCode}</span>`
+        : `<span>${awayCode}</span>`;
+      const homeHTML = hNum>aNum
+        ? `<span class="winner">${homeCode}</span>`
+        : `<span>${homeCode}</span>`;
 
       // build row
       const row = document.createElement("div");
       row.className = "game-row";
       row.innerHTML = `
-        <div class="game-time${isLive? " live": isFinal?" game-time-final":""}">
+        <div class="game-time${disp==="F"?" game-time-final":(isLive?" live":"")}">
           ${disp}
         </div>
         <div class="game-teams">
           <div class="team-row" style="display:flex;justify-content:space-between;">
-            <span${aWin? ' class="winner"':''}>${aCode}</span><span>${g.awayScore}</span>
+            ${awayHTML}<span>${aNum||""}</span>
           </div>
           <div class="team-row" style="display:flex;justify-content:space-between;">
-            <span${hWin? ' class="winner"':''}>${hCode}</span><span>${g.homeScore}</span>
+            ${homeHTML}<span>${hNum||""}</span>
           </div>
         </div>
         <div class="game-channel"></div>
       `;
 
       // bucket
-      if (g.date === yesterdayStr && isFinal)       byDate.scores.push(row);
-      else if (g.date === todayStr && isFinal)      byDate.today.push(row);
-      else if (g.date === todayStr && isLive)       byDate.live.push(row);
-      else if (g.date === todayStr && !isFinal)     byDate.today.push(row);
+      if (date === yesterday && isFinal)        bins.scores.push(row);
+      else if (date === today && isFinal)       bins.today.push(row);
+      else if (date === today && isLive)        bins.live.push(row);
+      else if (date === today)                  bins.today.push(row);
     });
 
-    // league header wrapper
-    ["scores","today","live"].forEach(tab => {
-      const list = byDate[tab];
-      if (!list.length) return;
+    // league header + append
+    ["scores","today","live"].forEach(key=>{
+      if (!bins[key].length) return;
       const box = document.createElement("div");
       box.className = "league-section";
       box.innerHTML = `<div class="league-header">MLB</div>`;
-      list.forEach(r => box.appendChild(r));
-      containers[tab].appendChild(box);
+      bins[key].forEach(r=>box.appendChild(r));
+      containers[key].appendChild(box);
     });
   }
 
-  // initial + polling
-  async function refresh() {
-    try {
-      const games = await fetchAll();
-      render(games);
-    } catch (e) {
-      console.error("MLB fetch error:", e);
-    }
+  // Kick off + refresh every 5min
+  async function refreshAll() {
+    const now = new Date();
+    const today = now.toISOString().slice(0,10);
+    const yesterday = new Date(now - 864e5).toISOString().slice(0,10);
+    const tomorrow  = new Date(now + 864e5).toISOString().slice(0,10);
+
+    const games = await fetchGamesForDates([yesterday,today,tomorrow]);
+    renderGames(games);
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    // run once
-    refresh();
-    // and every 5 min
-    setInterval(refresh, 5*60*1000);
-
-    // tab switching (if not already wired)
-    const tabs  = document.querySelectorAll(".games-tab");
-    const panes = document.querySelectorAll(".games-content");
-    tabs.forEach(t=>t.addEventListener("click",()=>{
-      tabs.forEach(x=>x.classList.remove("active"));
-      panes.forEach(p=>p.style.display="none");
-      t.classList.add("active");
-      document.getElementById("tv-listings-"+t.dataset.tab).style.display="block";
-    }));
+  document.addEventListener("DOMContentLoaded", ()=>{
+    refreshAll();
+    setInterval(refreshAll, 5 * 60 * 1000);
+    // also wire your tabs if you haven’t yet:
+    document.querySelectorAll(".games-tab").forEach(tab=>{
+      tab.addEventListener("click", ()=>{
+        document.querySelectorAll(".games-tab").forEach(t=>t.classList.remove("active"));
+        document.querySelectorAll(".games-content").forEach(c=>c.style.display="none");
+        tab.classList.add("active");
+        document.getElementById("tv-listings-"+tab.dataset.tab).style.display="block";
+      });
+    });
+    // default to TODAY
+    document.querySelector(".games-tab[data-tab='today']")?.click();
   });
 </script>
  
