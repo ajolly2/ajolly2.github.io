@@ -1272,12 +1272,12 @@
     <div id="tv-listings-today" class="games-content" style="display: none;">
   <!-- ────────── BEGIN “Today’s MLB Games” widget ────────── -->
    <!-- ────────── Today’s MLB Games widget ────────── -->
-  <div id="games">Loading…</div>
+  <div id="games-today">Loading…</div>
 
   <script>
     // 1) your Sheet’s “Publish to web → CSV” URL
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vToJOR-n-NOVeS-_JAtdyacwCiOEYWKMbsMpqB9oZweQvzMBY29imLHblh-VHTY00UWcd7LR7aO-DsU/pub?gid=1312714292&single=true&output=csv';
-
+const SHEET_CSV_URL =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vToJOR-n-NOVeS-_JAtdyacwCiOEYWKMbsMpqB9oZweQvzMBY29imLHblh-VHTY00UWcd7LR7aO-DsU/pub?gid=1312714292&single=true&output=csv';
     // 2) map full team names → short mascots
     const MASCOT = {
       "Arizona Diamondbacks":"Diamondbacks","Atlanta Braves":"Braves",
@@ -1325,7 +1325,7 @@
     // 6) merge MLB API + sheet data into your widget
     async function updateGames(){
       const etDate = getETDateString();
-      const container = document.getElementById('games');
+      const container = document.getElementById('games-today');
       container.innerHTML = '';
 
       let data;
