@@ -73,7 +73,54 @@
   .spacer-line {
     height: 10px;
   }
+/* ────── Today’s MLB Games widget (scoped) ────── */
+#tv-listings-today #games .game-row {
+  display: grid;
+  /* col1=time • col2=teams • col3=scores • col4=channel */
+  grid-template-columns: 60px 1fr 50px 80px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #333;
+  font-size: 13px;
+}
 
+#tv-listings-today #games .time {
+  color: #ccc;
+}
+#tv-listings-today #games .time.live {
+  color: #DC143C;
+  font-weight: bold;
+}
+
+#tv-listings-today #games .teams {
+  display: flex;
+  flex-direction: column;
+  padding-left: 8px;
+}
+
+#tv-listings-today #games .team-name {
+  line-height: 1.2;
+}
+
+#tv-listings-today #games .score-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-variant-numeric: tabular-nums;
+}
+
+#tv-listings-today #games .channel-cell {
+  text-align: right;
+  font-size: 12px;
+}
+#tv-listings-today #games .channel-cell a {
+  color: #99f;
+  text-decoration: none;
+}
+#tv-listings-today #games .channel-cell a:hover {
+  text-decoration: underline;
+}
+/* ──────────────────────────────────────────────── */
   /* ────────────────────────────────────────────────────────── */
   /*                         Top Bars                          */
   /* ────────────────────────────────────────────────────────── */
@@ -1222,7 +1269,114 @@
   </div>
   <div id="tv-listings-container">
     <div id="tv-listings-scores" class="games-content" style="display: block;"></div>
-    <div id="tv-listings-today" class="games-content" style="display: none;"></div>
+    <div id="tv-listings-today" class="games-content" style="display: none;">
+  <!-- ────────── BEGIN “Today’s MLB Games” widget ────────── -->
+  <div id="games">Loading…</div>
+
+  <script>
+    const MASCOT = {
+      "Arizona Diamondbacks":"Diamondbacks","Atlanta Braves":"Braves",
+      "Baltimore Orioles":"Orioles","Boston Red Sox":"Red Sox",
+      "Chicago White Sox":"White Sox","Chicago Cubs":"Cubs",
+      "Cincinnati Reds":"Reds","Cleveland Guardians":"Guardians",
+      "Colorado Rockies":"Rockies","Detroit Tigers":"Tigers",
+      "Houston Astros":"Astros","Kansas City Royals":"Royals",
+      "Los Angeles Angels":"Angels","Los Angeles Dodgers":"Dodgers",
+      "Miami Marlins":"Marlins","Milwaukee Brewers":"Brewers",
+      "Minnesota Twins":"Twins","New York Yankees":"Yankees",
+      "New York Mets":"Mets","Oakland Athletics":"Athletics",
+      "Philadelphia Phillies":"Phillies","Pittsburgh Pirates":"Pirates",
+      "San Diego Padres":"Padres","San Francisco Giants":"Giants",
+      "Seattle Mariners":"Mariners","St. Louis Cardinals":"Cardinals",
+      "Tampa Bay Rays":"Rays","Texas Rangers":"Rangers",
+      "Toronto Blue Jays":"Blue Jays","Washington Nationals":"Nationals"
+    };
+
+    const STREAM_URL = {
+      "Phillies@Astros":"https://www.mlb.com/gameday/phillies-vs-astros/2025/06/25/777366/preview",
+      "Nationals@Padres":"https://www.mlb.com/gameday/nationals-vs-padres/2025/06/25/777360/preview"
+    };
+
+    function getETDateString(){
+      const et = new Date(new Date().toLocaleString('en-US',{timeZone:'America/New_York'}));
+      return `${et.getFullYear()}-${String(et.getMonth()+1).padStart(2,'0')}-${String(et.getDate()).padStart(2,'0')}`;
+    }
+    function normalizeInning(ls){
+      const s = ls.inningState.replace('Middle','Mid').replace('Bottom','Bot');
+      const o = (ls.currentInningOrdinal||'').replace(/\D/g,'');
+      return o ? `${s} ${o}` : s;
+    }
+
+    async function updateGames(){
+      const etDate = getETDateString();
+      const container = document.getElementById('games');
+      container.innerHTML = '';
+      let data;
+      try {
+        data = await fetch(
+          `https://statsapi.mlb.com/api/v1/schedule?date=${etDate}&sportId=1&hydrate=team,linescore,broadcasts`
+        ).then(r=>r.json());
+      } catch {
+        container.textContent = 'Error loading games.';
+        return;
+      }
+
+      const games = data.dates[0]?.games || [];
+      const seen  = new Set();
+
+      for (let g of games) {
+        const awayF = g.teams.away.team.name, homeF = g.teams.home.team.name;
+        const away = MASCOT[awayF]||awayF.split(' ').pop(),
+              home = MASCOT[homeF]||homeF.split(' ').pop();
+        const status = g.status.detailedState,
+              ls     = g.linescore,
+              live   = status==='In Progress',
+              fin    = /Final|Game Over/.test(status);
+
+        let disp;
+        if      (live) disp = normalizeInning(ls);
+        else if (fin ) disp = 'F';
+        else           disp = new Date(g.gameDate)
+                           .toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+
+        const show = (live||fin||!seen.has(disp)) ? disp : '';
+        if (!live && !fin) seen.add(disp);
+
+        const aS = (live||fin) ? g.teams.away.score : '',
+              hS = (live||fin) ? g.teams.home.score : '';
+
+        let bc = '';
+        if (!fin) {
+          const tv = (g.broadcasts||[]).find(b=>b.type==='TV')?.name||'';
+          const url = STREAM_URL[`${away}@${home}`];
+          bc = url
+            ? `<a href="${url}" target="_blank">${tv}</a>`
+            : tv;
+        }
+
+        const row = document.createElement('div');
+        row.className = 'game-row';
+        row.innerHTML = `
+          <div class="time ${live?'live':''}">${show}</div>
+          <div class="teams">
+            <div class="team-name">${away}</div>
+            <div class="team-name">${home}</div>
+          </div>
+          <div class="score-cell">
+            <div>${aS}</div><div>${hS}</div>
+          </div>
+          <div class="channel-cell">${bc}</div>
+        `;
+        container.appendChild(row);
+      }
+      if (!games.length) container.textContent = 'No games scheduled for today.';
+    }
+
+    updateGames();
+    setInterval(updateGames, 5 * 60 * 1000);
+  </script>
+  <!-- ────────── END “Today’s MLB Games” widget ────────── -->
+</div>
     <div id="tv-listings-live" class="games-content" style="display: none;"></div>
   </div>
 </div>
