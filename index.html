@@ -1271,9 +1271,14 @@
     <div id="tv-listings-scores" class="games-content" style="display: block;"></div>
     <div id="tv-listings-today" class="games-content" style="display: none;">
   <!-- ────────── BEGIN “Today’s MLB Games” widget ────────── -->
+   <!-- ────────── Today’s MLB Games widget ────────── -->
   <div id="games">Loading…</div>
 
   <script>
+    // 1) your Sheet’s “Publish to web → CSV” URL
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vToJOR-n-NOVeS-_JAtdyacwCiOEYWKMbsMpqB9oZweQvzMBY29imLHblh-VHTY00UWcd7LR7aO-DsU/pub?gid=1312714292&single=true&output=csv';
+
+    // 2) map full team names → short mascots
     const MASCOT = {
       "Arizona Diamondbacks":"Diamondbacks","Atlanta Braves":"Braves",
       "Baltimore Orioles":"Orioles","Boston Red Sox":"Red Sox",
@@ -1292,11 +1297,21 @@
       "Toronto Blue Jays":"Blue Jays","Washington Nationals":"Nationals"
     };
 
-    const STREAM_URL = {
-      "Phillies@Astros":"https://www.mlb.com/gameday/phillies-vs-astros/2025/06/25/777366/preview",
-      "Nationals@Padres":"https://www.mlb.com/gameday/nationals-vs-padres/2025/06/25/777360/preview"
-    };
+    // 3) we'll stash sheet-provided URLs here
+    let linkMap = {};
 
+    // 4) fetch & parse your CSV once on load
+    async function loadLinkMap() {
+      const text = await fetch(SHEET_CSV_URL).then(r => r.text());
+      const rows = text.trim().split('\n').slice(1);
+      for (let line of rows) {
+        const [ gamePk, , , away, home, , , , previewURL, streamLink ] = line.split(',');
+        linkMap[gamePk] = { previewURL, streamLink };
+        linkMap[`${away}@${home}`] = { previewURL, streamLink };
+      }
+    }
+
+    // 5) your existing helpers
     function getETDateString(){
       const et = new Date(new Date().toLocaleString('en-US',{timeZone:'America/New_York'}));
       return `${et.getFullYear()}-${String(et.getMonth()+1).padStart(2,'0')}-${String(et.getDate()).padStart(2,'0')}`;
@@ -1307,51 +1322,52 @@
       return o ? `${s} ${o}` : s;
     }
 
+    // 6) merge MLB API + sheet data into your widget
     async function updateGames(){
       const etDate = getETDateString();
       const container = document.getElementById('games');
       container.innerHTML = '';
+
       let data;
       try {
         data = await fetch(
           `https://statsapi.mlb.com/api/v1/schedule?date=${etDate}&sportId=1&hydrate=team,linescore,broadcasts`
         ).then(r=>r.json());
       } catch {
-        container.textContent = 'Error loading games.';
-        return;
+        return container.textContent = 'Error loading games.';
       }
 
       const games = data.dates[0]?.games || [];
       const seen  = new Set();
 
       for (let g of games) {
-        const awayF = g.teams.away.team.name, homeF = g.teams.home.team.name;
-        const away = MASCOT[awayF]||awayF.split(' ').pop(),
-              home = MASCOT[homeF]||homeF.split(' ').pop();
+        const awayF = g.teams.away.team.name,
+              homeF = g.teams.home.team.name;
+        const key    = g.gamePk || `${awayF}@${homeF}`;
+        const mapped = linkMap[key] || {};
+        const preview = mapped.previewURL,
+              stream  = mapped.streamLink;
+
         const status = g.status.detailedState,
               ls     = g.linescore,
               live   = status==='In Progress',
               fin    = /Final|Game Over/.test(status);
 
-        let disp;
-        if      (live) disp = normalizeInning(ls);
-        else if (fin ) disp = 'F';
-        else           disp = new Date(g.gameDate)
-                           .toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
-
+        let disp = live   ? normalizeInning(ls)
+                 : fin    ? 'F'
+                 : new Date(g.gameDate).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
         const show = (live||fin||!seen.has(disp)) ? disp : '';
         if (!live && !fin) seen.add(disp);
 
         const aS = (live||fin) ? g.teams.away.score : '',
               hS = (live||fin) ? g.teams.home.score : '';
 
-        let bc = '';
+        let tv = (g.broadcasts||[]).find(b=>b.type==='TV')?.name||'',
+            bc = '';
         if (!fin) {
-          const tv = (g.broadcasts||[]).find(b=>b.type==='TV')?.name||'';
-          const url = STREAM_URL[`${away}@${home}`];
-          bc = url
-            ? `<a href="${url}" target="_blank">${tv}</a>`
-            : tv;
+          if (live && stream)        bc = `<a href="${stream}"  target="_blank">${tv}</a>`;
+          else if (!live && preview) bc = `<a href="${preview}" target="_blank">${tv}</a>`;
+          else                        bc = tv;
         }
 
         const row = document.createElement('div');
@@ -1359,22 +1375,28 @@
         row.innerHTML = `
           <div class="time ${live?'live':''}">${show}</div>
           <div class="teams">
-            <div class="team-name">${away}</div>
-            <div class="team-name">${home}</div>
+            <div class="team-name">${MASCOT[awayF]||awayF.split(' ').pop()}</div>
+            <div class="team-name">${MASCOT[homeF]||homeF.split(' ').pop()}</div>
           </div>
-          <div class="score-cell">
-            <div>${aS}</div><div>${hS}</div>
-          </div>
+          <div class="score-cell"><div>${aS}</div><div>${hS}</div></div>
           <div class="channel-cell">${bc}</div>
         `;
         container.appendChild(row);
       }
-      if (!games.length) container.textContent = 'No games scheduled for today.';
+
+      if (!games.length) {
+        container.textContent = 'No games scheduled for today.';
+      }
     }
 
-    updateGames();
-    setInterval(updateGames, 5 * 60 * 1000);
+    // 7) bootstrap
+    (async function init(){
+      await loadLinkMap();
+      updateGames();
+      setInterval(updateGames, 5 * 60 * 1000);
+    })();
   </script>
+  <!-- ────────── END Today’s MLB Games widget ────────── -->
   <!-- ────────── END “Today’s MLB Games” widget ────────── -->
 </div>
     <div id="tv-listings-live" class="games-content" style="display: none;"></div>
