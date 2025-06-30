@@ -73,246 +73,7 @@
   .spacer-line {
     height: 10px;
   }
-/* --- NEW: Styles for Sports Schedule Display --- */
 
-/* Loading indicator styling */
-.loading-indicator {
-    display: none; /* flex */
-    flex-direction: column; /* flex-col */
-    align-items: center; /* items-center */
-    justify-content: center; /* justify-center */
-    padding: 2.5rem; /* p-10 */
-    color: #9ca3af; /* text-gray-400 */
-}
-.loading-spinner {
-    display: none;
-    animation: spin 1s linear infinite; /* animate-spin */
-    height: 2.5rem; /* h-10 */
-    width: 2.5rem; /* w-10 */
-    color: #60a5fa; /* text-blue-400 */
-    margin-bottom: 0.75rem; /* mb-3 */
-}
-.loading-text {
-   display: none;
-    font-size: 1.125rem; /* text-lg */
-    line-height: 1.75rem; /* leading-7 */
-}
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* Error message styling */
-.error-message {
-     display: none;
-    background-color: #991b1b; /* bg-red-800 */
-    border-width: 1px; /* border */
-    border-color: #dc2626; /* border-red-600 */
-    color: #fecaca; /* text-red-200 */
-    padding: 0.75rem 1rem; /* py-3 px-4 */
-    border-radius: 0.25rem; /* rounded */
-    position: relative; /* relative */
-    margin-top: 1rem; /* mt-4 */
-}
-.error-message strong {
-    font-weight: 700; /* font-bold */
-}
-.error-message span {
-    display: block; /* block */
-}
-@media (min-width: 640px) { /* sm:inline */
-    .error-message span {
-        display: inline;
-    }
-}
-
-/* League section styling */
-.league-section {
-    margin-bottom: 16px; /* mb-4 */
-}
-.league-section:last-child {
-    margin-bottom: 0;
-}
-
-/* League header styling (matches screenshot dark theme) */
-.league-header {
-    background-color: #2a2a2a; /* Darker gray for league headers */
-    color: #e0e0e0; /* Light text */
-    padding: 0.75rem 1rem;
-    font-size: 1.25rem; /* text-xl */
-    font-weight: 600; /* semi-bold */
-    border-bottom: 1px solid #4a4a4a;
-    border-top: 1px solid #4a4a4a;
-    margin-top: 1.5rem; /* Spacing between leagues */
-    margin-bottom: 0.5rem;
-    border-radius: 0.5rem; /* Rounded corners */
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-/* Game entries wrapper */
-.game-entry-wrapper {
-    border-radius: 0.5rem; /* rounded-lg */
-    border-width: 1px; /* border */
-    border-color: #374151; /* border-gray-700 */
-    overflow: hidden; /* overflow-hidden */
-    background-color: #1f2937; /* bg-gray-800 */
-}
-.game-entry-wrapper .game-entry:not(:last-child) {
-    border-bottom: 1px solid #374151; /* divide-y divide-gray-700 */
-}
-
-/* Individual game entry styling */
-.game-entry {
-    display: flex; /* flex */
-    align-items: center; /* items-center */
-    padding-top: 0.5rem; /* py-2 */
-    padding-bottom: 0.5rem; /* py-2 */
-    padding-left: 1rem; /* px-4 */
-    padding-right: 1rem; /* px-4 */
-}
-.game-entry:hover {
-    background-color: #374151; /* hover:bg-gray-700 */
-}
-
-/* Status cell styling */
-.status-cell {
-    font-weight: 600; /* font-semibold */
-    text-align: center; /* text-center */
-    width: 50px; /* fixed width */
-    flex-shrink: 0; /* flex-shrink-0 */
-    padding-right: 0.5rem; /* small padding to separate from event */
-}
-.status-finished {
-    color: #22c55e; /* text-green-500 */
-}
-.status-live {
-    color: #ef4444; /* text-red-500 */
-}
-.status-scheduled {
-    color: #a0a0a0; /* text-gray-400 */
-}
-
-/* Time cell styling */
-.time-cell {
-    font-weight: 500; /* Medium weight */
-    text-align: center; /* Center align time */
-    width: 80px; /* Fixed width for time */
-    flex-shrink: 0;
-    padding-right: 0.5rem; /* Small padding to separate from event */
-    color: #e0e0e0; /* Light text color */
-    font-size: 0.875rem; /* text-sm */
-}
-
-/* Game details (teams) styling */
-.game-details {
-    flex-grow: 1; /* flex-grow */
-    padding-left: 0.5rem; /* padding-left */
-    padding-right: 0.5rem; /* padding-right */
-    color: #e5e7eb; /* text-gray-200 */
-}
-.team-name {
-    font-size: 0.875rem; /* text-sm */
-    line-height: 1.25rem; /* leading-5 */
-    padding-top: 0.25rem; /* py-0.25rem (simulated) */
-    padding-bottom: 0.25rem; /* py-0.25rem (simulated) */
-}
-
-/* Game scores styling */
-.game-scores {
-    text-align: right; /* text-right */
-    padding-right: 1rem; /* padding-right */
-    width: 60px; /* fixed width */
-    flex-shrink: 0; /* flex-shrink-0 */
-    color: #e5e7eb; /* text-gray-200 */
-}
-.score-value {
-    font-size: 0.875rem; /* text-sm */
-    line-height: 1.25rem; /* leading-5 */
-    padding-top: 0.25rem; /* py-0.25rem (simulated) */
-    padding-bottom: 0.25rem; /* py-0.25rem (simulated) */
-}
-
-/* Game channel styling */
-.game-channel {
-    text-align: right; /* text-right */
-    width: 100px; /* fixed width */
-    flex-shrink: 0; /* flex-shrink-0 */
-    padding-right: 1rem; /* padding-right */
-    color: #9ca3af; /* text-gray-400 */
-    font-size: 0.875rem; /* text-sm */
-    line-height: 1.25rem; /* leading-5 */
-}
-
-/* Custom scrollbar for overflow-y-auto */
-.column.tv-listings::-webkit-scrollbar,
-.games-content::-webkit-scrollbar,
-.game-entry-wrapper::-webkit-scrollbar {
-    width: 8px;
-}
-.column.tv-listings::-webkit-scrollbar-thumb,
-.games-content::-webkit-scrollbar-thumb,
-.game-entry-wrapper::-webkit-scrollbar-thumb {
-    background-color: #4a4a4a; /* Darker gray */
-    border-radius: 4px;
-}
-.column.tv-listings::-webkit-scrollbar-track,
-.games-content::-webkit-scrollbar-track,
-.game-entry-wrapper::-webkit-scrollbar-track {
-    background-color: #2a2a2a; /* Even darker gray */
-}
-
-/* Utility class to hide elements */
-.hidden {
-    display: none !important;
-}
-/* ────── Today’s MLB Games widget (scoped) ────── */
-#tv-listings-today #games .game-row {
-  display: grid;
-  /* col1=time • col2=teams • col3=scores • col4=channel */
-  grid-template-columns: 60px 1fr 50px 80px;
-  align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid #333;
-  font-size: 13px;
-}
-
-#tv-listings-today #games .time {
-  color: #ccc;
-}
-#tv-listings-today #games .time.live {
-  color: #DC143C;
-  font-weight: bold;
-}
-
-#tv-listings-today #games .teams {
-  display: flex;
-  flex-direction: column;
-  padding-left: 8px;
-}
-
-#tv-listings-today #games .team-name {
-  line-height: 1.2;
-}
-
-#tv-listings-today #games .score-cell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-variant-numeric: tabular-nums;
-}
-
-#tv-listings-today #games .channel-cell {
-  text-align: right;
-  font-size: 12px;
-}
-#tv-listings-today #games .channel-cell a {
-  color: #99f;
-  text-decoration: none;
-}
-#tv-listings-today #games .channel-cell a:hover {
-  text-decoration: underline;
-}
-/* ──────────────────────────────────────────────── */
   /* ────────────────────────────────────────────────────────── */
   /*                         Top Bars                          */
   /* ────────────────────────────────────────────────────────── */
@@ -1459,33 +1220,12 @@
     <div class="games-tab" data-tab="today">TODAY</div>
     <div class="games-tab" data-tab="live">LIVE</div>
   </div>
- <div id="tv-listings-container">
-  <div id="tv-listings-scores" class="games-content" style="display: none;"></div>
-
-  <div id="tv-listings-today" class="games-content" style="display: block;">
-    <!-- Loading Indicator for Games -->
-    <div id="gamesLoading" class="loading-indicator hidden">
-      <svg class="loading-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-        </path>
-      </svg>
-      <p class="loading-text">Loading sports data...</p>
-    </div>
-
-    <!-- Error Message for Games -->
-    <div id="gamesErrorMessage" class="error-message hidden" role="alert">
-      <strong>Error!</strong>
-      <span id="gamesErrorText"></span>
-    </div>
-    
-    <!-- Game content will be injected directly into this container -->
+  <div id="tv-listings-container">
+    <div id="tv-listings-scores" class="games-content" style="display: block;"></div>
+    <div id="tv-listings-today" class="games-content" style="display: none;"></div>
+    <div id="tv-listings-live" class="games-content" style="display: none;"></div>
   </div>
-
-  <div id="tv-listings-live" class="games-content" style="display: none;"></div>
 </div>
-
 
 
 
@@ -2385,34 +2125,112 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 <!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
 <div id="live-games-container"></div>
 
-<!-- Put this <script> after your <div id="live-games-container"></div> -->
 <script>
-  // ─── FULL TEAM_ABBR — as provided ─────────────────────────────────────────
-  const TEAM_ABBR = {
-    "Arizona Diamondbacks":"ARI","Atlanta Braves":"ATL","Baltimore Orioles":"BAL","Boston Red Sox":"BOS",
-    "Chicago White Sox":"CHW","Chicago Cubs":"CHC","Cincinnati Reds":"CIN","Cleveland Guardians":"CLE",
-    "Colorado Rockies":"COL","Detroit Tigers":"DET","Houston Astros":"HOU","Kansas City Royals":"KC",
-    "Los Angeles Angels":"LAA","Los Angeles Dodgers":"LAD","Miami Marlins":"MIA","Milwaukee Brewers":"MIL",
-    "Minnesota Twins":"MIN","New York Yankees":"NYY","New York Mets":"NYM","Athletics":"ATH",
-    "Philadelphia Phillies":"PHI","Pittsburgh Pirates":"PIT","San Diego Padres":"SD","San Francisco Giants":"SF",
-    "Seattle Mariners":"SEA","St. Louis Cardinals":"STL","Tampa Bay Rays":"TB","Texas Rangers":"TEX",
-    "Toronto Blue Jays":"TOR","Washington Nationals":"WSH"
-  };
+// FULL TEAM_ABBR — inserted exactly as provided
+const TEAM_ABBR = {
+  "Arizona Diamondbacks":"ARI","Atlanta Braves":"ATL","Baltimore Orioles":"BAL","Boston Red Sox":"BOS",
+  "Chicago White Sox":"CHW","Chicago Cubs":"CHC","Cincinnati Reds":"CIN","Cleveland Guardians":"CLE",
+  "Colorado Rockies":"COL","Detroit Tigers":"DET","Houston Astros":"HOU","Kansas City Royals":"KC",
+  "Los Angeles Angels":"LAA","Los Angeles Dodgers":"LAD","Miami Marlins":"MIA","Milwaukee Brewers":"MIL",
+  "Minnesota Twins":"MIN","New York Yankees":"NYY","New York Mets":"NYM","Athletics":"ATH",
+  "Philadelphia Phillies":"PHI","Pittsburgh Pirates":"PIT","San Diego Padres":"SD","San Francisco Giants":"SF",
+  "Seattle Mariners":"SEA","St. Louis Cardinals":"STL","Tampa Bay Rays":"TB","Texas Rangers":"TEX",
+  "Toronto Blue Jays":"TOR","Washington Nationals":"WSH",
 
-  // ─── your CSV endpoints ───────────────────────────────────────────────────
+  "Atlanta Hawks":"ATL","Boston Celtics":"BOS","Brooklyn Nets":"BKN","Charlotte Hornets":"CHA",
+  "Chicago Bulls":"CHI","Cleveland Cavaliers":"CLE","Dallas Mavericks":"DAL","Denver Nuggets":"DEN",
+  "Detroit Pistons":"DET","Golden State Warriors":"GSW","Houston Rockets":"HOU","Indiana Pacers":"IND",
+  "LA Clippers":"LAC","Los Angeles Lakers":"LAL","Memphis Grizzlies":"MEM","Miami Heat":"MIA",
+  "Milwaukee Bucks":"MIL","Minnesota Timberwolves":"MIN","New Orleans Pelicans":"NOP","New York Knicks":"NYK",
+  "Oklahoma City Thunder":"OKC","Orlando Magic":"ORL","Philadelphia 76ers":"PHI","Phoenix Suns":"PHX",
+  "Portland Trail Blazers":"POR","Sacramento Kings":"SAC","San Antonio Spurs":"SAS","Toronto Raptors":"TOR",
+  "Utah Jazz":"UTA","Washington Wizards":"WAS",
+
+  "Atlanta Dream":"ATL","Chicago Sky":"CHI","Connecticut Sun":"CON","Dallas Wings":"DAL",
+  "Indiana Fever":"IND","Las Vegas Aces":"LVA","Los Angeles Sparks":"LA","Minnesota Lynx":"MIN",
+  "New York Liberty":"NY","Phoenix Mercury":"PHX","Seattle Storm":"SEA","Washington Mystics":"WAS",
+  "Golden State Valkyries":"GSV",
+
+  "Anaheim Ducks":"ANA","Arizona Coyotes":"ARI","Boston Bruins":"BOS","Buffalo Sabres":"BUF",
+  "Calgary Flames":"CGY","Carolina Hurricanes":"CAR","Chicago Blackhawks":"CHI","Colorado Avalanche":"COL",
+  "Columbus Blue Jackets":"CBJ","Dallas Stars":"DAL","Detroit Red Wings":"DET","Edmonton Oilers":"EDM",
+  "Florida Panthers":"FLA","Los Angeles Kings":"LAK","Minnesota Wild":"MIN","Montreal Canadiens":"MTL",
+  "Nashville Predators":"NSH","New Jersey Devils":"NJD","New York Islanders":"NYI","New York Rangers":"NYR",
+  "Ottawa Senators":"OTT","Philadelphia Flyers":"PHI","Pittsburgh Penguins":"PIT","San Jose Sharks":"SJ",
+  "Seattle Kraken":"SEA","St. Louis Blues":"STL","Tampa Bay Lightning":"TB","Toronto Maple Leafs":"TOR",
+  "Vancouver Canucks":"VAN","Vegas Golden Knights":"VGK","Washington Capitals":"WSH","Winnipeg Jets":"WPG",
+
+  "Arsenal":"ARS","Atletico Madrid":"ATM","Barcelona":"BAR","Bayern Munich":"BAY",
+  "Benfica":"BEN","Borussia Dortmund":"DOR","Celtic":"CEL","Chelsea":"CHE",
+  "Club Brugge":"BRU","Feyenoord":"FEY","Galatasaray":"GAL","Inter Milan":"INT",
+  "Juventus":"JUV","Liverpool":"LIV","Manchester City":"MCI","Manchester United":"MUN",
+  "Marseille":"MAR","Napoli":"NAP","Paris Saint-Germain":"PSG","Porto":"POR",
+  "Real Madrid":"RMA","RB Leipzig":"RBL","Red Star Belgrade":"RSB","Sevilla":"SEV",
+  "Shakhtar Donetsk":"SHA","Sporting CP":"SCP","Union Berlin":"UNB","Villarreal":"VIL",
+
+  "Aston Villa":"AVL","Bournemouth":"BOU","Brentford":"BRE","Brighton & Hove Albion":"BHA",
+  "Burnley":"BUR","Crystal Palace":"CRY","Everton":"EVE","Fulham":"FUL",
+  "Leeds United":"LEE","Leicester City":"LEI","Luton Town":"LUT","Newcastle United":"NEW",
+  "Nottingham Forest":"NFO","Sheffield United":"SHU","Tottenham Hotspur":"TOT",
+  "West Ham United":"WHU","Wolverhampton Wanderers":"WOL",
+
+  "Atlanta United":"ATL","Austin FC":"ATX","Charlotte FC":"CLT","Chicago Fire":"CHI",
+  "FC Cincinnati":"CIN","Colorado Rapids":"COL","Columbus Crew":"CLB","D.C. United":"DCU",
+  "FC Dallas":"DAL","Houston Dynamo":"HOU","Inter Miami":"MIA","LA Galaxy":"LAG",
+  "Los Angeles FC":"LAFC","Minnesota United":"MIN","CF Montréal":"MTL","Nashville SC":"NSH",
+  "New England Revolution":"NE","New York City FC":"NYC","New York Red Bulls":"RBNY","Orlando City":"ORL",
+  "Philadelphia Union":"PHI","Portland Timbers":"POR","Real Salt Lake":"RSL","San Diego FC":"SD",
+  "San Jose Earthquakes":"SJ","Seattle Sounders":"SEA","Sporting Kansas City":"SKC","St. Louis City SC":"STL",
+  "Toronto FC":"TOR","Vancouver Whitecaps":"VAN",
+
+  "Alavés":"ALA","Almería":"ALM","Athletic Club":"ATH","Cádiz":"CAD","Celta Vigo":"CEL",
+  "Elche":"ELC","Espanyol":"ESP","Getafe":"GET","Girona":"GIR","Granada":"GRA","Levante":"LEV",
+  "Mallorca":"MLL","Osasuna":"OSA","Rayo Vallecano":"RAY","Real Betis":"BET",
+  "Real Sociedad":"RSO","Valencia":"VAL","Valladolid":"VLL",
+
+  "Atalanta":"ATA","Bologna":"BOL","Cagliari":"CAG","Empoli":"EMP","Fiorentina":"FIO","Genoa":"GEN",
+  "Hellas Verona":"VER","Lazio":"LAZ","Lecce":"LEC","AC Milan":"MIL","Monza":"MON","Parma":"PAR",
+  "Roma":"ROM","Salernitana":"SAL","Sampdoria":"SAM","Sassuolo":"SAS","Spezia":"SPE",
+  "Torino":"TOR","Udinese":"UDI","Venezia":"VEN",
+
+  "Augsburg":"AUG","Bayer Leverkusen":"LEV","Bochum":"BOC","Borussia Mönchengladbach":"BMG",
+  "Eintracht Frankfurt":"SGE","FC Heidenheim":"HEI","Hertha BSC":"BSC","Hoffenheim":"TSG",
+  "Mainz 05":"M05","SC Freiburg":"SCF","Schalke 04":"S04","Stuttgart":"STU",
+  "Werder Bremen":"BRE","Wolfsburg":"WOB",
+
+  "América":"AME","Atlas":"ATS","Atlético San Luis":"ASL","Cruz Azul":"CAZ","Guadalajara":"GDL",
+  "Juárez":"JUA","León":"LEO","Mazatlán":"MAZ","Monterrey":"MTY","Necaxa":"NEC","Pachuca":"PAC",
+  "Puebla":"PUE","Pumas UNAM":"UNAM","Querétaro":"QUE","Santos Laguna":"SAN","Tijuana":"TIJ",
+  "Tigres UANL":"UANL","Toluca":"TOL",
+
+  "Angel City FC":"ACFC","Bay FC":"BAY","Chicago Red Stars":"CHI","Houston Dash":"HOU",
+  "Kansas City Current":"KC","NJ/NY Gotham FC":"GOT","North Carolina Courage":"NC",
+  "Orlando Pride":"ORL","Portland Thorns FC":"POR","Racing Louisville FC":"LOU",
+  "San Diego Wave FC":"SDW","Seattle Reign FC":"SEA","Utah Royals FC":"UTA","Washington Spirit":"WAS",
+
+  "Angers":"ANG","Bordeaux":"BOR","Brest":"BRE","Clermont":"CLE","Dijon":"DIJ","Lens":"LEN",
+  "Lille":"LIL","Lorient":"LOR","Lyon":"LYO","Metz":"MET","Monaco":"MON","Montpellier":"MPL",
+  "Nantes":"NAN","Nice":"NIC","Reims":"REI","Rennes":"REN","Saint-Étienne":"STE","Strasbourg":"STR",
+  "Toulouse":"TOU","Troyes":"TRO",
+
+  "Ajax":"AJA","Fenerbahçe":"FEN","PSV Eindhoven":"PSV","Zorya Luhansk":"ZOR","Slavia Prague":"SLA",
+  "Basel":"BAS","Gent":"GEN","Molde":"MOL","LASK":"LAS","Partizan":"PAR","Trabzonspor":"TRA",
+  "Copenhagen":"COP","Aberdeen":"ABE","Anderlecht":"AND","Hearts":"HEA"
+};
   const leagueOrderURL =
     'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkzU6UkVdQoCIU_nF3fAH5NGOzjGbjsCcvDljVe763NopA2DYvYWwBpKCDE-jXyhLpoJaSl_-PTRt3/pub?gid=0&single=true&output=csv';
 
- const sheetURLs = {
-  MLB: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vToJOR-n-NOVeS-_JAtdyacwCiOEYWKMbsMpqB9oZweQvzMBY29imLHblh-VHTY00UWcd7LR7aO-DsU/pub?gid=1312714292&single=true&output=csv'
-};
+  const sheetURLs = {
+    MLB: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkzU6UkVdQoCIU_nF3fAH5NGOzjGbjsCcvDljVe763NopA2DYvYWwBpKCDE-jXyhLpoJaSl_-PTRt3/pub?gid=1753117312&single=true&output=csv'
+  };
 
   let leagueOrder = [];
 
   async function loadLeagueOrder() {
     try {
       const txt = await (await fetch(leagueOrderURL)).text();
-      leagueOrder = txt.trim()
+      leagueOrder = txt
+        .trim()
         .split(/\r?\n/)
         .map(r => r.split(',')[0])
         .filter(l => sheetURLs[l]);
@@ -2422,136 +2240,172 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
   }
 
   function parseTimeToLocal(timeStr) {
-    // ET string → local Date
+    // ET → local Date()
     const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
     const base = new Date(eastNow);
     const YYYY = base.getFullYear();
     const MM   = String(base.getMonth()+1).padStart(2,'0');
     const DD   = String(base.getDate()).padStart(2,'0');
-
-    let [time, mod] = timeStr.split(' ');
-    if (!time||!mod) return null;
+    let [time, modifier] = timeStr.split(' ');
+    if (!time || !modifier) return null;
     let [h,m] = time.split(':').map(x=>parseInt(x,10));
-    if (mod==='PM'&&h!==12) h+=12;
-    if (mod==='AM'&&h===12) h=0;
-
+    if (modifier==='PM' && h!==12) h+=12;
+    if (modifier==='AM' && h===12) h=0;
     const iso = `${YYYY}-${MM}-${DD}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00-04:00`;
     return new Date(iso);
   }
 
   async function fetchAllGames() {
     const byLeague = {};
-    await Promise.all(Object.entries(sheetURLs).map(async ([lg,url])=>{
-      try {
-        const txt = await (await fetch(url)).text();
-        const rows = txt.trim().split(/\r?\n/).slice(1).map(r=>r.split(','));
-        if(rows.length) byLeague[lg]=rows;
-      } catch(e){
-        console.warn(`fetch ${lg} failed`,e);
-      }
-    }));
+    await Promise.all(
+      Object.entries(sheetURLs).map(async ([league, url]) => {
+        try {
+          const text = await (await fetch(url)).text();
+          const rows = text
+            .trim()
+            .split(/\r?\n/)
+            .slice(1)            // drop header row
+            .map(r => r.split(','));
+          if (rows.length) byLeague[league] = rows;
+        } catch (e) {
+          console.warn(`failed ${league}`, e);
+        }
+      })
+    );
     return byLeague;
   }
 
   function renderGamesByTab(byLeague) {
-    const nowET = new Date().toLocaleString("en-US",{timeZone:"America/New_York"});
-    const baseET = new Date(nowET);
-    const y = baseET.getFullYear(), m = String(baseET.getMonth()+1).padStart(2,'0'), d = String(baseET.getDate()).padStart(2,'0');
-    const todayStr = `${y}-${m}-${d}`;
-    const yestDate = new Date(baseET.getTime() - 864e5);
-    const yy = yestDate.getFullYear(), mm = String(yestDate.getMonth()+1).padStart(2,'0'), dd = String(yestDate.getDate()).padStart(2,'0');
-    const yesterdayStr = `${yy}-${mm}-${dd}`;
-
     const containers = {
       scores: document.getElementById("tv-listings-scores"),
       today:  document.getElementById("tv-listings-today"),
       live:   document.getElementById("tv-listings-live")
     };
-    Object.values(containers).forEach(c=>c.innerHTML="");
+    Object.values(containers).forEach(c => c.innerHTML = "");
 
-    leagueOrder.forEach(league=>{
-      const games = byLeague[league]||[];
-      const sections = {scores:[], today:[], live:[]};
-      const seen = new Set();
+    const now = new Date();
+    const YYYY = now.getFullYear(), MM = String(now.getMonth()+1).padStart(2,'0'), DD = String(now.getDate()).padStart(2,'0');
+    const todayStr = `${YYYY}-${MM}-${DD}`;
+    const yest = new Date(now.getTime() - 864e5);
+    const yY  = yest.getFullYear(), yM = String(yest.getMonth()+1).padStart(2,'0'), yD = String(yest.getDate()).padStart(2,'0');
+    const yesterdayStr = `${yY}-${yM}-${yD}`;
 
-      games.forEach(cols=>{
-        let [date, start, away, home, status, inning, score] = cols;
-        status = status.trim();
-        score = (score||"").replace(/–/g,'-').trim();
-        const isFinal = /^(F|Final)$/i.test(status);
-        const isLive  = status==="In Progress";
+    leagueOrder.forEach(league => {
+      const games = byLeague[league] || [];
+      const sections = { scores: [], today: [], live: [] };
+      const seenDisplayTimes = new Set();
 
+      games.forEach(cols => {
+        // 1) destruct A–F
+        const [
+          sheetDate = "",   // col A
+          startRaw  = "",   // col B
+          away      = "",   // col C
+          home      = "",   // col D
+          statusRaw = "",   // col E
+          scoreRaw  = ""    // col F
+        ] = cols;
+
+        // 2) clean up
+        const score    = scoreRaw.replace(/–/g,'-').trim();
+        const isFinal  = /^(F|Final)$/i.test(statusRaw.trim());
+        const isLive   = /(In Progress|Top|Bot)/i.test(statusRaw);
+
+        // 3) displayTime
         let displayTime;
-        if (isFinal)            displayTime='F';
-        else if (isLive)        displayTime=inning||'';
-        else {
-          const dt = parseTimeToLocal(start);
-          displayTime = dt ? dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}) : start;
+        if (isFinal) {
+          displayTime = 'F';
+        } else if (isLive) {
+          displayTime = statusRaw;
+        } else {
+          const dt = parseTimeToLocal(startRaw);
+          displayTime = dt
+            ? dt.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' })
+            : startRaw;
         }
 
-        const showTime = (isFinal||isLive||!seen.has(displayTime)) ? displayTime : '';
-        if (!isFinal&&!isLive) seen.add(displayTime);
+        // 4) throttle duplicates
+        const showTime = (isFinal || isLive || !seenDisplayTimes.has(displayTime))
+          ? displayTime
+          : '';
+        if (!isFinal && !isLive) seenDisplayTimes.add(displayTime);
 
-        let [aScore,hScore] = (score||"0-0").split('-').map(s=>s.trim());
-        const aNum = parseInt(aScore,10)||0, hNum = parseInt(hScore,10)||0;
-        const aCode = TEAM_ABBR[away]||away.split(' ').slice(-1)[0];
-        const hCode = TEAM_ABBR[home]||home.split(' ').slice(-1)[0];
-        const awayHTML = aNum>hNum ? `<span class="winner">${aCode}</span>` : `<span>${aCode}</span>`;
-        const homeHTML = hNum>aNum ? `<span class="winner">${hCode}</span>` : `<span>${hCode}</span>`;
+        // 5) split numeric
+        let [awayScore, homeScore] = score.split('-').map(s => s.trim());
+        const aNum = parseInt(awayScore,10)||0, hNum = parseInt(homeScore,10)||0;
 
+        // 6) abbreviate via TEAM_ABBR
+        const awayCode = TEAM_ABBR[away] || away.split(' ').slice(-1)[0];
+        const homeCode = TEAM_ABBR[home] || home.split(' ').slice(-1)[0];
+        const awayHTML = aNum>hNum 
+          ? `<span class="winner">${awayCode}</span>` 
+          : `<span>${awayCode}</span>`;
+        const homeHTML = hNum>aNum 
+          ? `<span class="winner">${homeCode}</span>` 
+          : `<span>${homeCode}</span>`;
+
+        // 7) build row
         const row = document.createElement("div");
-        row.className="game-row";
-        row.innerHTML=`
-          <div class="game-time${showTime==='F'?' game-time-final':(isLive?' live':'')}">${showTime}</div>
+        row.className = "game-row";
+        row.innerHTML = `
+          <div class="game-time${showTime==='F'? ' game-time-final': (isLive?' live':'')}">
+            ${showTime}
+          </div>
           <div class="game-teams">
             <div class="team-row" style="display:flex;justify-content:space-between;">
-              ${awayHTML}<span>${aScore}</span>
+              ${awayHTML}<span>${awayScore}</span>
             </div>
             <div class="team-row" style="display:flex;justify-content:space-between;">
-              ${homeHTML}<span>${hScore}</span>
+              ${homeHTML}<span>${homeScore}</span>
             </div>
           </div>
           <div class="game-channel"></div>
         `;
 
-        if      (date===yesterdayStr&&isFinal) sections.scores.push(row);
-        else if (date===todayStr&&isFinal)     sections.today.push(row);
-        else if (date===todayStr&&isLive)      sections.live.push(row);
-        else if (date===todayStr)              sections.today.push(row);
+        // 8) bucket
+        if (sheetDate === yesterdayStr && isFinal) {
+          sections.scores.push(row);
+        } else if (sheetDate === todayStr && isFinal) {
+          sections.today.push(row);
+        } else if (sheetDate === todayStr && isLive) {
+          sections.live.push(row);
+        } else if (sheetDate === todayStr) {
+          sections.today.push(row);
+        }
       });
 
-      Object.entries(sections).forEach(([key,list])=>{
-        if(!list.length) return;
-        const box=document.createElement("div");
-        box.className="league-section";
-        box.innerHTML=`<div class="league-header">${league}</div>`;
-        list.forEach(r=>box.appendChild(r));
+      // 9) append each non-empty section
+      Object.entries(sections).forEach(([key,list]) => {
+        if (!list.length) return;
+        const box = document.createElement("div");
+        box.className = "league-section";
+        box.innerHTML = `<div class="league-header">${league}</div>`;
+        list.forEach(r => box.appendChild(r));
         containers[key].appendChild(box);
       });
     });
   }
 
-  document.addEventListener("DOMContentLoaded", async ()=>{
+  // ── initialize on DOM ready ──
+  document.addEventListener("DOMContentLoaded", async () => {
     await loadLeagueOrder();
     const allData = await fetchAllGames();
     renderGamesByTab(allData);
 
-    const tabs = document.querySelectorAll(".games-tab"),
-          panes = document.querySelectorAll(".games-content");
-    tabs.forEach(tab=>{
-      tab.addEventListener("click",()=>{
-        tabs.forEach(t=>t.classList.remove("active"));
-        panes.forEach(p=>p.style.display="none");
-        tab.classList.add("active");
-        document.getElementById("tv-listings-"+tab.dataset.tab).style.display="block";
-      });
-    });
+    // tabs
+    const tabs  = document.querySelectorAll(".games-tab");
+    const panes = document.querySelectorAll(".games-content");
+    tabs.forEach(tab => tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      panes.forEach(p => p.style.display = "none");
+      tab.classList.add("active");
+      document.getElementById("tv-listings-" + tab.dataset.tab).style.display = "block";
+    }));
 
-    // default to TODAY
+    // default to “today”
     document.querySelector(".games-tab[data-tab='today']")?.click();
   });
 </script>
-	    
 <script>
   // -- FEED URLs: Replace with your real feeds --
 const HEADLINES_FEED = "https://www.espn.com/espn/rss/news";
@@ -2907,319 +2761,11 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
     });
   });
 </script>
-<script>
-    // THE CSV_URL - This is the source of your sports data
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPmKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv';
 
-   async function fetchAndDisplaySportsData() {
-    const gamesLoadingElement = document.getElementById('gamesLoading');
-    const gamesErrorMessageDiv = document.getElementById('gamesErrorMessage');
-    const gamesErrorTextSpan = document.getElementById('gamesErrorText');
-    const dynamicGamesContent = document.getElementById('tv-listings-today');
 
-	    // Force visibility of the container to prevent accidental hiding
-    const todayContentBlock = document.getElementById('tv-listings-today');
-    if (todayContentBlock) {
-        todayContentBlock.style.display = 'block';
-    }
 	   
-    // Ensure loading is shown and data/error are hidden at the start of fetch
-    if (gamesLoadingElement) {
-        gamesLoadingElement.classList.remove('hidden');
-    }
-    dynamicGamesContent.classList.add('hidden'); // Hide content while loading
-    gamesErrorMessageDiv.classList.add('hidden'); // Hide error message
-
-        try {
-            const response = await fetch(CSV_URL);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const csvText = await response.text();
-            const games = parseCsv(csvText);
-
-            if (games.length === 0) {
-                gamesErrorTextSpan.textContent = 'No sports data found in the CSV.';
-                gamesErrorMessageDiv.classList.remove('hidden');
-                return;
-            }
-
-            // Group games by league
-            const groupedGames = games.reduce((acc, game) => {
-                const league = game.League || 'Other'; // Use 'Other' for games without a specific league
-                if (!acc[league]) {
-                    acc[league] = [];
-                }
-                acc[league].push(game);
-                return acc;
-            }, {});
-
-            // Sort league names alphabetically
-            const sortedLeagueNames = Object.keys(groupedGames).sort();
-
-            sortedLeagueNames.forEach(leagueName => {
-                const leagueGames = groupedGames[leagueName];
-                // Sort games within each league by current stage (LIVE first, then SCHEDULED, then FINISHED) and then by time
-                leagueGames.sort((a, b) => {
-                    const statusOrder = { 'LIVE': 1, 'SCHEDULED': 2, 'FINISHED': 3, 'N/A': 4 };
-                    const statusA = statusOrder[a['Current Inning/Stage'] ? a['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
-                    const statusB = statusOrder[b['Current Inning/Stage'] ? b['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
-
-                    if (statusA !== statusB) {
-                        return statusA - statusB;
-                    }
-
-                    // Then sort by time (assuming "HH:MM AM/PM" format)
-                    const parseTime = (timeStr) => {
-                        if (!timeStr || timeStr === 'N/A') return 0; // Handle N/A or empty times
-                        const [time, ampm] = timeStr.split(' ');
-                        let [hours, minutes] = time.split(':').map(Number);
-                        if (ampm === 'PM' && hours < 12) hours += 12;
-                        if (ampm === 'AM' && hours === 12) hours = 0; // Midnight
-                        return hours * 60 + minutes;
-                    };
-                    const timeA = parseTime(a.Time);
-                    const timeB = parseTime(b.Time);
-                    return timeA - timeB;
-                });
-
-
-                // Create a section for each league
-                const leagueSection = document.createElement('div');
-                leagueSection.classList.add('league-section'); // Custom class for section margin
-
-                const leagueHeader = document.createElement('h2');
-                leagueHeader.classList.add('league-header'); // Custom class for styling
-                leagueHeader.textContent = leagueName;
-                leagueSection.appendChild(leagueHeader);
-
-                const gamesListContainer = document.createElement('div');
-                gamesListContainer.classList.add('game-entry-wrapper'); // Custom class for wrapper styling
-
-                // Reset lastDisplayedTime for each new league
-                let lastDisplayedTime = null; 
-
-                leagueGames.forEach(game => {
-                    const gameEntry = document.createElement('div');
-                    gameEntry.classList.add('game-entry'); // Custom class for flex and hover
-
-                    // --- Status Column (Leftmost) ---
-                    const statusDiv = document.createElement('div');
-                    statusDiv.classList.add('status-cell');
-                    let statusText = '';
-                    let statusClass = 'status-scheduled'; // Default to gray
-
-                    const currentStage = game['Current Inning/Stage'] ? game['Current Inning/Stage'].toUpperCase() : 'N/A';
-                    if (currentStage === 'FINISHED') {
-                        statusText = 'F';
-                        statusClass = 'status-finished';
-                    } else if (currentStage !== 'SCHEDULED' && currentStage !== 'N/A') {
-                        // For live games, show inning/stage
-                        statusText = currentStage.replace(/_INNING/g, '').replace(/_/g, ' '); // Clean up "SIXTH_INNING" to "SIXTH INNING"
-                        statusClass = 'status-live';
-                    } else {
-                        statusText = ''; // Blank for scheduled, as per screenshot
-                    }
-                    statusDiv.textContent = statusText;
-                    statusDiv.classList.add(statusClass);
-                    gameEntry.appendChild(statusDiv);
-
-                    // --- NEW: Time Column (with non-repeating logic) ---
-                    const timeDiv = document.createElement('div');
-                    timeDiv.classList.add('time-cell'); // New class for styling
-
-                    const currentTime = game.Time || '';
-                    if (currentTime && currentTime !== 'N/A' && currentTime !== lastDisplayedTime) {
-                        timeDiv.textContent = currentTime;
-                        lastDisplayedTime = currentTime; // Update last displayed time
-                    } else {
-                        timeDiv.textContent = ''; // Leave blank if same as last or invalid
-                    }
-                    gameEntry.appendChild(timeDiv);
-
-                    // --- Event (Teams) Column ---
-                    const eventDiv = document.createElement('div');
-                    eventDiv.classList.add('game-details'); // Custom class for flex-grow and padding
-
-                    // Handle event name for non-team sports vs. team sports
-                    let homeTeam = '';
-                    let awayTeam = '';
-                    if (game.Event && game.Event.includes(' - ')) {
-                        const teams = game.Event.split(' - ');
-                        homeTeam = teams[0] ? teams[0].trim() : 'N/A';
-                        awayTeam = teams[1] ? teams[1].trim() : 'N/A';
-                    } else {
-                        // For non-team sports like F1, Golf, etc., use Event as single line
-                        homeTeam = game.Event || 'N/A Event';
-                        awayTeam = game.Time || ''; // Use time for the second line if no away team
-                    }
-
-
-                    eventDiv.innerHTML = `
-                        <div class="team-name">${homeTeam}</div>
-                        <div class="team-name">${awayTeam}</div>
-                    `;
-                    gameEntry.appendChild(eventDiv);
-
-                    // --- Score Column ---
-                    const scoreDiv = document.createElement('div');
-                    scoreDiv.classList.add('game-scores'); // Custom class for text-align, width, flex-shrink
-
-                    let homeScore = game['Home Score'] !== 'N/A' ? game['Home Score'] : '';
-                    let awayScore = game['Away Score'] !== 'N/A' ? game['Away Score'] : '';
-
-                    // Only show scores for non-scheduled/non-N/A stages
-                    if (currentStage === 'SCHEDULED' || currentStage === 'N/A') {
-                        homeScore = '';
-                        awayScore = '';
-                    }
-
-                    scoreDiv.innerHTML = `
-                        <div class="score-value">${homeScore}</div>
-                        <div class="score-value">${awayScore}</div>
-                    `;
-                    gameEntry.appendChild(scoreDiv);
-
-                    // --- Channel Column (Optional, Right-aligned) ---
-                    const channelDiv = document.createElement('div');
-                    channelDiv.classList.add('game-channel'); // Custom class for text-align, width, flex-shrink, text-sm
-                    const channelText = (game.Channels && game.Channels !== 'N/A') ? game.Channels : '';
-                    channelDiv.textContent = channelText;
-                    gameEntry.appendChild(channelDiv);
-
-                    gamesListContainer.appendChild(gameEntry);
-                });
-
-                leagueSection.appendChild(gamesListContainer);
-                dynamicGamesContent.appendChild(leagueSection);
-            });
-
-            dynamicGamesContent.classList.remove('hidden'); // Show content after loading
-
-        } catch (error) {
-            console.error('Failed to fetch or parse sports data:', error);
-            gamesErrorTextSpan.textContent = `Failed to load data: ${error.message}. Please check the CSV URL or try again later.`;
-            gamesErrorMessageDiv.classList.remove('hidden'); // Show error if there's a problem
-        } finally {
-            gamesLoadingElement.classList.add('hidden'); // Always hide loading indicator
-        }
-    }
-
-    /**
-     * Simple CSV parser that assumes no commas within fields unless quoted.
-     * Handles quoted fields and newlines within quoted fields.
-     * @param {string} csvText - The raw CSV string.
-     * @returns {Array<Object>} An array of objects, where each object represents a row.
-     */
-    function parseCsv(csvText) {
-        const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== ''); // Split by newline, remove empty lines
-        if (lines.length === 0) return [];
-
-        const headerLine = lines[0];
-        const dataLines = lines.slice(1);
-
-        // Regex to split by comma, respecting quoted fields
-        const parseLine = (line) => {
-            const result = [];
-            let inQuote = false;
-            let currentField = '';
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                if (char === '"') {
-                    inQuote = !inQuote;
-                    if (!inQuote && line[i + 1] === '"') { // Handle escaped double quotes ""
-                        currentField += '"';
-                        i++; // Skip the next quote
-                    }
-                } else if (char === ',' && !inQuote) {
-                    result.push(currentField.trim());
-                    currentField = '';
-                } else {
-                    currentField += char;
-                }
-            }
-            result.push(currentField.trim()); // Add the last field
-            return result;
-        };
-
-        const headers = parseLine(headerLine);
-        const data = dataLines.map(line => parseLine(line));
-
-        const games = [];
-        data.forEach(row => {
-            if (row.length === headers.length) { // Ensure row has same number of columns as header
-                const game = {};
-                headers.forEach((header, index) => {
-                    game[header.trim()] = row[index];
-                });
-                games.push(game);
-            }
-        });
-        return games;
-    }
-
-   <script>
-  // Function to handle tab switching
-  function setupTabSwitching() {
-      const gamesTabs = document.querySelectorAll('.games-tab');
-      const gamesContents = document.querySelectorAll('.games-content');
-
-      gamesTabs.forEach(tab => {
-          tab.addEventListener('click', () => {
-              const targetTabId = tab.dataset.tab;
-
-              gamesTabs.forEach(t => t.classList.remove('active'));
-              tab.classList.add('active');
-
-              gamesContents.forEach(content => {
-                  if (content.id === `tv-listings-${targetTabId}`) {
-                      content.style.display = 'block';
-                  } else {
-                      content.style.display = 'none';
-                  }
-              });
-
-              // If the "TODAY" tab is clicked, fetch and display data
-              if (targetTabId === 'today') {
-                  fetchAndDisplaySportsData();
-              }
-              // You can add logic for 'LIVE' and 'SCORES' tabs here if needed
-          });
-      });
-  }
-
-document.addEventListener('DOMContentLoaded', () => {
-  setupTabSwitching();
-
-  const todayTab = document.querySelector('.games-tab[data-tab="today"]');
-  if (todayTab) {
-    todayTab.classList.add('active');
-    todayTab.click(); // This will trigger the fetch AND show the tab
-  }
-});
-
-
-</script>
-
-
-	    <script>
-  window.addEventListener("DOMContentLoaded", () => {
-    const todayTab = document.querySelector('.games-tab[data-target="today"]');
-    if (todayTab) todayTab.click();
-  });
-</script>
-	   
-<script>
-  const target = document.getElementById("today");
-  const observer = new MutationObserver((mutations) => {
-    console.log("🔄 #today content changed!", mutations);
-  });
-  if (target) {
-    observer.observe(target, { childList: true, subtree: true });
-  } else {
-    console.warn("⚠️ No #today element found.");
-  }
-</script>
 
   </body>
 </html> 
+
+
