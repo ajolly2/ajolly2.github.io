@@ -2918,35 +2918,47 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
         const gamesErrorTextSpan = document.getElementById('gamesErrorText');
         const dynamicGamesContent = document.getElementById('dynamicGamesContent');
 
-        // Ensure loading is shown and data/error are hidden at the start of fetch
-        gamesLoadingElement.classList.remove('hidden');
-        dynamicGamesContent.classList.add('hidden'); // Hide content while loading
-        gamesErrorMessageDiv.classList.add('hidden'); // Hide error message
-        dynamicGamesContent.innerHTML = ''; // Clear previous data
+     // Show loading, but DO NOT hide or clear dynamicGamesContent yet
+gamesLoadingElement.classList.remove('hidden');
+gamesErrorMessageDiv.classList.add('hidden'); // Hide error message
 
-        try {
-            const response = await fetch(CSV_URL);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const csvText = await response.text();
-            const games = parseCsv(csvText);
+try {
+    const response = await fetch(CSV_URL);
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const csvText = await response.text();
+    const games = parseCsv(csvText);
 
-            if (games.length === 0) {
-                gamesErrorTextSpan.textContent = 'No sports data found in the CSV.';
-                gamesErrorMessageDiv.classList.remove('hidden');
-                return;
-            }
+    if (games.length === 0) {
+        gamesErrorTextSpan.textContent = 'No sports data found in the CSV.';
+        gamesErrorMessageDiv.classList.remove('hidden');
+        gamesLoadingElement.classList.add('hidden');
+        return;
+    }
 
-            // Group games by league
-            const groupedGames = games.reduce((acc, game) => {
-                const league = game.League || 'Other'; // Use 'Other' for games without a specific league
-                if (!acc[league]) {
-                    acc[league] = [];
-                }
-                acc[league].push(game);
-                return acc;
-            }, {});
+    // Only now, after everything succeeded, clear and show the new content
+    dynamicGamesContent.innerHTML = '';
+    dynamicGamesContent.classList.remove('hidden');
+    gamesLoadingElement.classList.add('hidden');
+    gamesErrorMessageDiv.classList.add('hidden');
+
+    // Group games by league
+    const groupedGames = games.reduce((acc, game) => {
+        const league = game.League || 'Other'; // Use 'Other' for games without a specific league
+        if (!acc[league]) {
+            acc[league] = [];
+        }
+        acc[league].push(game);
+        return acc;
+    }, {});
+
+} catch (error) {
+    gamesErrorTextSpan.textContent = error.message;
+    gamesErrorMessageDiv.classList.remove('hidden');
+    gamesLoadingElement.classList.add('hidden');
+    // DO NOT clear dynamicGamesContent; leave previous data visible
+}
 
             // Sort league names alphabetically
             const sortedLeagueNames = Object.keys(groupedGames).sort();
