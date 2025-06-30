@@ -3198,6 +3198,17 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
   });
 </script>
 	   
+<script>
+  const target = document.getElementById("today");
+  const observer = new MutationObserver((mutations) => {
+    console.log("🔄 #today content changed!", mutations);
+  });
+  if (target) {
+    observer.observe(target, { childList: true, subtree: true });
+  } else {
+    console.warn("⚠️ No #today element found.");
+  }
+</script>
 
   </body>
 </html> 
