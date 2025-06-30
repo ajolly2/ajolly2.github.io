@@ -2918,9 +2918,10 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
         const gamesErrorTextSpan = document.getElementById('gamesErrorText');
         const dynamicGamesContent = document.getElementById('dynamicGamesContent');
 
-     // Show loading, but DO NOT hide or clear dynamicGamesContent yet
+    // Show loading spinner, but leave games visible for now
 gamesLoadingElement.classList.remove('hidden');
 gamesErrorMessageDiv.classList.add('hidden'); // Hide error message
+// DO NOT clear or hide dynamicGamesContent yet
 
 try {
     const response = await fetch(CSV_URL);
@@ -2934,30 +2935,32 @@ try {
         gamesErrorTextSpan.textContent = 'No sports data found in the CSV.';
         gamesErrorMessageDiv.classList.remove('hidden');
         gamesLoadingElement.classList.add('hidden');
+        // DO NOT clear dynamicGamesContent, keep previous data visible
         return;
     }
 
-    // Only now, after everything succeeded, clear and show the new content
-    dynamicGamesContent.innerHTML = '';
+    // --- Data fetch and parse succeeded! ---
+    // Now update the UI:
+    dynamicGamesContent.innerHTML = ''; // Clear only now, after we know data is good
     dynamicGamesContent.classList.remove('hidden');
     gamesLoadingElement.classList.add('hidden');
     gamesErrorMessageDiv.classList.add('hidden');
 
-    // Group games by league
+    // ...group games by league and render as before...
     const groupedGames = games.reduce((acc, game) => {
-        const league = game.League || 'Other'; // Use 'Other' for games without a specific league
-        if (!acc[league]) {
-            acc[league] = [];
-        }
+        const league = game.League || 'Other';
+        if (!acc[league]) acc[league] = [];
         acc[league].push(game);
         return acc;
     }, {});
+
+    // (Insert your rendering code here after grouping!)
 
 } catch (error) {
     gamesErrorTextSpan.textContent = error.message;
     gamesErrorMessageDiv.classList.remove('hidden');
     gamesLoadingElement.classList.add('hidden');
-    // DO NOT clear dynamicGamesContent; leave previous data visible
+    // DO NOT clear/hide dynamicGamesContent; keep old games visible!
 }
 
             // Sort league names alphabetically
