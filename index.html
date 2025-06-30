@@ -1817,14 +1817,15 @@ const HEADLINES_FEED = "https://www.espn.com/espn/rss/news";
 const BREAKING_FEED = "https://rss.app/feeds/XcFXtVdyCBGtIC6O.xml";
 const FANTASY_FEED = "https://fantasynews.cbssports.com/rss/headlines/";
 const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news";
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPmKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv';
+const YAHOO_FEED = "https://sports.yahoo.com/mlb/rss/";
+const FOX_FEED = "http://api.foxsports.com/v1/rss?q=mlb";
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPyKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv'; // Re-checked this URL to be safe
 
 // ─── Generic function to fetch and render a basic RSS feed ──────────────────
 function fetchRSSFeed(url, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
   container.innerHTML = "Loading...";
-
   fetch(url)
     .then(res => {
       if (!res.ok) {
@@ -1935,7 +1936,7 @@ async function fetchAndDisplaySportsData() {
         const statusB = statusOrder[b['Current Inning/Stage'] ? b['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
         if (statusA !== statusB) return statusA - statusB;
         const parseTime = (timeStr) => {
-          if (!timeStr || timeStr === 'N/A') return 0;
+          if (!timeStr && timeStr !== 'N/A') return 0;
           const [time, ampm] = timeStr.split(' ');
           let [hours, minutes] = time.split(':').map(Number);
           if (ampm === 'PM' && hours < 12) hours += 12;
@@ -2108,7 +2109,9 @@ function removeNearDuplicateHeadlines() {
 
 // ─── Master DOMContentLoaded Event Listener ─────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-  // Initialize all tab switching
+  // ------------------------------------
+  // --- Tab Switching Logic (GAMETABS) ---
+  // ------------------------------------
   const gameTabs = document.querySelectorAll(".games-tab");
   const gamePanes = document.querySelectorAll(".games-content");
   gameTabs.forEach(tab => {
@@ -2120,7 +2123,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // News Tabs
+  // ------------------------------------
+  // --- Tab Switching Logic (NEWS TABS) ---
+  // ------------------------------------
   const newsTabs = document.querySelectorAll(".news-tab");
   newsTabs.forEach(tab => {
     tab.addEventListener("click", () => {
@@ -2131,36 +2136,40 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("fantasy-feed").style.display = "none";
       document.getElementById("transactions-feed").style.display = "none";
       // Show and fetch the selected feed
-      if (tab.dataset.tab === "breaking") {
-        document.getElementById("breaking-feed").style.display = "block";
-        fetchRSSFeed(BREAKING_FEED, "breaking-feed");
-      }
-      if (tab.dataset.tab === "fantasy") {
-        document.getElementById("fantasy-feed").style.display = "block";
-        fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
-      }
-      if (tab.dataset.tab === "transactions") {
-        document.getElementById("transactions-feed").style.display = "block";
-        fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
+      const feedId = tab.dataset.tab + "-feed";
+      const container = document.getElementById(feedId);
+      if (container) {
+          container.style.display = "block";
+          let feedUrl;
+          if (tab.dataset.tab === "breaking") feedUrl = BREAKING_FEED;
+          if (tab.dataset.tab === "fantasy") feedUrl = FANTASY_FEED;
+          if (tab.dataset.tab === "transactions") feedUrl = TRANSACTIONS_FEED;
+          if (feedUrl) fetchRSSFeed(feedUrl, feedId);
       }
     });
   });
 
-  // Headlines Tabs with Scroll Watcher
+  // -----------------------------------------
+  // --- Tab Switching Logic (HEADLINES TABS) ---
+  // -----------------------------------------
   const headlineTabs = Array.from(document.querySelectorAll(".headlines-tab"));
-  const sources = ["espn", "cbs", "yahoo", "fox"];
+  const headlineSources = {
+    "espn": HEADLINES_FEED,
+    "cbs": FANTASY_FEED, // Assuming CBS feed is the fantasy feed
+    "yahoo": YAHOO_FEED,
+    "fox": FOX_FEED
+  };
   const scrollListeners = {};
   function attachScrollWatcher(src) {
     const feedEl = document.getElementById(src + "-feed");
     if (!feedEl || scrollListeners[src]) return;
     const onScroll = () => {
       if (feedEl.scrollHeight - feedEl.scrollTop - feedEl.clientHeight <= 1) {
+        const sources = Object.keys(headlineSources);
         const idx = sources.indexOf(src);
         const nextIdx = idx + 1;
         if (nextIdx < sources.length) {
-          const nextTab = document.querySelector(
-            `.headlines-tab[data-source="${sources[nextIdx]}"]`
-          );
+          const nextTab = document.querySelector(`.headlines-tab[data-source="${sources[nextIdx]}"]`);
           if (nextTab) nextTab.click();
         }
       }
@@ -2170,17 +2179,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function activateSource(src) {
     headlineTabs.forEach(t => t.classList.toggle("active", t.getAttribute("data-source") === src));
-    sources.forEach(s => {
+    Object.keys(headlineSources).forEach(s => {
       const div = document.getElementById(s + "-feed");
       if (div) div.style.display = (s === src) ? "block" : "none";
     });
-    attachScrollWatcher(src);
+    const feedUrl = headlineSources[src];
+    if (feedUrl) {
+        fetchRSSFeed(feedUrl, src + "-feed");
+        attachScrollWatcher(src);
+    }
   }
   headlineTabs.forEach(tab => {
     tab.addEventListener("click", () => activateSource(tab.getAttribute("data-source")));
   });
 
-  // Menu Toggles
+  // ------------------------------------
+  // --- Menu Toggles ---
+  // ------------------------------------
   const menuBtn = document.getElementById('menu-toggle');
   const gamesBtn = document.getElementById('games-toggle');
   const menuCol = document.querySelector('.column.main-menu');
@@ -2191,19 +2206,19 @@ document.addEventListener("DOMContentLoaded", () => {
   if (gamesBtn && gamesCol) {
     gamesBtn.addEventListener('click', () => gamesCol.classList.toggle('open'));
   }
-
-  // Load data on page load
+  
+  // ------------------------------------
+  // --- Initial Page Load Functions ---
+  // ------------------------------------
   fetchAndDisplaySportsData();
   loadSocialFeed();
-  setupLinkRedirects();
   
-  // Set default tabs and deduplicate headlines
+  // Programmatically click default tabs to ensure content is visible on load
   document.querySelector(".games-tab[data-tab='today']")?.click();
-  
-  // Fetch initial headlines feeds to populate the containers
-  fetchRSSFeed(BREAKING_FEED, "breaking-feed");
-  fetchRSSFeed(HEADLINES_FEED, "headlines-feed"); // This one should load on page load
-  
+  document.querySelector(".news-tab[data-tab='breaking']")?.click();
+  document.querySelector(`.headlines-tab[data-source="espn"]`)?.click();
+
+  // Deduplication logic for RSS feeds
   const rssWidgetContainer = document.getElementById("my-rss-widget");
   if (rssWidgetContainer) {
     const observer = new MutationObserver((mutations, obs) => {
