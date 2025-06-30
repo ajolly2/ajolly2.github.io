@@ -3186,7 +3186,10 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
         });
 
         // Trigger the initial load for the "TODAY" tab when the page loads
-        document.querySelector('.games-tab[data-tab="today"]').click();
+        window.addEventListener('load', () => {
+  const todayTab = document.querySelector('.games-tab[data-tab="today"]');
+  if (todayTab) todayTab.click();
+});
     }
 
     // Initialize tab switching and load initial data when the page loads
