@@ -3191,6 +3191,12 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
     document.addEventListener('DOMContentLoaded', setupTabSwitching);
 </script>
 
+	    <script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const todayTab = document.querySelector('.games-tab[data-target="today"]');
+    if (todayTab) todayTab.click();
+  });
+</script>
 	   
 
   </body>
