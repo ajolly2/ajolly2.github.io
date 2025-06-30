@@ -1802,105 +1802,36 @@
 </div>
 
 <script>
-// ─── Consolidated Tab Switching Logic ───────────────────────────────────────
-function setupTabSwitching() {
-  // Games Tabs
-  const gameTabs = document.querySelectorAll(".games-tab");
-  const gamePanes = document.querySelectorAll(".games-content");
-  gameTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      gameTabs.forEach(t => t.classList.remove("active"));
-      gamePanes.forEach(p => p.style.display = "none");
-      tab.classList.add("active");
-      document.getElementById("tv-listings-" + tab.dataset.tab).style.display = "block";
-    });
-  });
-
-  // News Tabs
-  const newsTabs = document.querySelectorAll(".news-tab");
-  newsTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      newsTabs.forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      document.getElementById("breaking-feed").style.display = "none";
-      document.getElementById("fantasy-feed").style.display = "none";
-      document.getElementById("transactions-feed").style.display = "none";
-      if (tab.dataset.tab === "breaking") {
-        document.getElementById("breaking-feed").style.display = "block";
-        fetchRSSFeed(BREAKING_FEED, "breaking-feed");
-      }
-      if (tab.dataset.tab === "fantasy") {
-        document.getElementById("fantasy-feed").style.display = "block";
-        fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
-      }
-      if (tab.dataset.tab === "transactions") {
-        document.getElementById("transactions-feed").style.display = "block";
-        fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
-      }
-    });
-  });
-
-  // Headlines Tabs with Scroll Watcher
-  const headlineTabs = Array.from(document.querySelectorAll(".headlines-tab"));
-  const sources = ["espn", "cbs", "yahoo", "fox"];
-  const scrollListeners = {};
-  function attachScrollWatcher(src) {
-    const feedEl = document.getElementById(src + "-feed");
-    if (!feedEl || scrollListeners[src]) return;
-    const onScroll = () => {
-      if (feedEl.scrollHeight - feedEl.scrollTop - feedEl.clientHeight <= 1) {
-        const idx = sources.indexOf(src);
-        const nextIdx = idx + 1;
-        if (nextIdx < sources.length) {
-          const nextTab = document.querySelector(
-            `.headlines-tab[data-source="${sources[nextIdx]}"]`
-          );
-          if (nextTab) nextTab.click();
-        }
-      }
-    };
-    feedEl.addEventListener("scroll", onScroll);
-    scrollListeners[src] = onScroll;
-  }
-
-  function activateSource(src) {
-    headlineTabs.forEach(t => t.classList.toggle("active", t.getAttribute("data-source") === src));
-    sources.forEach(s => {
-      const div = document.getElementById(s + "-feed");
-      if (div) div.style.display = (s === src) ? "block" : "none";
-    });
-    attachScrollWatcher(src);
-  }
-
-  headlineTabs.forEach(tab => {
-    tab.addEventListener("click", () => activateSource(tab.getAttribute("data-source")));
-  });
-
-  // Menu Toggles
-  const menuBtn = document.getElementById('menu-toggle');
-  const gamesBtn = document.getElementById('games-toggle');
-  const menuCol = document.querySelector('.column.main-menu');
-  const gamesCol = document.querySelector('.column.tv-listings');
-  if (menuBtn && menuCol) {
-    menuBtn.addEventListener('click', () => menuCol.classList.toggle('open'));
-  }
-  if (gamesBtn && gamesCol) {
-    gamesBtn.addEventListener('click', () => gamesCol.classList.toggle('open'));
-  }
-}
-
-// ─── RSS Feed Fetching ────────────────────────────────────────────────────────
+// ─── FEED URLs and other constants ──────────────────────────────────────────
+const TEAM_ABBR = {
+  "Arizona Diamondbacks": "ARI", "Atlanta Braves": "ATL", "Baltimore Orioles": "BAL", "Boston Red Sox": "BOS",
+  "Chicago White Sox": "CHW", "Chicago Cubs": "CHC", "Cincinnati Reds": "CIN", "Cleveland Guardians": "CLE",
+  "Colorado Rockies": "COL", "Detroit Tigers": "DET", "Houston Astros": "HOU", "Kansas City Royals": "KC",
+  "Los Angeles Angels": "LAA", "Los Angeles Dodgers": "LAD", "Miami Marlins": "MIA", "Milwaukee Brewers": "MIL",
+  "Minnesota Twins": "MIN", "New York Yankees": "NYY", "New York Mets": "NYM", "Athletics": "ATH",
+  "Philadelphia Phillies": "PHI", "Pittsburgh Pirates": "PIT", "San Diego Padres": "SD", "San Francisco Giants": "SF",
+  "Seattle Mariners": "SEA", "St. Louis Cardinals": "STL", "Tampa Bay Rays": "TB", "Texas Rangers": "TEX",
+  "Toronto Blue Jays": "TOR", "Washington Nationals": "WSH"
+};
 const HEADLINES_FEED = "https://www.espn.com/espn/rss/news";
 const BREAKING_FEED = "https://rss.app/feeds/XcFXtVdyCBGtIC6O.xml";
 const FANTASY_FEED = "https://fantasynews.cbssports.com/rss/headlines/";
-const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news"; // EXAMPLE, replace as needed
+const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news";
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPmKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv';
 
+// ─── Generic function to fetch and render a basic RSS feed ──────────────────
 function fetchRSSFeed(url, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
   container.innerHTML = "Loading...";
+
   fetch(url)
-    .then(res => res.text())
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.text();
+    })
     .then(str => {
       const parser = new DOMParser();
       const xml = parser.parseFromString(str, "application/xml");
@@ -1924,8 +1855,9 @@ function fetchRSSFeed(url, containerId) {
       container.innerHTML = "";
       container.appendChild(ul);
     })
-    .catch(() => {
-      container.innerHTML = "<p>Error loading feed.</p>";
+    .catch(error => {
+      console.error("Error loading feed:", error);
+      container.innerHTML = "<p>Error loading feed. It may be temporarily unavailable.</p>";
     });
 }
 
@@ -1964,57 +1896,7 @@ async function loadSocialFeed() {
   }
 }
 
-// ─── Link Redirect Handler ────────────────────────────────────────────────────
-function setupLinkRedirects() {
-  const breakingContainer = document.getElementById("breaking-feed");
-  if (!breakingContainer) return;
-  breakingContainer.addEventListener("click", async (evt) => {
-    const anchor = evt.target.closest("a");
-    if (!anchor || !breakingContainer.contains(anchor)) return;
-    evt.preventDefault();
-    const newsNowUrl = anchor.href;
-    try {
-      const resp = await fetch(newsNowUrl, { redirect: "follow" });
-      const html = await resp.text();
-      const doc = new DOMParser().parseFromString(html, "text/html");
-      const metaRefresh = doc.querySelector('meta[http-equiv="refresh"]');
-      if (metaRefresh) {
-        const content = metaRefresh.getAttribute("content") || "";
-        const match = content.match(/URL=(.*)/i);
-        if (match && match[1]) {
-          window.open(match[1], "_blank");
-          return;
-        }
-      }
-      const linkCanonical = doc.querySelector('link[rel="canonical"]');
-      if (linkCanonical && linkCanonical.href) {
-        window.open(linkCanonical.href, "_blank");
-        return;
-      }
-      const scripts = Array.from(doc.querySelectorAll("script"));
-      for (const s of scripts) {
-        const txt = s.textContent || "";
-        let m = txt.match(/window\.location\.href\s*=\s*['"](.*?)['"]/);
-        if (m && m[1]) {
-          window.open(m[1], "_blank");
-          return;
-        }
-        m = txt.match(/location\.replace\s*\(\s*['"](.*?)['"]/);
-        if (m && m[1]) {
-          window.open(m[1], "_blank");
-          return;
-        }
-      }
-      window.open(newsNowUrl, "_blank");
-    } catch (err) {
-      window.open(newsNowUrl, "_blank");
-    }
-  });
-}
-
-// ─── Sports Data Fetching (Your intended logic) ─────────────────────────────
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPmKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv';
-
+// ─── Sports Data Fetching ───────────────────────────────────────────────────
 async function fetchAndDisplaySportsData() {
   const gamesLoadingElement = document.getElementById('gamesLoading');
   const gamesErrorMessageDiv = document.getElementById('gamesErrorMessage');
@@ -2022,10 +1904,9 @@ async function fetchAndDisplaySportsData() {
   const dynamicGamesContent = document.getElementById('dynamicGamesContent');
 
   gamesLoadingElement?.classList.remove('hidden');
-  dynamicGamesContent?.classList.add('hidden');
   gamesErrorMessageDiv?.classList.add('hidden');
   if (dynamicGamesContent) dynamicGamesContent.innerHTML = '';
-
+  
   try {
     const response = await fetch(CSV_URL);
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -2133,7 +2014,6 @@ async function fetchAndDisplaySportsData() {
       leagueSection.appendChild(gamesListContainer);
       if (dynamicGamesContent) dynamicGamesContent.appendChild(leagueSection);
     });
-
     dynamicGamesContent?.classList.remove('hidden');
   } catch (error) {
     console.error('Failed to fetch or parse sports data:', error);
@@ -2228,20 +2108,102 @@ function removeNearDuplicateHeadlines() {
 
 // ─── Master DOMContentLoaded Event Listener ─────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-  // Initialize all components
-  setupTabSwitching();
+  // Initialize all tab switching
+  const gameTabs = document.querySelectorAll(".games-tab");
+  const gamePanes = document.querySelectorAll(".games-content");
+  gameTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      gameTabs.forEach(t => t.classList.remove("active"));
+      gamePanes.forEach(p => p.style.display = "none");
+      tab.classList.add("active");
+      document.getElementById("tv-listings-" + tab.dataset.tab).style.display = "block";
+    });
+  });
+
+  // News Tabs
+  const newsTabs = document.querySelectorAll(".news-tab");
+  newsTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      newsTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      // Hide all news feed containers
+      document.getElementById("breaking-feed").style.display = "none";
+      document.getElementById("fantasy-feed").style.display = "none";
+      document.getElementById("transactions-feed").style.display = "none";
+      // Show and fetch the selected feed
+      if (tab.dataset.tab === "breaking") {
+        document.getElementById("breaking-feed").style.display = "block";
+        fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+      }
+      if (tab.dataset.tab === "fantasy") {
+        document.getElementById("fantasy-feed").style.display = "block";
+        fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
+      }
+      if (tab.dataset.tab === "transactions") {
+        document.getElementById("transactions-feed").style.display = "block";
+        fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
+      }
+    });
+  });
+
+  // Headlines Tabs with Scroll Watcher
+  const headlineTabs = Array.from(document.querySelectorAll(".headlines-tab"));
+  const sources = ["espn", "cbs", "yahoo", "fox"];
+  const scrollListeners = {};
+  function attachScrollWatcher(src) {
+    const feedEl = document.getElementById(src + "-feed");
+    if (!feedEl || scrollListeners[src]) return;
+    const onScroll = () => {
+      if (feedEl.scrollHeight - feedEl.scrollTop - feedEl.clientHeight <= 1) {
+        const idx = sources.indexOf(src);
+        const nextIdx = idx + 1;
+        if (nextIdx < sources.length) {
+          const nextTab = document.querySelector(
+            `.headlines-tab[data-source="${sources[nextIdx]}"]`
+          );
+          if (nextTab) nextTab.click();
+        }
+      }
+    };
+    feedEl.addEventListener("scroll", onScroll);
+    scrollListeners[src] = onScroll;
+  }
+  function activateSource(src) {
+    headlineTabs.forEach(t => t.classList.toggle("active", t.getAttribute("data-source") === src));
+    sources.forEach(s => {
+      const div = document.getElementById(s + "-feed");
+      if (div) div.style.display = (s === src) ? "block" : "none";
+    });
+    attachScrollWatcher(src);
+  }
+  headlineTabs.forEach(tab => {
+    tab.addEventListener("click", () => activateSource(tab.getAttribute("data-source")));
+  });
+
+  // Menu Toggles
+  const menuBtn = document.getElementById('menu-toggle');
+  const gamesBtn = document.getElementById('games-toggle');
+  const menuCol = document.querySelector('.column.main-menu');
+  const gamesCol = document.querySelector('.column.tv-listings');
+  if (menuBtn && menuCol) {
+    menuBtn.addEventListener('click', () => menuCol.classList.toggle('open'));
+  }
+  if (gamesBtn && gamesCol) {
+    gamesBtn.addEventListener('click', () => gamesCol.classList.toggle('open'));
+  }
+
+  // Load data on page load
   fetchAndDisplaySportsData();
-  fetchRSSFeed(HEADLINES_FEED, "headlines-feed");
-  fetchRSSFeed(BREAKING_FEED, "breaking-feed");
   loadSocialFeed();
   setupLinkRedirects();
-
-  // Set default tabs and watchers
+  
+  // Set default tabs and deduplicate headlines
   document.querySelector(".games-tab[data-tab='today']")?.click();
-  document.querySelector(".news-tab[data-tab='breaking']")?.click();
-  document.querySelector(`.headlines-tab[data-source="espn"]`)?.click();
-
-  // Deduplication logic for RSS feeds
+  
+  // Fetch initial headlines feeds to populate the containers
+  fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+  fetchRSSFeed(HEADLINES_FEED, "headlines-feed"); // This one should load on page load
+  
   const rssWidgetContainer = document.getElementById("my-rss-widget");
   if (rssWidgetContainer) {
     const observer = new MutationObserver((mutations, obs) => {
