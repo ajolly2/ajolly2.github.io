@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games Column Preview</title>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Resets for this isolated preview */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a; /* Dark background */
+            color: #e0e0e0; /* Light text color */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better content flow */
+            min-height: 100vh;
+            padding: 20px; /* Add some padding around the column */
+            box-sizing: border-box;
+        }
+
+        /* TV Listings (Games) Column Styling - Adapted from your main HTML */
+        .column.tv-listings {
+            background-color: #151515; /* Main column background */
+            width: 350px; /* Fixed width for the column as per your main layout */
+            max-width: 100%; /* Ensure responsiveness on smaller screens */
+            padding: 0; /* No padding on the column itself, content handles padding */
+            box-sizing: border-box;
+            overflow-y: auto; /* Allow scrolling within the column */
+            height: calc(100vh - 40px); /* Adjust height to fit preview window with padding */
+            border-radius: 8px; /* Rounded corners for the column */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+        }
+
+        /* Header for the Games column */
+        #tv-listings-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #3c3c3c; /* Matches your news-header background */
+            width: 100%;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            padding-left: 1px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            border-bottom: 1px solid #1f1f1f;
+            color: white; /* Text color for "GAMES" */
+        }
+        #tv-listings-header .news-header { /* Reusing news-header class for "GAMES" text */
+            font-size: 10px; /* Override to match the small header text */
+            font-weight: normal; /* Override to match news-header */
+            padding: 0; /* Remove extra padding */
+            margin: 0; /* Remove extra margin */
+            line-height: 18px; /* Ensure vertical centering */
+        }
+
+        /* Tabs for TODAY, LIVE, SCORES */
+        #tv-listings-header .breaking-tabs-header { /* Reusing breaking-tabs-header class */
+            position: sticky; /* Keep it sticky within its parent */
+            top: 18px; /* Just under the "GAMES" header */
+            z-index: 9;
+            display: flex;
+            gap: 0;
+            padding: 0;
+            height: 18px;
+            background-color: #3c3c3c;
+            width: 100%;
+        }
+
+        .games-tab {
+            flex: 1;
+            text-align: center;
+            font-size: 10px;
+            line-height: 18px;
+            color: #aaa;
+            cursor: pointer;
+            background-color: #2a2a2a;
+            border-right: 1px solid #1f1f1f;
+            display: flex; /* Use flex to center content vertically */
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box; /* Include padding/border in element's total width/height */
+        }
+
+        .games-tab:last-child {
+            border-right: none;
+        }
+
+        .games-tab.active {
+            background-color: #3c3c3c;
+            color: #fff;
+        }
+
+        /* Content area for each tab (TODAY, LIVE, SCORES) */
+        .games-content {
+            display: none; /* Hidden by default, JS shows active tab */
+            padding: 10px; /* Padding inside the content area */
+            background-color: #151515; /* Background for the content area */
+            height: calc(100% - 36px); /* Full column height minus two 18px headers */
+            overflow-y: auto; /* Allow scrolling within the content area */
+            box-sizing: border-box;
+        }
+        #tv-listings-today {
+            display: block; /* TODAY tab is active by default in this preview */
+        }
+
+        /* NEW CUSTOM CSS FOR GAME LISTINGS (FROM PREVIOUS HTML, CONVERTED FROM TAILWIND) */
+        /* General body and container styles, adapted for existing structure */
+        /* These are already handled by the body and .column.tv-listings above for this isolated preview */
+
+        /* Header for the games section (within a tab) */
+        .games-section-header {
+            font-size: 1.5rem; /* text-2xl */
+            line-height: 2rem; /* leading-8 */
+            font-weight: 700; /* font-bold */
+            text-align: center; /* text-center */
+            color: #ffffff; /* text-white */
+            margin-bottom: 1.5rem; /* mb-6 */
+            display: none; /* Hide this specific header as the main column header covers it */
+        }
+
+        /* Loading indicator styling */
+        .loading-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem;
+            color: #9ca3af;
+        }
+
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+            height: 2.5rem;
+            width: 2.5rem;
+            color: #60a5fa;
+            margin-bottom: 0.75rem;
+        }
+
+        .loading-text {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Error message styling */
+        .error-message {
+            background-color: #991b1b;
+            border-width: 1px;
+            border-color: #dc2626;
+            color: #fecaca;
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+            position: relative;
+            margin-top: 1rem;
+        }
+
+        .error-message strong {
+            font-weight: 700;
+        }
+
+        .error-message span {
+            display: block;
+        }
+
+        @media (min-width: 640px) {
+            .error-message span {
+                display: inline;
+            }
+        }
+
+        /* Sports list container (wrapper for all games in a league) */
+        .sports-list-container {
+            border-radius: 0.5rem;
+            border-width: 1px;
+            border-color: #374151;
+            overflow: hidden;
+            margin-bottom: 16px; /* Space after each league block */
+        }
+
+        .sports-list-container .game-entry:not(:last-child) {
+            border-bottom: 1px solid #374151;
+        }
+
+        /* League header styling (matches screenshot dark theme) */
+        .league-header-custom {
+            background-color: #2a2a2a; /* Darker gray for league headers */
+            color: #e0e0e0; /* Light text */
+            padding: 0.75rem 1rem;
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* semi-bold */
+            border-bottom: 1px solid #4a4a4a;
+            border-top: 1px solid #4a4a4a;
+            margin-top: 1.5rem; /* Spacing between leagues */
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem; /* Rounded corners */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        /* Individual game entry styling (matches screenshot flex layout) */
+        .game-entry {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #1f2937; /* bg-gray-800 */
+        }
+
+        .game-entry:hover {
+            background-color: #374151; /* hover:bg-gray-700 */
+        }
+
+        /* Status cell styling */
+        .status-cell {
+            font-weight: 600;
+            text-align: center;
+            width: 50px;
+            flex-shrink: 0;
+            padding-right: 0.5rem;
+        }
+
+        .status-finished {
+            color: #22c55e;
+        }
+
+        .status-live {
+            color: #ef4444;
+        }
+
+        .status-scheduled {
+            color: #a0a0a0;
+        }
+
+        /* Game details (teams) styling */
+        .game-details {
+            flex-grow: 1;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            color: #e5e7eb;
+        }
+
+        .team-name {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        /* Game scores styling */
+        .game-scores {
+            text-align: right;
+            padding-right: 1rem;
+            width: 60px;
+            flex-shrink: 0;
+            color: #e5e7eb;
+        }
+
+        .score-value {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        /* Game channel styling */
+        .game-channel {
+            text-align: right;
+            width: 100px;
+            flex-shrink: 0;
+            padding-right: 1rem;
+            color: #9ca3af;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        /* Custom scrollbar for overflow-y-auto */
+        .column.tv-listings::-webkit-scrollbar,
+        .games-content::-webkit-scrollbar,
+        .sports-list-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .column.tv-listings::-webkit-scrollbar-thumb,
+        .games-content::-webkit-scrollbar-thumb,
+        .sports-list-container::-webkit-scrollbar-thumb {
+            background-color: #4a4a4a; /* Darker gray */
+            border-radius: 4px;
+        }
+        .column.tv-listings::-webkit-scrollbar-track,
+        .games-content::-webkit-scrollbar-track,
+        .sports-list-container::-webkit-scrollbar-track {
+            background-color: #2a2a2a; /* Even darker gray */
+        }
+    </style>
+</head>
+<body>
+    <!-- TV LISTINGS (GAMES) COLUMN -->
+    <div class="column tv-listings">
+        <div id="tv-listings-header">
+            <div class="news-header">GAMES</div>
+            <div class="breaking-tabs-header">
+                <div class="games-tab active" data-tab="today">TODAY</div>
+                <div class="games-tab" data-tab="live">LIVE</div>
+                <div class="games-tab" data-tab="scores">SCORES</div>
+            </div>
+        </div>
+
+        <div id="tv-listings-today" class="games-content">
+            <!-- The game listings from the CSV will be injected here -->
+            <div id="games">
+                <!-- Loading Indicator for Games -->
+                <div id="gamesLoading" class="loading-indicator">
+                    <svg class="loading-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="loading-text">Loading game data...</p>
+                </div>
+                <!-- Error Message for Games -->
+                <div id="gamesErrorMessage" class="error-message hidden" role="alert">
+                    <strong>Error!</strong>
+                    <span id="gamesErrorText"></span>
+                </div>
+                <!-- This div will hold the dynamically loaded game content -->
+                <div id="dynamicGamesContent"></div>
+            </div>
+        </div>
+
+        <div id="tv-listings-live" class="games-content">
+            <!-- Live games will be injected here -->
+        </div>
+
+        <div id="tv-listings-scores" class="games-content">
+            <!-- Scores will be injected here -->
+        </div>
+    </div>
+
+    <script>
+        // THE CORRECTED CSV_URL - THIS IS THE ORIGINAL URL YOU PROVIDED.
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPmKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv';
+
+        async function fetchAndDisplaySportsData() {
+            const gamesLoadingElement = document.getElementById('gamesLoading');
+            const gamesErrorMessageDiv = document.getElementById('gamesErrorMessage');
+            const gamesErrorTextSpan = document.getElementById('gamesErrorText');
+            const dynamicGamesContent = document.getElementById('dynamicGamesContent'); // Target the new dynamic content div
+
+            // Always hide the error message at the start of the fetch operation
+            gamesErrorMessageDiv.classList.add('hidden');
+            gamesLoadingElement.classList.remove('hidden'); // Show loading
+            dynamicGamesContent.innerHTML = ''; // Clear only the dynamic content
+
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const csvText = await response.text();
+                const games = parseCsv(csvText);
+
+                if (games.length === 0) {
+                    gamesErrorTextSpan.textContent = 'No sports data found in the CSV.';
+                    gamesErrorMessageDiv.classList.remove('hidden'); // Show error if no data
+                    return;
+                }
+
+                // Group games by league
+                const groupedGames = games.reduce((acc, game) => {
+                    const league = game.League || 'Other'; // Use 'Other' for games without a specific league
+                    if (!acc[league]) {
+                        acc[league] = [];
+                    }
+                    acc[league].push(game);
+                    return acc;
+                }, {});
+
+                // Sort league names alphabetically
+                const sortedLeagueNames = Object.keys(groupedGames).sort();
+
+                // Clear the dynamicGamesContent before adding new content
+                dynamicGamesContent.innerHTML = '';
+
+                sortedLeagueNames.forEach(leagueName => {
+                    const leagueGames = groupedGames[leagueName];
+                    // Sort games within each league by current stage (LIVE first, then SCHEDULED, then FINISHED) and then by time
+                    leagueGames.sort((a, b) => {
+                        const statusOrder = { 'LIVE': 1, 'SCHEDULED': 2, 'FINISHED': 3, 'N/A': 4 };
+                        const statusA = statusOrder[a['Current Inning/Stage'] ? a['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
+                        const statusB = statusOrder[b['Current Inning/Stage'] ? b['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
+
+                        if (statusA !== statusB) {
+                            return statusA - statusB;
+                        }
+
+                        // Then sort by time (assuming "HH:MM AM/PM" format)
+                        const parseTime = (timeStr) => {
+                            if (!timeStr || timeStr === 'N/A') return 0; // Handle N/A or empty times
+                            const [time, ampm] = timeStr.split(' ');
+                            let [hours, minutes] = time.split(':').map(Number);
+                            if (ampm === 'PM' && hours < 12) hours += 12;
+                            if (ampm === 'AM' && hours === 12) hours = 0; // Midnight
+                            return hours * 60 + minutes;
+                        };
+                        const timeA = parseTime(a.Time);
+                        const timeB = parseTime(b.Time);
+                        return timeA - timeB;
+                    });
+
+
+                    // Create a section for each league
+                    const leagueSection = document.createElement('div');
+                    leagueSection.classList.add('league-section'); // Use 'league-section' for consistency
+
+                    const leagueHeader = document.createElement('h2');
+                    leagueHeader.classList.add('league-header-custom'); // Custom class for styling
+                    leagueHeader.textContent = leagueName;
+                    leagueSection.appendChild(leagueHeader);
+
+                    const gamesListForLeague = document.createElement('div');
+                    gamesListForLeague.classList.add('sports-list-container'); // Wrapper for all games in a league
+
+                    leagueGames.forEach(game => {
+                        const gameEntry = document.createElement('div');
+                        gameEntry.classList.add('game-entry');
+
+                        // --- Status Column (Leftmost) ---
+                        const statusDiv = document.createElement('div');
+                        statusDiv.classList.add('status-cell');
+                        let statusText = '';
+                        let statusClass = 'status-scheduled'; // Default to gray
+
+                        const currentStage = game['Current Inning/Stage'] ? game['Current Inning/Stage'].toUpperCase() : 'N/A';
+                        if (currentStage === 'FINISHED') {
+                            statusText = 'F';
+                            statusClass = 'status-finished';
+                        } else if (currentStage !== 'SCHEDULED' && currentStage !== 'N/A') {
+                            // For live games, show inning/stage
+                            statusText = currentStage.replace(/_INNING/g, '').replace(/_/g, ' '); // Clean up "SIXTH_INNING" to "SIXTH INNING"
+                            statusClass = 'status-live';
+                        } else {
+                            statusText = ''; // Blank for scheduled, as per screenshot
+                        }
+                        statusDiv.textContent = statusText;
+                        statusDiv.classList.add(statusClass);
+                        gameEntry.appendChild(statusDiv);
+
+                        // --- Event (Teams) Column ---
+                        const eventDiv = document.createElement('div');
+                        eventDiv.classList.add('game-details');
+
+                        // Handle event name for non-team sports vs. team sports
+                        let homeTeam = '';
+                        let awayTeam = '';
+                        if (game.Event && game.Event.includes(' - ')) {
+                            const teams = game.Event.split(' - ');
+                            homeTeam = teams[0] ? teams[0].trim() : 'N/A';
+                            awayTeam = teams[1] ? teams[1].trim() : 'N/A';
+                        } else {
+                            // For non-team sports like F1, Golf, etc., use Event as single line
+                            homeTeam = game.Event || 'N/A Event';
+                            awayTeam = game.Time || ''; // Use time for the second line if no away team
+                        }
+
+
+                        eventDiv.innerHTML = `
+                            <div class="team-name">${homeTeam}</div>
+                            <div class="team-name">${awayTeam}</div>
+                        `;
+                        gameEntry.appendChild(eventDiv);
+
+                        // --- Score Column ---
+                        const scoreDiv = document.createElement('div');
+                        scoreDiv.classList.add('game-scores');
+
+                        let homeScore = game['Home Score'] !== 'N/A' ? game['Home Score'] : '';
+                        let awayScore = game['Away Score'] !== 'N/A' ? game['Away Score'] : '';
+
+                        // Only show scores for non-scheduled/non-N/A stages
+                        if (currentStage === 'SCHEDULED' || currentStage === 'N/A') {
+                            homeScore = '';
+                            awayScore = '';
+                        }
+
+                        scoreDiv.innerHTML = `
+                            <div class="score-value">${homeScore}</div>
+                            <div class="score-value">${awayScore}</div>
+                        `;
+                        gameEntry.appendChild(scoreDiv);
+
+                        // --- Channel Column (Optional, Right-aligned) ---
+                        const channelDiv = document.createElement('div');
+                        channelDiv.classList.add('game-channel');
+                        const channelText = (game.Channels && game.Channels !== 'N/A') ? game.Channels : '';
+                        channelDiv.textContent = channelText;
+                        gameEntry.appendChild(channelDiv);
+
+                        gamesListForLeague.appendChild(gameEntry);
+                    });
+
+                    leagueSection.appendChild(gamesListForLeague);
+                    dynamicGamesContent.appendChild(leagueSection); // Append league section to the new dynamic content div
+                });
+
+                // If we reached here, data was successfully loaded and displayed, so hide the error message.
+                // Add a small delay to ensure it's hidden after potential re-renders by the embedding environment.
+                setTimeout(() => {
+                    gamesErrorMessageDiv.classList.add('hidden');
+                }, 100); // 100ms delay
+
+            } catch (error) {
+                console.error('Failed to fetch or parse sports data:', error);
+                gamesErrorTextSpan.textContent = `Failed to load data: ${error.message}. Please check the CSV URL or try again later.`;
+                gamesErrorMessageDiv.classList.remove('hidden'); // Show error if there's a problem
+            } finally {
+                gamesLoadingElement.classList.add('hidden'); // Always hide loading
+            }
+        }
+
+        /**
+         * Simple CSV parser that assumes no commas within fields unless quoted.
+         * Handles quoted fields and newlines within quoted fields.
+         * @param {string} csvText - The raw CSV string.
+         * @returns {Array<Object>} An array of objects, where each object represents a row.
+         */
+        function parseCsv(csvText) {
+            const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== ''); // Split by newline, remove empty lines
+            if (lines.length === 0) return [];
+
+            const headerLine = lines[0];
+            const dataLines = lines.slice(1);
+
+            // Regex to split by comma, respecting quoted fields
+            const parseLine = (line) => {
+                const result = [];
+                let inQuote = false;
+                let currentField = '';
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                        inQuote = !inQuote;
+                        if (!inQuote && line[i + 1] === '"') { // Handle escaped double quotes ""
+                            currentField += '"';
+                            i++; // Skip the next quote
+                        }
+                    } else if (char === ',' && !inQuote) {
+                        result.push(currentField.trim());
+                        currentField = '';
+                    } else {
+                        currentField += char;
+                    }
+                }
+                result.push(currentField.trim()); // Add the last field
+                return result;
+            };
+
+            const headers = parseLine(headerLine);
+            const data = dataLines.map(line => parseLine(line));
+
+            const games = [];
+            data.forEach(row => {
+                if (row.length === headers.length) { // Ensure row has same number of columns as header
+                    const game = {};
+                    headers.forEach((header, index) => {
+                        game[header.trim()] = row[index];
+                    });
+                    games.push(game);
+                }
+            });
+            return games;
+        }
+
+        // Function to handle tab switching
+        function setupTabSwitching() {
+            const gamesTabs = document.querySelectorAll('.games-tab');
+            const gamesContents = document.querySelectorAll('.games-content');
+
+            gamesTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTabId = tab.dataset.tab;
+
+                    gamesTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    gamesContents.forEach(content => {
+                        if (content.id === `tv-listings-${targetTabId}`) {
+                            content.style.display = 'block';
+                        } else {
+                            content.style.display = 'none';
+                        }
+                    });
+
+                    // If the "TODAY" tab is clicked, fetch and display data
+                    if (targetTabId === 'today') {
+                        fetchAndDisplaySportsData();
+                    }
+                    // You can add logic for 'LIVE' and 'SCORES' tabs here if needed
+                });
+            });
+
+            // Set initial active tab and display content
+            document.querySelector('.games-tab[data-tab="today"]').click();
+        }
+
+        // Fetch and display data when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setupTabSwitching(); // Initialize tab switching and load initial data
+        });
+    </script>
+</body>
+</html>
