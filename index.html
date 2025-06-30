@@ -1455,28 +1455,35 @@
     <strong>Games</strong>
   </div>
   <div id="games-tabs" style="display: flex; height: 18px; background-color: #2a2a2a;">
-    <div class="games-tab" data-tab="scores">SCORES</div>
+    <div class="games-tab active" data-tab="scores">SCORES</div>
     <div class="games-tab" data-tab="today">TODAY</div>
     <div class="games-tab" data-tab="live">LIVE</div>
   </div>
   <div id="tv-listings-container">
     <div id="tv-listings-scores" class="games-content" style="display: block;"></div>
     <div id="tv-listings-today" class="games-content" style="display: none;">
-      <div id="games-container">
-        <div id="gamesLoading" class="loading-indicator hidden">
-          <svg class="loading-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <p class="loading-text">Loading sports data...</p>
-        </div>
-        <div id="gamesErrorMessage" class="error-message hidden" role="alert">
-          <strong>Error!</strong>
-          <span id="gamesErrorText"></span>
-        </div>
-        <div id="dynamicGamesContent"></div>
-      </div>
-    </div>
+  <!-- The game listings from the CSV will be injected here -->
+            <div id="games">
+                <!-- Loading Indicator for Games -->
+                <div id="gamesLoading" class="loading-indicator hidden">
+                    <svg class="loading-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="loading-text">Loading sports data...</p>
+                </div>
+                <!-- Error Message for Games -->
+                <div id="gamesErrorMessage" class="error-message hidden" role="alert">
+                    <strong>Error!</strong>
+                    <span id="gamesErrorText"></span>
+                </div>
+                <!-- This div will hold the dynamically loaded game content -->
+                <div id="dynamicGamesContent"></div>
+            </div>
+<div id="games-today">Loading…</div>
+
+
+</div>
     <div id="tv-listings-live" class="games-content" style="display: none;"></div>
   </div>
 </div>
@@ -1802,37 +1809,764 @@
 </div>
 
 <script>
-// ─── FEED URLs and other constants ──────────────────────────────────────────
-const TEAM_ABBR = {
-  "Arizona Diamondbacks": "ARI", "Atlanta Braves": "ATL", "Baltimore Orioles": "BAL", "Boston Red Sox": "BOS",
-  "Chicago White Sox": "CHW", "Chicago Cubs": "CHC", "Cincinnati Reds": "CIN", "Cleveland Guardians": "CLE",
-  "Colorado Rockies": "COL", "Detroit Tigers": "DET", "Houston Astros": "HOU", "Kansas City Royals": "KC",
-  "Los Angeles Angels": "LAA", "Los Angeles Dodgers": "LAD", "Miami Marlins": "MIA", "Milwaukee Brewers": "MIL",
-  "Minnesota Twins": "MIN", "New York Yankees": "NYY", "New York Mets": "NYM", "Athletics": "ATH",
-  "Philadelphia Phillies": "PHI", "Pittsburgh Pirates": "PIT", "San Diego Padres": "SD", "San Francisco Giants": "SF",
-  "Seattle Mariners": "SEA", "St. Louis Cardinals": "STL", "Tampa Bay Rays": "TB", "Texas Rangers": "TEX",
-  "Toronto Blue Jays": "TOR", "Washington Nationals": "WSH"
+  const TEAM_ABBREVIATIONS = {
+    "Liverpool": "LFC", "Arsenal": "ARS", "Newcastle United": "NEW", "Manchester City": "MC",
+    "Chelsea": "CHE", "Nottingham Forest": "NF", "Aston Villa": "AV", "Fulham": "FUL",
+    "Brighton & Hove Albion": "BHA", "AFC Bournemouth": "BOU", "Brentford": "BRE",
+    "Crystal Palace": "CP", "Wolverhampton Wanderers": "WOL", "Manchester United": "MU",
+    "Everton": "EVE", "Tottenham Hotspur": "TOT", "West Ham United": "WHU",
+    "Ipswich Town": "IPS", "Leicester City": "LEI", "Southampton": "SOU"
+  };
+
+  function abbreviateTeam(name) {
+    name = name.replace(/ FC$/, "");
+    return TEAM_ABBREVIATIONS[name] || name;
+  }
+
+  function fullTeamName(name) {
+    return name.replace(/ FC$/, "");
+  }
+
+  async function fetchSheetData() {
+const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbOUvGIXCWv0_AMhDPKfIOWv_hqBSuzXGtTBtke7DpPhiwM0zpXsuPCWMAXnyBI/pub?output=csv";
+    const res = await fetch(url);
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(row => row.split(','));
+
+    const compactBody = document.getElementById('compactBody');
+    const fullBody = document.getElementById('fullBody');
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      const fullName = fullTeamName(row[1]);
+      const abbr = abbreviateTeam(row[1]);
+
+      const trCompact = document.createElement('tr');
+      trCompact.innerHTML = `<td>${row[0]}</td><td>${abbr}</td><td>${row[9]}</td>`;
+      compactBody.appendChild(trCompact);
+
+      const trFull = document.createElement('tr');
+      row[1] = fullName;
+      trFull.innerHTML = row.map(col => `<td>${col}</td>`).join('');
+      fullBody.appendChild(trFull);
+    }
+  }
+
+  fetchSheetData();
+
+  // Show standings only when Premier League is active
+  document.querySelectorAll('#menuList li[data-section]').forEach(item => {
+    item.addEventListener('click', () => {
+      const show = item.dataset.section === 'PremierLeague';
+      document.getElementById('standings-PremierLeague').style.display = show ? 'block' : 'none';
+      document.getElementById('topScorers-PremierLeague').style.display = show ? 'block' : 'none';
+    });
+  });
+</script>
+
+      <script>
+        
+  async function fetchTopScorers() {
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTG7UOhbpZy2AG9PkuyCjlSqgJ8JiepMENdgkh1bBkG4AmevP7p205kyIb5kRvyWsDHh5HeLgAtC8He/pub?output=csv';
+    const res = await fetch(url);
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(row => row.split(','));
+
+    const teamAbbreviations = {
+  "Liverpool": "LFC",
+  "Arsenal": "ARS",
+  "Manchester City": "MC",
+  "Newcastle United": "NEW",
+  "Chelsea": "CHE",
+  "Nottingham Forest": "NF",
+  "Aston Villa": "AVL",
+  "Fulham": "FUL",
+  "Brighton & Hove Albion": "BHA",
+  "AFC Bournemouth": "BOU",
+  "Brentford": "BRE",
+  "Crystal Palace": "CRY",
+  "Wolverhampton Wanderers": "WOL",
+  "Manchester United": "MU",
+  "Everton": "EVE",
+  "Tottenham Hotspur": "TOT",
+  "West Ham United": "WHU",
+  "Ipswich Town": "IPS",
+  "Leicester City": "LEI",
+  "Southampton": "SOU"
 };
+
+    const tbody = document.getElementById('scorersBody');
+    tbody.innerHTML = '';
+
+    for (let i = 1; i < Math.min(rows.length, 11); i++) {
+      const row = rows[i];
+      const fullName = row[0].trim();
+const teamName = row[1].replace(/ FC$/, '').trim();
+      const goals = row[2].trim();
+
+      const nameParts = fullName.split(' ');
+      const formattedName = nameParts.length > 1
+        ? `${nameParts[0][0]}. ${nameParts.slice(1).join(' ')}`
+        : fullName;
+
+      const teamAbbrev = teamAbbreviations[teamName] || "";
+      const teamSpan = `<span style="font-size: 9px; color: blue; margin-left: 5px;">${teamAbbrev}</span>`;
+
+      const tr = document.createElement('tr');
+tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-size:8px; color:#818181;">${teamAbbrev}</span></td><td style="text-align:center">${goals}</td>`;
+      tbody.appendChild(tr);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#menuList li[data-section]').forEach(item => {
+      item.addEventListener('click', () => {
+        const show = item.dataset.section === 'PremierLeague';
+        const scorersPanel = document.getElementById('scorers-PremierLeague');
+        if (scorersPanel) scorersPanel.style.display = show ? 'block' : 'none';
+        if (show) fetchTopScorers();
+      });
+    });
+  });
+</script>
+
+
+
+    <!-- SINGLE RSS.app script load (only once) -->
+    <script src="https://widget.rss.app/v1/feed.js" async></script>
+
+    <!-- Lazy Load Social Feeds Script -->
+    <script>
+      // Updated rssFeeds including new social feed keys
+      const rssFeeds = {
+        Home: "_W0ZzValCUhv9Q88Y",
+        MLB: "_wcNmb7Pr9SpM8BQ4",
+        NBA: "5RV6ZHeyJhWxORz5",
+        NFL: "INJ6Bk4bDkbmuBbD",
+        NHL: "pNuN9vyuvzYgmCmy",
+        UFC: "D7Pzjs1eNyeNfRZg",
+        Boxing: "E4QHg9gnRHekN0eL",
+        NASCARCupSeries: "aIpvGxQaOiSfwADb",
+        Tennis: "InsXma0Pwpks5ZgB",
+        WNBA: "Am6lI6WHRaAxHmbL",
+        LIVGolf: "xTe6w6kt4LL4Hi8v",
+        IndyCar: "0J2bXOqqSpbcTt1Y",
+        NCAAM: "Zd1KfPkoPaqAlIxp",
+        NCAAW: "Aozk9D13FRvOiR16",
+        NCAABaseball: "iJ2vCYtgsHm9IR5d",
+        NCAASoftball: "ON2eWO5ApxIBiGYV",
+        MotoGP: "CKPWivTATHSyhDSN",
+        LPGATour: "RsLnkbshlMSpf2b7",
+        UEFAChampionsLeague: ["_UEFASocialFeed", "fJDD9RMqob2qCjwA"],
+        PremierLeague: ["_PremierSocialFeed", "neXmnwbubK21ZWYF"],
+        MLS: "9EAOd7JHtY1IRVUP",
+        Bundesliga: "YPjYmfSS1NyBDka8",
+        LaLiga: "iatyOkXWhSWdum53",
+        SerieA: "zbTyEkE5gjqLEv3s",
+        Soccer: "YhR2LGbhScpKNkzd",
+        FACup: "2zqHVQtHCIa3PVME",
+        LigaMX: "ExlLtrY7vEkY58OK",
+        NWSL: "YuC1qAhWubEURaom",
+        Ligue1: "WMDUyBIu1k0aSUYq",
+        UEFAEuropaLeague: "7ONIKeDn4stczUat",
+        UEFAConferenceLeague: "F5l3pTQwaGkBrFJk",
+        FormulaOne: "s7r6yAgtrA3k2dJw",
+        NCAAF: "AnA5shmkBJ7gdzCs",
+        PGATour: "c2yYJn0ed57eix3y",
+        TrackAndField: "26sFnjxqUEUQ6mkZ"
+      };
+
+      let currentFeed = null;
+
+      function loadSocialFeed(section) {
+        const container = document.getElementById("social-feed-container");
+        if (currentFeed === section) return;
+        container.innerHTML = "";
+        const feedId = rssFeeds[section];
+        if (feedId) {
+          if (Array.isArray(feedId)) {
+            feedId.forEach(id => {
+              const feedTag = document.createElement("rssapp-feed");
+              feedTag.setAttribute("id", id);
+              container.appendChild(feedTag);
+            });
+          } else {
+            const feedTag = document.createElement("rssapp-feed");
+            feedTag.setAttribute("id", feedId);
+            container.appendChild(feedTag);
+          }
+        } else {
+          container.innerHTML =
+            "<div style='padding: 10px; font-size: 12px;'>No social feed available for this section.</div>";
+        }
+        currentFeed = section;
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // Load default feed (Home) on page load
+        loadSocialFeed("Home");
+
+        // Bind lazy loading to menu item clicks
+        document.querySelectorAll("#menuList li[data-section]").forEach(item => {
+          item.addEventListener("click", () => {
+            const section = item.dataset.section;
+            loadSocialFeed(section);
+          });
+        });
+      });
+    </script>
+
+      <script>
+        function showDiscussionSection(section) {
+  // Hide all discussion content sections
+  document.querySelectorAll("#discussion-panel .content-section").forEach(el => {
+    el.style.display = "none";
+  });
+  // Show the discussion section for the given menu item
+  const target = document.getElementById("discussion-" + section);
+  if (target) {
+    target.style.display = "block";
+  }
+}
+      </script>
+
+    <!-- News Feeds Script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Helper function to fetch and render an XML feed and attach click event listeners to its links
+        function fetchFeed(containerSelector, feedUrl) {
+          const container = document.querySelector(containerSelector);
+          if (!container) return;
+          fetch(feedUrl)
+            .then(res => res.text())
+            .then(str => {
+              const parser = new DOMParser();
+              const xml = parser.parseFromString(str, "application/xml");
+              const items = Array.from(xml.querySelectorAll("item"));
+              if (items.length > 0) {
+                const ul = document.createElement("ul");
+                items.forEach(item => {
+                  const title = item.querySelector("title")?.textContent || "No title";
+                  const link = item.querySelector("link")?.textContent || "#";
+                  const li = document.createElement("li");
+                  const a = document.createElement("a");
+                  a.href = link;
+                  a.target = "_blank";
+                  a.textContent = title;
+                  li.appendChild(a);
+                  ul.appendChild(li);
+                });
+                container.innerHTML = "";
+                container.appendChild(ul);
+                ul.querySelectorAll("a").forEach(link => {
+                  link.addEventListener("click", () => {
+                    link.classList.add("clicked");
+                  });
+                });
+              } else {
+                container.innerHTML = "<p>No items found.</p>";
+              }
+            })
+            .catch(error => {
+              console.error("Error loading feed:", error);
+              container.innerHTML = "<p>Error loading feed.</p>";
+            });
+        }
+
+        // ─── Updated “Headlines” feedMap ───
+const feedMap = {
+  // ESPN still works directly, but you can point it at rss.app if you like:
+  espn:  "https://www.espn.com/espn/rss/news",
+
+  // CBS through rss.app instead of AllOrigins
+  cbs:   "https://rss.app/feeds/qQ90C7XC0oUECOLP.xml",
+
+  // Yahoo through rss.app
+  yahoo: "https://rss.app/feeds/OvSpAK6PF8gmF37d.xml",
+
+  // FOX through rss.app
+  fox:   "https://rss.app/feeds/gqwmnxZNc8bSqdto.xml"
+};
+
+
+Object.entries(feedMap).forEach(([source, url]) => {
+  // Notice we now pass "#espn-feed", "#cbs-feed", etc., instead of "#feed-ESPN .feed-content"
+  fetchFeed(`#${source}-feed`, url);
+});
+
+        // Fetch custom feeds for existing sections
+        fetchFeed(
+          "#feed-_6gzCeS4YQ4h2adTs .feed-content",
+          "https://rss.app/feeds/_6gzCeS4YQ4h2adTs.xml"
+        ); // MLB
+        fetchFeed(
+          "#feed-_ja3fYEA7yigAcmAk .feed-content",
+          "https://rss.app/feeds/_ja3fYEA7yigAcmAk.xml"
+        ); // NBA
+        fetchFeed(
+          "#feed-_iiyR3EPoC5QXMnqt .feed-content",
+          "https://rss.app/feeds/_iiyR3EPoC5QXMnqt.xml"
+        ); // NFL
+        fetchFeed(
+          "#feed-_pBOHW7eyjbGkaiZq .feed-content",
+          "https://rss.app/feeds/_pBOHW7eyjbGkaiZq.xml"
+        ); // MLS
+        fetchFeed(
+          "#feed-PremierLeague .feed-content",
+          "https://rss.app/feeds/_U8NbeKvmRWqgPwZq.xml"
+        ); // Premier League
+        fetchFeed(
+          "#feed-UEFAChampionsLeague .feed-content",
+          "https://rss.app/feeds/_BnF56qFhfPBsVZ6I.xml"
+        ); // UEFA Champions League
+        fetchFeed(
+          "#feed-SerieA .feed-content",
+          "https://rss.app/feeds/_IEjWrVaKRW3QNEkB.xml"
+        ); // Serie A
+        fetchFeed(
+          "#feed-Bundesliga .feed-content",
+          "https://rss.app/feeds/_OFOWQNsn38MFTtLv.xml"
+        ); // Bundesliga
+        fetchFeed(
+          "#feed-LaLiga .feed-content",
+          "https://rss.app/feeds/_zvRqo1UuuoLB5czl.xml"
+        ); // LaLiga
+        fetchFeed(
+          "#feed-_5c3ZcfSrwvdwdG2Z .feed-content",
+          "https://rss.app/feeds/_5c3ZcfSrwvdwdG2Z.xml"
+        ); // NHL
+
+        // Fetch custom feeds for new news sections
+        fetchFeed(
+          "#feed-UFC .feed-content",
+          "https://rss.app/feeds/_YGmr1TjOD0yXmfU1.xml"
+        ); // UFC
+        fetchFeed(
+          "#feed-Boxing .feed-content",
+          "https://rss.app/feeds/_7DfbEtxpn8RPNIMf.xml"
+        ); // Boxing
+        fetchFeed(
+          "#feed-NASCARCupSeries .feed-content",
+          "https://rss.app/feeds/_D7Q3jbrHjR3bGj8O.xml"
+        ); // NASCAR Cup Series
+        fetchFeed(
+          "#feed-Tennis .feed-content",
+          "https://rss.app/feeds/_tGSXi2957CegL2kC.xml"
+        ); // Tennis
+        fetchFeed(
+          "#feed-WNBA .feed-content",
+          "https://rss.app/feeds/_JsIgbwln4EnDHpSE.xml"
+        ); // WNBA
+        fetchFeed(
+          "#feed-LIVGolf .feed-content",
+          "https://rss.app/feeds/_s7tH2abPc7ZQXhLp.xml"
+        ); // LIV Golf
+        fetchFeed(
+          "#feed-IndyCar .feed-content",
+          "https://rss.app/feeds/_TqIJuTCX0SmFe0lM.xml"
+        ); // IndyCar
+        fetchFeed(
+          "#feed-NCAAM .feed-content",
+          "https://rss.app/feeds/_va6EQaZAxOx6z8xR.xml"
+        ); // NCAAM
+        fetchFeed(
+          "#feed-NCAAW .feed-content",
+          "https://rss.app/feeds/_2P4NcD95YPwU8T51.xml"
+        ); // NCAAW
+        fetchFeed(
+          "#feed-NCAABaseball .feed-content",
+          "https://rss.app/feeds/_q2SYr186Ed7j8jud.xml"
+        ); // NCAABaseball
+        fetchFeed(
+          "#feed-NCAASoftball .feed-content",
+          "https://rss.app/feeds/_y4zf68Y0lK5bkT47.xml"
+        ); // NCAASoftball
+        fetchFeed(
+          "#feed-MotoGP .feed-content",
+          "https://rss.app/feeds/_4Bpke8POCqxzxfKq.xml"
+        ); // MotoGP
+        fetchFeed(
+          "#feed-LPGATour .feed-content",
+          "https://rss.app/feeds/_a4W47htGlhRlO2ju.xml"
+        ); // LPGA Tour
+fetchFeed(
+  "#feed-NCAAF .feed-content",
+  "https://rss.app/feeds/_e8BTSPZYg61J9CYu.xml"
+);
+fetchFeed(
+  "#feed-PGATour .feed-content",
+  "https://rss.app/feeds/_QQsPX3f8GnzYvAXX.xml"
+);
+        fetchFeed(
+  "#feed-FACup .feed-content",
+  "https://rss.app/feeds/Wlg6SgkaP1M71ZJK.xml"
+);
+              fetchFeed(
+  "#feed-LigaMX .feed-content",
+  "https://rss.app/feeds/_JgpA2OqGGC8IrApe.xml"
+);
+      fetchFeed(
+  "#feed-NWSL .feed-content",
+  "https://rss.app/feeds/_1kbC9b791rPZgjg6.xml"
+);
+           fetchFeed(
+  "#feed-FormulaOne .feed-content",
+  "https://rss.app/feeds/_69qKKrngeWZusxVz.xml"
+);
+              fetchFeed(
+  "#feed-Ligue1 .feed-content",
+  "https://rss.app/feeds/_9nS7hLmB3aUlWcjH.xml"
+);
+                fetchFeed(
+  "#feed-UEFAEuropaLeague .feed-content",
+  "https://rss.app/feeds/_Op8jopGsYny0gt0e.xml"
+);
+                fetchFeed(
+  "#feed-UEFAConferenceLeague .feed-content",
+  "https://rss.app/feeds/_BjsIqdRuSa1z3U9p.xml"
+);
+        fetchFeed(
+  "#feed-TrackAndField .feed-content",
+  "https://rss.app/feeds/_rZcwsn3Z2MR5N2Zq.xml"
+);
+         fetchFeed(
+  "#feed-Soccer .feed-content",
+  "https://rss.app/feeds/_X9Xovb703UELx2SR.xml"
+);
+        
+        
+
+        // Existing menu functionality
+        let selectedSection = "Home";
+        document.querySelectorAll(".menu-filter").forEach(filter => {
+          filter.addEventListener("click", () => {
+            document.getElementById("menuSearch").value = "";
+            ["123", "az", "group"].forEach(type => {
+              document.querySelectorAll("#menuList-" + type + " li").forEach(li => {
+                li.style.display = "";
+              });
+            });
+            document.querySelectorAll(".menu-filter").forEach(f =>
+              f.classList.remove("active")
+            );
+            filter.classList.add("active");
+            const type = filter.dataset.filter;
+            document.getElementById("menuList-123").style.display =
+              type === "123" ? "block" : "none";
+            document.getElementById("menuList-az").style.display =
+              type === "az" ? "block" : "none";
+            document.getElementById("menuList-group").style.display =
+              type === "group" ? "block" : "none";
+            const newList = document.getElementById("menuList-" + type);
+            if (newList) {
+              newList.querySelectorAll("li[data-section]").forEach(li => {
+                li.classList.toggle("selected", li.dataset.section === selectedSection);
+              });
+            }
+          });
+        });
+
+        document.querySelectorAll("#menuList li").forEach(item => {
+          item.addEventListener("click", e => {
+            if (
+              item.classList.contains("spacer-line") ||
+              item.classList.contains("soccer-more-toggle")||
+              item.querySelector("strong")
+              
+            ) {
+              e.stopPropagation();
+              return;
+            }
+            e.stopPropagation();
+            if (item.dataset.section) {
+              selectedSection = item.dataset.section;
+            }
+            document
+              .querySelectorAll("#menuList li[data-section]")
+              .forEach(li => li.classList.remove("selected"));
+            item.classList.add("selected");
+            const section = item.dataset.section;
+            document.querySelectorAll(".news .content-section").forEach(
+              s => (s.style.display = "none")
+            );
+            document.querySelectorAll("#social-feed-container .content-section").forEach(s => s.style.display = "none");
+
+            const news = document.getElementById("news-" + section);
+            const social = document.getElementById("social-" + section);
+            if (news) {
+              news.style.display = "block";
+              if (section === "Home") {
+                document.getElementById("newsSubMenu").style.display = "flex";
+                const container = document.querySelector(".news");
+                container.scrollTop = 0;
+                container.dispatchEvent(new Event("scroll"));
+              } else {
+                document.getElementById("newsSubMenu").style.display = "none";
+              }
+            }
+            if (social) social.style.display = "block";
+          });
+        });
+
+        const feeds = ["feed-ESPN", "feed-CBS", "feed-FOX", "feed-Yahoo"];
+        const newsPanel = document.querySelector(".news");
+        newsPanel.addEventListener("scroll", () => {
+          const top = newsPanel.getBoundingClientRect().top;
+          const offset = document.getElementById("newsSubMenu").offsetHeight + 50;
+          let active = 0;
+          for (let i = 0; i < feeds.length; i++) {
+            const el = document.getElementById(feeds[i]);
+            if (!el) continue;
+            const h4 = el.querySelector("h4");
+            if (!h4) continue;
+            if (h4.getBoundingClientRect().top > top + offset) break;
+            active = i;
+          }
+          const feedName = feeds[active].replace("feed-", "").toLowerCase();
+          document.querySelectorAll(".news-menu-item").forEach(item => {
+            item.classList.toggle(
+              "active",
+              item.dataset.feed.toLowerCase() === feedName
+            );
+          });
+        });
+
+        document.getElementById("menuSearch").addEventListener("keyup", function () {
+          const query = this.value.toLowerCase();
+          const activeFilterElem = document.querySelector(".menu-filter.active");
+          if (!activeFilterElem) return;
+          const activeFilter = activeFilterElem.dataset.filter;
+          const activeList = document.getElementById("menuList-" + activeFilter);
+          if (activeList) {
+            activeList.querySelectorAll("li").forEach(li => {
+              li.style.display = li.textContent.toLowerCase().includes(query)
+                ? ""
+                : "none";
+            });
+          }
+        });
+
+        window.toggleSoccerMore = function () {
+          const section = document.getElementById("soccer-more");
+          const toggle = document.querySelector(".soccer-more-toggle");
+          const expanded = section.style.display === "block";
+          section.style.display = expanded ? "none" : "block";
+          toggle.textContent = expanded ? "More…" : "Less…";
+        };
+
+        // For any RSS feed links added outside fetchFeed, force them to open in a new tab and attach a click listener
+        document.querySelectorAll(".rss-feed a").forEach(link => {
+          link.setAttribute("target", "_blank");
+          link.addEventListener("click", () => {
+            link.classList.add("clicked");
+          });
+        });
+      });
+     function showSecondSocialSection(section) {
+  document.querySelectorAll("#second-social-panel .content-section").forEach(el => {
+    el.style.display = "none";
+  });
+  const target = document.getElementById("social2-" + section);
+  if (target) {
+    target.style.display = "block";
+  }
+}
+
+// When a menu item is clicked:
+document.querySelectorAll("#menuList li[data-section]").forEach(item => {
+  item.addEventListener("click", () => {
+    const section = item.dataset.section; // should be "NBA" for NBA
+    showSecondSocialSection(section);
+    showDiscussionSection(section);
+  });
+});
+    </script>
+
+	   
+
+<!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
+<div id="live-games-container"></div>
+
+<!-- Put this <script> after your <div id="live-games-container"></div> -->
+<script>
+  // ─── FULL TEAM_ABBR — as provided ─────────────────────────────────────────
+  const TEAM_ABBR = {
+    "Arizona Diamondbacks":"ARI","Atlanta Braves":"ATL","Baltimore Orioles":"BAL","Boston Red Sox":"BOS",
+    "Chicago White Sox":"CHW","Chicago Cubs":"CHC","Cincinnati Reds":"CIN","Cleveland Guardians":"CLE",
+    "Colorado Rockies":"COL","Detroit Tigers":"DET","Houston Astros":"HOU","Kansas City Royals":"KC",
+    "Los Angeles Angels":"LAA","Los Angeles Dodgers":"LAD","Miami Marlins":"MIA","Milwaukee Brewers":"MIL",
+    "Minnesota Twins":"MIN","New York Yankees":"NYY","New York Mets":"NYM","Athletics":"ATH",
+    "Philadelphia Phillies":"PHI","Pittsburgh Pirates":"PIT","San Diego Padres":"SD","San Francisco Giants":"SF",
+    "Seattle Mariners":"SEA","St. Louis Cardinals":"STL","Tampa Bay Rays":"TB","Texas Rangers":"TEX",
+    "Toronto Blue Jays":"TOR","Washington Nationals":"WSH"
+  };
+
+  // ─── your CSV endpoints ───────────────────────────────────────────────────
+  const leagueOrderURL =
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkzU6UkVdQoCIU_nF3fAH5NGOzjGbjsCcvDljVe763NopA2DYvYWwBpKCDE-jXyhLpoJaSl_-PTRt3/pub?gid=0&single=true&output=csv';
+
+ const sheetURLs = {
+  MLB: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vToJOR-n-NOVeS-_JAtdyacwCiOEYWKMbsMpqB9oZweQvzMBY29imLHblh-VHTY00UWcd7LR7aO-DsU/pub?gid=1312714292&single=true&output=csv'
+};
+
+  let leagueOrder = [];
+
+  async function loadLeagueOrder() {
+    try {
+      const txt = await (await fetch(leagueOrderURL)).text();
+      leagueOrder = txt.trim()
+        .split(/\r?\n/)
+        .map(r => r.split(',')[0])
+        .filter(l => sheetURLs[l]);
+    } catch {
+      leagueOrder = Object.keys(sheetURLs);
+    }
+  }
+
+  function parseTimeToLocal(timeStr) {
+    // ET string → local Date
+    const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+    const base = new Date(eastNow);
+    const YYYY = base.getFullYear();
+    const MM   = String(base.getMonth()+1).padStart(2,'0');
+    const DD   = String(base.getDate()).padStart(2,'0');
+
+    let [time, mod] = timeStr.split(' ');
+    if (!time||!mod) return null;
+    let [h,m] = time.split(':').map(x=>parseInt(x,10));
+    if (mod==='PM'&&h!==12) h+=12;
+    if (mod==='AM'&&h===12) h=0;
+
+    const iso = `${YYYY}-${MM}-${DD}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00-04:00`;
+    return new Date(iso);
+  }
+
+  async function fetchAllGames() {
+    const byLeague = {};
+    await Promise.all(Object.entries(sheetURLs).map(async ([lg,url])=>{
+      try {
+        const txt = await (await fetch(url)).text();
+        const rows = txt.trim().split(/\r?\n/).slice(1).map(r=>r.split(','));
+        if(rows.length) byLeague[lg]=rows;
+      } catch(e){
+        console.warn(`fetch ${lg} failed`,e);
+      }
+    }));
+    return byLeague;
+  }
+
+  function renderGamesByTab(byLeague) {
+    const nowET = new Date().toLocaleString("en-US",{timeZone:"America/New_York"});
+    const baseET = new Date(nowET);
+    const y = baseET.getFullYear(), m = String(baseET.getMonth()+1).padStart(2,'0'), d = String(baseET.getDate()).padStart(2,'0');
+    const todayStr = `${y}-${m}-${d}`;
+    const yestDate = new Date(baseET.getTime() - 864e5);
+    const yy = yestDate.getFullYear(), mm = String(yestDate.getMonth()+1).padStart(2,'0'), dd = String(yestDate.getDate()).padStart(2,'0');
+    const yesterdayStr = `${yy}-${mm}-${dd}`;
+
+    const containers = {
+      scores: document.getElementById("tv-listings-scores"),
+      today:  document.getElementById("tv-listings-today"),
+      live:   document.getElementById("tv-listings-live")
+    };
+    Object.values(containers).forEach(c=>c.innerHTML="");
+
+    leagueOrder.forEach(league=>{
+      const games = byLeague[league]||[];
+      const sections = {scores:[], today:[], live:[]};
+      const seen = new Set();
+
+      games.forEach(cols=>{
+        let [date, start, away, home, status, inning, score] = cols;
+        status = status.trim();
+        score = (score||"").replace(/–/g,'-').trim();
+        const isFinal = /^(F|Final)$/i.test(status);
+        const isLive  = status==="In Progress";
+
+        let displayTime;
+        if (isFinal)            displayTime='F';
+        else if (isLive)        displayTime=inning||'';
+        else {
+          const dt = parseTimeToLocal(start);
+          displayTime = dt ? dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}) : start;
+        }
+
+        const showTime = (isFinal||isLive||!seen.has(displayTime)) ? displayTime : '';
+        if (!isFinal&&!isLive) seen.add(displayTime);
+
+        let [aScore,hScore] = (score||"0-0").split('-').map(s=>s.trim());
+        const aNum = parseInt(aScore,10)||0, hNum = parseInt(hScore,10)||0;
+        const aCode = TEAM_ABBR[away]||away.split(' ').slice(-1)[0];
+        const hCode = TEAM_ABBR[home]||home.split(' ').slice(-1)[0];
+        const awayHTML = aNum>hNum ? `<span class="winner">${aCode}</span>` : `<span>${aCode}</span>`;
+        const homeHTML = hNum>aNum ? `<span class="winner">${hCode}</span>` : `<span>${hCode}</span>`;
+
+        const row = document.createElement("div");
+        row.className="game-row";
+        row.innerHTML=`
+          <div class="game-time${showTime==='F'?' game-time-final':(isLive?' live':'')}">${showTime}</div>
+          <div class="game-teams">
+            <div class="team-row" style="display:flex;justify-content:space-between;">
+              ${awayHTML}<span>${aScore}</span>
+            </div>
+            <div class="team-row" style="display:flex;justify-content:space-between;">
+              ${homeHTML}<span>${hScore}</span>
+            </div>
+          </div>
+          <div class="game-channel"></div>
+        `;
+
+        if      (date===yesterdayStr&&isFinal) sections.scores.push(row);
+        else if (date===todayStr&&isFinal)     sections.today.push(row);
+        else if (date===todayStr&&isLive)      sections.live.push(row);
+        else if (date===todayStr)              sections.today.push(row);
+      });
+
+      Object.entries(sections).forEach(([key,list])=>{
+        if(!list.length) return;
+        const box=document.createElement("div");
+        box.className="league-section";
+        box.innerHTML=`<div class="league-header">${league}</div>`;
+        list.forEach(r=>box.appendChild(r));
+        containers[key].appendChild(box);
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", async ()=>{
+    await loadLeagueOrder();
+    const allData = await fetchAllGames();
+    renderGamesByTab(allData);
+
+    const tabs = document.querySelectorAll(".games-tab"),
+          panes = document.querySelectorAll(".games-content");
+    tabs.forEach(tab=>{
+      tab.addEventListener("click",()=>{
+        tabs.forEach(t=>t.classList.remove("active"));
+        panes.forEach(p=>p.style.display="none");
+        tab.classList.add("active");
+        document.getElementById("tv-listings-"+tab.dataset.tab).style.display="block";
+      });
+    });
+
+    // default to TODAY
+    document.querySelector(".games-tab[data-tab='today']")?.click();
+  });
+</script>
+	    
+<script>
+  // -- FEED URLs: Replace with your real feeds --
 const HEADLINES_FEED = "https://www.espn.com/espn/rss/news";
 const BREAKING_FEED = "https://rss.app/feeds/XcFXtVdyCBGtIC6O.xml";
 const FANTASY_FEED = "https://fantasynews.cbssports.com/rss/headlines/";
-const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news";
-const YAHOO_FEED = "https://sports.yahoo.com/mlb/rss/";
-const FOX_FEED = "http://api.foxsports.com/v1/rss?q=mlb";
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPyKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv'; // Re-checked this URL to be safe
+const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news"; // EXAMPLE, replace as needed
 
-// ─── Generic function to fetch and render a basic RSS feed ──────────────────
+// -- Generic function to fetch and render a basic RSS feed --
 function fetchRSSFeed(url, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
   container.innerHTML = "Loading...";
   fetch(url)
-    .then(res => {
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      return res.text();
-    })
+    .then(res => res.text())
     .then(str => {
       const parser = new DOMParser();
       const xml = parser.parseFromString(str, "application/xml");
@@ -1856,24 +2590,119 @@ function fetchRSSFeed(url, containerId) {
       container.innerHTML = "";
       container.appendChild(ul);
     })
-    .catch(error => {
-      console.error("Error loading feed:", error);
-      container.innerHTML = "<p>Error loading feed. It may be temporarily unavailable.</p>";
+    .catch(() => {
+      container.innerHTML = "<p>Error loading feed.</p>";
     });
 }
 
-// ─── Social Feed Fetching ───────────────────────────────────────────────────
-async function loadSocialFeed() {
-  const container = document.getElementById("social-feed-container");
-  if (!container) return;
-  container.innerHTML = "Loading...";
-  try {
-    const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_sources/main/social_feed.xml?nocache=" + new Date().getTime());
+// -- Tabs logic for Breaking/Fantasy/Transactions
+document.addEventListener("DOMContentLoaded", function() {
+  // Load default feeds
+  fetchRSSFeed(HEADLINES_FEED, "headlines-feed");
+  fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+
+  const tabs = document.querySelectorAll(".news-tab");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById("breaking-feed").style.display = "none";
+      document.getElementById("fantasy-feed").style.display = "none";
+      document.getElementById("transactions-feed").style.display = "none";
+
+      if (tab.dataset.tab === "breaking") {
+        document.getElementById("breaking-feed").style.display = "block";
+        fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+      }
+      if (tab.dataset.tab === "fantasy") {
+        document.getElementById("fantasy-feed").style.display = "block";
+        fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
+      }
+      if (tab.dataset.tab === "transactions") {
+        document.getElementById("transactions-feed").style.display = "block";
+        fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
+      }
+    });
+  });
+});
+</script>
+ 
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // ── A) Grab all four tab elements and define their order ──
+    const tabs    = Array.from(document.querySelectorAll(".headlines-tab"));
+    const sources = ["espn", "cbs", "yahoo", "fox"];
+
+    // ── B) Keep track of which feeds already have a scroll listener ──
+    const scrollListeners = {};
+
+    // ── C) Function to attach a “scroll to bottom” watcher on a feed ──
+    function attachScrollWatcher(src) {
+      const feedEl = document.getElementById(src + "-feed");
+      // If there's no such element or we've already wired it, do nothing
+      if (!feedEl || scrollListeners[src]) return;
+
+      const onScroll = () => {
+        // When scrolled to (or within 1px of) bottom, auto‐advance:
+        if (feedEl.scrollHeight - feedEl.scrollTop - feedEl.clientHeight <= 1) {
+          const idx     = sources.indexOf(src);
+          const nextIdx = idx + 1;
+          if (nextIdx < sources.length) {
+            const nextTab = document.querySelector(
+              `.headlines-tab[data-source="${sources[nextIdx]}"]`
+            );
+            if (nextTab) nextTab.click();
+          }
+        }
+      };
+
+      feedEl.addEventListener("scroll", onScroll);
+      scrollListeners[src] = onScroll;
+    }
+
+    // ── D) Function to activate (highlight) exactly one tab + feed ──
+    function activateSource(src) {
+      // 1) Toggle “active” class on tabs
+      tabs.forEach(t => t.classList.toggle(
+        "active",
+        t.getAttribute("data-source") === src
+      ));
+
+      // 2) Hide all four feed‐divs, then show only the chosen one
+      sources.forEach(s => {
+        const div = document.getElementById(s + "-feed");
+        if (div) {
+          div.style.display = (s === src) ? "block" : "none";
+        }
+      });
+
+      // 3) After switching, (re‐)attach the scroll watcher to the newly visible feed
+      attachScrollWatcher(src);
+    }
+
+    // ── E) Add click listeners to each .headlines-tab ──
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const src = tab.getAttribute("data-source"); // “espn” / “cbs” / etc.
+        activateSource(src);
+      });
+    });
+
+    // ── F) On initial load, activate ESPN by default ──
+    activateSource("espn");
+  });
+</script>
+	    <script>
+  async function loadSocialFeed() {
+const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_sources/main/social_feed.xml?nocache=" + new Date().getTime());
     const xmlText = await response.text();
     const parser = new DOMParser();
     const xml = parser.parseFromString(xmlText, "application/xml");
-    const items = [...xml.querySelectorAll("item")].slice(0, 10);
-    container.innerHTML = "";
+
+    const items = [...xml.querySelectorAll("item")].slice(0, 10); // Top 10 posts
+    const container = document.getElementById("social-feed-container");
+    container.innerHTML = ""; // Clear loading state
+
     items.forEach(item => {
       const title = item.querySelector("title")?.textContent ?? "";
       const link = item.querySelector("link")?.textContent ?? "#";
@@ -1881,6 +2710,7 @@ async function loadSocialFeed() {
       const description = item.querySelector("description")?.textContent ?? "";
       const imgMatch = description.match(/<img[^>]+src="([^">]+)"/i);
       const imgSrc = imgMatch ? imgMatch[1] : "";
+
       const div = document.createElement("div");
       div.style.marginBottom = "15px";
       div.innerHTML = `
@@ -1892,345 +2722,490 @@ async function loadSocialFeed() {
       `;
       container.appendChild(div);
     });
-  } catch (e) {
-    container.innerHTML = "<p>Error loading social feed.</p>";
   }
-}
 
-// ─── Sports Data Fetching ───────────────────────────────────────────────────
-async function fetchAndDisplaySportsData() {
-  const gamesLoadingElement = document.getElementById('gamesLoading');
-  const gamesErrorMessageDiv = document.getElementById('gamesErrorMessage');
-  const gamesErrorTextSpan = document.getElementById('gamesErrorText');
-  const dynamicGamesContent = document.getElementById('dynamicGamesContent');
-
-  gamesLoadingElement?.classList.remove('hidden');
-  gamesErrorMessageDiv?.classList.add('hidden');
-  if (dynamicGamesContent) dynamicGamesContent.innerHTML = '';
-  
-  try {
-    const response = await fetch(CSV_URL);
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-    const csvText = await response.text();
-    const games = parseCsv(csvText);
-
-    if (games.length === 0) {
-      gamesErrorTextSpan.textContent = 'No sports data found in the CSV.';
-      gamesErrorMessageDiv.classList.remove('hidden');
-      return;
-    }
-
-    const groupedGames = games.reduce((acc, game) => {
-      const league = game.League || 'Other';
-      if (!acc[league]) acc[league] = [];
-      acc[league].push(game);
-      return acc;
-    }, {});
-
-    const sortedLeagueNames = Object.keys(groupedGames).sort();
-    sortedLeagueNames.forEach(leagueName => {
-      const leagueGames = groupedGames[leagueName];
-      leagueGames.sort((a, b) => {
-        const statusOrder = { 'LIVE': 1, 'SCHEDULED': 2, 'FINISHED': 3, 'N/A': 4 };
-        const statusA = statusOrder[a['Current Inning/Stage'] ? a['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
-        const statusB = statusOrder[b['Current Inning/Stage'] ? b['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
-        if (statusA !== statusB) return statusA - statusB;
-        const parseTime = (timeStr) => {
-          if (!timeStr && timeStr !== 'N/A') return 0;
-          const [time, ampm] = timeStr.split(' ');
-          let [hours, minutes] = time.split(':').map(Number);
-          if (ampm === 'PM' && hours < 12) hours += 12;
-          if (ampm === 'AM' && hours === 12) hours = 0;
-          return hours * 60 + minutes;
-        };
-        return parseTime(a.Time) - parseTime(b.Time);
-      });
-
-      const leagueSection = document.createElement('div');
-      leagueSection.classList.add('league-section');
-      leagueSection.innerHTML = `<h2 class="league-header">${leagueName}</h2>`;
-      const gamesListContainer = document.createElement('div');
-      gamesListContainer.classList.add('game-entry-wrapper');
-      let lastDisplayedTime = null;
-      leagueGames.forEach(game => {
-        const gameEntry = document.createElement('div');
-        gameEntry.classList.add('game-entry');
-        const statusDiv = document.createElement('div');
-        statusDiv.classList.add('status-cell');
-        let statusText = '', statusClass = 'status-scheduled';
-        const currentStage = game['Current Inning/Stage'] ? game['Current Inning/Stage'].toUpperCase() : 'N/A';
-        if (currentStage === 'FINISHED') {
-          statusText = 'F';
-          statusClass = 'status-finished';
-        } else if (currentStage !== 'SCHEDULED' && currentStage !== 'N/A') {
-          statusText = currentStage.replace(/_INNING/g, '').replace(/_/g, ' ');
-          statusClass = 'status-live';
-        } else {
-          statusText = '';
-        }
-        statusDiv.textContent = statusText;
-        statusDiv.classList.add(statusClass);
-        gameEntry.appendChild(statusDiv);
-
-        const timeDiv = document.createElement('div');
-        timeDiv.classList.add('time-cell');
-        const currentTime = game.Time || '';
-        if (currentTime && currentTime !== 'N/A' && currentTime !== lastDisplayedTime) {
-          timeDiv.textContent = currentTime;
-          lastDisplayedTime = currentTime;
-        }
-        gameEntry.appendChild(timeDiv);
-
-        const eventDiv = document.createElement('div');
-        eventDiv.classList.add('game-details');
-        let homeTeam = '', awayTeam = '';
-        if (game.Event && game.Event.includes(' - ')) {
-          const teams = game.Event.split(' - ');
-          homeTeam = teams[0]?.trim() || 'N/A';
-          awayTeam = teams[1]?.trim() || 'N/A';
-        } else {
-          homeTeam = game.Event || 'N/A Event';
-          awayTeam = game.Time || '';
-        }
-        eventDiv.innerHTML = `<div class="team-name">${homeTeam}</div><div class="team-name">${awayTeam}</div>`;
-        gameEntry.appendChild(eventDiv);
-
-        const scoreDiv = document.createElement('div');
-        scoreDiv.classList.add('game-scores');
-        let homeScore = game['Home Score'] !== 'N/A' ? game['Home Score'] : '';
-        let awayScore = game['Away Score'] !== 'N/A' ? game['Away Score'] : '';
-        if (currentStage === 'SCHEDULED' || currentStage === 'N/A') {
-          homeScore = '';
-          awayScore = '';
-        }
-        scoreDiv.innerHTML = `<div class="score-value">${homeScore}</div><div class="score-value">${awayScore}</div>`;
-        gameEntry.appendChild(scoreDiv);
-
-        const channelDiv = document.createElement('div');
-        channelDiv.classList.add('game-channel');
-        channelDiv.textContent = (game.Channels && game.Channels !== 'N/A') ? game.Channels : '';
-        gameEntry.appendChild(channelDiv);
-        gamesListContainer.appendChild(gameEntry);
-      });
-      leagueSection.appendChild(gamesListContainer);
-      if (dynamicGamesContent) dynamicGamesContent.appendChild(leagueSection);
-    });
-    dynamicGamesContent?.classList.remove('hidden');
-  } catch (error) {
-    console.error('Failed to fetch or parse sports data:', error);
-    if (gamesErrorTextSpan) gamesErrorTextSpan.textContent = `Failed to load data: ${error.message}. Please check the CSV URL or try again later.`;
-    gamesErrorMessageDiv?.classList.remove('hidden');
-  } finally {
-    gamesLoadingElement?.classList.add('hidden');
-  }
-}
-
-function parseCsv(csvText) {
-  const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
-  if (lines.length === 0) return [];
-  const headerLine = lines[0];
-  const dataLines = lines.slice(1);
-  const parseLine = (line) => {
-    const result = [];
-    let inQuote = false;
-    let currentField = '';
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      if (char === '"') {
-        inQuote = !inQuote;
-        if (!inQuote && line[i + 1] === '"') {
-          currentField += '"';
-          i++;
-        }
-      } else if (char === ',' && !inQuote) {
-        result.push(currentField.trim());
-        currentField = '';
-      } else {
-        currentField += char;
-      }
-    }
-    result.push(currentField.trim());
-    return result;
-  };
-  const headers = parseLine(headerLine);
-  const data = dataLines.map(line => parseLine(line));
-  const games = [];
-  data.forEach(row => {
-    if (row.length === headers.length) {
-      const rowObject = {};
-      headers.forEach((header, index) => {
-        rowObject[header] = row[index];
-      });
-      games.push(rowObject);
-    }
-  });
-  return games;
-}
-
-// ─── Fuzzy Deduplication Logic ──────────────────────────────────────────────
-function headlineToWordArray(str) {
-  return str.toLowerCase().replace(/[^\w\s]/g, "").split(/\s+/).filter(word => word.length > 0);
-}
-
-function jaccardSimilarity(wordsA, wordsB) {
-  const setA = new Set(wordsA);
-  const setB = new Set(wordsB);
-  let intersectionCount = 0;
-  for (let w of setA) {
-    if (setB.has(w)) intersectionCount++;
-  }
-  const unionCount = setA.size + setB.size - intersectionCount;
-  return unionCount === 0 ? 0 : intersectionCount / unionCount;
-}
-
-function removeNearDuplicateHeadlines() {
-  const container = document.getElementById("my-rss-widget");
-  if (!container) return;
-  const links = Array.from(container.querySelectorAll("a"));
-  const seenWordSets = [];
-  const SIMILARITY_THRESHOLD = 0.65;
-  links.forEach(link => {
-    const rawText = link.textContent || "";
-    const words = headlineToWordArray(rawText);
-    let isDuplicate = seenWordSets.some(seenWords => jaccardSimilarity(words, seenWords) >= SIMILARITY_THRESHOLD);
-    if (isDuplicate) {
-      let el = link;
-      while (el && el.parentElement && el.parentElement.id !== "my-rss-widget") {
-        el = el.parentElement;
-      }
-      if (el && el.parentElement === container) {
-        container.removeChild(el);
-      }
-    } else {
-      seenWordSets.push(words);
-    }
-  });
-}
-
-// ─── Master DOMContentLoaded Event Listener ─────────────────────────────────
-document.addEventListener("DOMContentLoaded", () => {
-  // ------------------------------------
-  // --- Tab Switching Logic (GAMETABS) ---
-  // ------------------------------------
-  const gameTabs = document.querySelectorAll(".games-tab");
-  const gamePanes = document.querySelectorAll(".games-content");
-  gameTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      gameTabs.forEach(t => t.classList.remove("active"));
-      gamePanes.forEach(p => p.style.display = "none");
-      tab.classList.add("active");
-      document.getElementById("tv-listings-" + tab.dataset.tab).style.display = "block";
-    });
-  });
-
-  // ------------------------------------
-  // --- Tab Switching Logic (NEWS TABS) ---
-  // ------------------------------------
-  const newsTabs = document.querySelectorAll(".news-tab");
-  newsTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      newsTabs.forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      // Hide all news feed containers
-      document.getElementById("breaking-feed").style.display = "none";
-      document.getElementById("fantasy-feed").style.display = "none";
-      document.getElementById("transactions-feed").style.display = "none";
-      // Show and fetch the selected feed
-      const feedId = tab.dataset.tab + "-feed";
-      const container = document.getElementById(feedId);
-      if (container) {
-          container.style.display = "block";
-          let feedUrl;
-          if (tab.dataset.tab === "breaking") feedUrl = BREAKING_FEED;
-          if (tab.dataset.tab === "fantasy") feedUrl = FANTASY_FEED;
-          if (tab.dataset.tab === "transactions") feedUrl = TRANSACTIONS_FEED;
-          if (feedUrl) fetchRSSFeed(feedUrl, feedId);
-      }
-    });
-  });
-
-  // -----------------------------------------
-  // --- Tab Switching Logic (HEADLINES TABS) ---
-  // -----------------------------------------
-  const headlineTabs = Array.from(document.querySelectorAll(".headlines-tab"));
-  const headlineSources = {
-    "espn": HEADLINES_FEED,
-    "cbs": FANTASY_FEED, // Assuming CBS feed is the fantasy feed
-    "yahoo": YAHOO_FEED,
-    "fox": FOX_FEED
-  };
-  const scrollListeners = {};
-  function attachScrollWatcher(src) {
-    const feedEl = document.getElementById(src + "-feed");
-    if (!feedEl || scrollListeners[src]) return;
-    const onScroll = () => {
-      if (feedEl.scrollHeight - feedEl.scrollTop - feedEl.clientHeight <= 1) {
-        const sources = Object.keys(headlineSources);
-        const idx = sources.indexOf(src);
-        const nextIdx = idx + 1;
-        if (nextIdx < sources.length) {
-          const nextTab = document.querySelector(`.headlines-tab[data-source="${sources[nextIdx]}"]`);
-          if (nextTab) nextTab.click();
-        }
-      }
-    };
-    feedEl.addEventListener("scroll", onScroll);
-    scrollListeners[src] = onScroll;
-  }
-  function activateSource(src) {
-    headlineTabs.forEach(t => t.classList.toggle("active", t.getAttribute("data-source") === src));
-    Object.keys(headlineSources).forEach(s => {
-      const div = document.getElementById(s + "-feed");
-      if (div) div.style.display = (s === src) ? "block" : "none";
-    });
-    const feedUrl = headlineSources[src];
-    if (feedUrl) {
-        fetchRSSFeed(feedUrl, src + "-feed");
-        attachScrollWatcher(src);
-    }
-  }
-  headlineTabs.forEach(tab => {
-    tab.addEventListener("click", () => activateSource(tab.getAttribute("data-source")));
-  });
-
-  // ------------------------------------
-  // --- Menu Toggles ---
-  // ------------------------------------
-  const menuBtn = document.getElementById('menu-toggle');
-  const gamesBtn = document.getElementById('games-toggle');
-  const menuCol = document.querySelector('.column.main-menu');
-  const gamesCol = document.querySelector('.column.tv-listings');
-  if (menuBtn && menuCol) {
-    menuBtn.addEventListener('click', () => menuCol.classList.toggle('open'));
-  }
-  if (gamesBtn && gamesCol) {
-    gamesBtn.addEventListener('click', () => gamesCol.classList.toggle('open'));
-  }
-  
-  // ------------------------------------
-  // --- Initial Page Load Functions ---
-  // ------------------------------------
-  fetchAndDisplaySportsData();
   loadSocialFeed();
-  
-  // Programmatically click default tabs to ensure content is visible on load
-  document.querySelector(".games-tab[data-tab='today']")?.click();
-  document.querySelector(".news-tab[data-tab='breaking']")?.click();
-  document.querySelector(`.headlines-tab[data-source="espn"]`)?.click();
+</script>
 
-  // Deduplication logic for RSS feeds
-  const rssWidgetContainer = document.getElementById("my-rss-widget");
-  if (rssWidgetContainer) {
+	    <script>
+  /**
+   * Turn a raw headline into a normalized array of words.
+   *  - Lowercase
+   *  - Remove punctuation
+   *  - Split on whitespace
+   *  - Filter out empty tokens
+   */
+  function headlineToWordArray(str) {
+    return str
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")   // strip any non‐alphanumeric (keeps letters/numbers/spaces)
+      .split(/\s+/)              // split on whitespace
+      .filter(word => word.length > 0);
+  }
+
+  /**
+   * Compute Jaccard similarity of two arrays of words:
+   *    |Intersection(words1, words2)| / |Union(words1, words2)|
+   */
+  function jaccardSimilarity(wordsA, wordsB) {
+    const setA = new Set(wordsA);
+    const setB = new Set(wordsB);
+    let intersectionCount = 0;
+    for (let w of setA) {
+      if (setB.has(w)) intersectionCount++;
+    }
+    const unionCount = setA.size + setB.size - intersectionCount;
+    if (unionCount === 0) return 0;
+    return intersectionCount / unionCount;
+  }
+
+  /**
+   * Remove any post element whose headline is “too similar” to one already kept.
+   * We keep track of word‐sets of all headlines we’ve accepted, then for each new one
+   * we measure its Jaccard similarity against all “seen” sets. If any overlap ≥ threshold, we remove it.
+   */
+  function removeNearDuplicateHeadlines() {
+    const container = document.getElementById("my-rss-widget");
+    if (!container) return;
+
+    // Grab every <a> under #my-rss-widget (RSS.app normally puts each item in an <a>).
+    const links = Array.from(container.querySelectorAll("a"));
+
+    // Array of word‐sets we have accepted so far
+    const seenWordSets = [];
+    // Threshold of Jaccard similarity above which we consider two headlines “duplicates”
+    const SIMILARITY_THRESHOLD = 0.65;
+
+    links.forEach(link => {
+      const rawText = link.textContent || "";
+      const words = headlineToWordArray(rawText);
+      // Compare against each seen word‐set:
+      let isDuplicate = false;
+      for (let seenWords of seenWordSets) {
+        const similarity = jaccardSimilarity(words, seenWords);
+        if (similarity >= SIMILARITY_THRESHOLD) {
+          isDuplicate = true;
+          break;
+        }
+      }
+
+      if (isDuplicate) {
+        // Remove this entire “item.” Climb up until you hit a direct child of #my-rss-widget:
+        let el = link;
+        while (el && el.parentElement && el.parentElement.id !== "my-rss-widget") {
+          el = el.parentElement;
+        }
+        if (el && el.parentElement === container) {
+          container.removeChild(el);
+        }
+      } else {
+        // Not a duplicate: add this word‐array to seenWordSets
+        seenWordSets.push(words);
+      }
+    });
+  }
+
+  /**
+   * Observe #my-rss-widget until at least one <a> appears, then run the fuzzy dedupe.
+   * Also run a fallback after 3 seconds in case feed loads slowly.
+   */
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("my-rss-widget");
+    if (!container) return;
+
     const observer = new MutationObserver((mutations, obs) => {
-      if (rssWidgetContainer.querySelector("a")) {
+      // If at least one <a> is present, RSS.app has rendered items
+      if (container.querySelector("a")) {
         removeNearDuplicateHeadlines();
         obs.disconnect();
       }
     });
-    observer.observe(rssWidgetContainer, { childList: true, subtree: true });
-    setTimeout(removeNearDuplicateHeadlines, 3000); // Fallback
-  }
-});
+
+    observer.observe(container, { childList: true, subtree: true });
+
+    // Fallback in case feed injection is delayed
+    setTimeout(removeNearDuplicateHeadlines, 3000);
+  });
+</script>
+
+	    <!-- put this right before the closing </body> tag -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const breakingContainer = document.getElementById("breaking-feed");
+    if (!breakingContainer) return;
+
+    breakingContainer.addEventListener("click", async (evt) => {
+      // Only proceed if a link (<a>) was clicked inside #breaking-feed
+      const anchor = evt.target.closest("a");
+      if (!anchor || !breakingContainer.contains(anchor)) return;
+      evt.preventDefault();
+
+      const newsNowUrl = anchor.href;
+      try {
+        // 1) Fetch the NewsNow page HTML
+        const resp = await fetch(newsNowUrl, { redirect: "follow" });
+        const html = await resp.text();
+        const doc = new DOMParser().parseFromString(html, "text/html");
+
+        // 2) Look for a <meta http-equiv="refresh"> redirect
+        const metaRefresh = doc.querySelector('meta[http-equiv="refresh"]');
+        if (metaRefresh) {
+          const content = metaRefresh.getAttribute("content") || "";
+          // “content” is often like “0; URL=https://…”
+          const match = content.match(/URL=(.*)/i);
+          if (match && match[1]) {
+            window.open(match[1], "_blank");
+            return;
+          }
+        }
+
+        // 3) Fallback: check for <link rel="canonical">
+        const linkCanonical = doc.querySelector('link[rel="canonical"]');
+        if (linkCanonical && linkCanonical.href) {
+          window.open(linkCanonical.href, "_blank");
+          return;
+        }
+
+        // 4) Fallback: inspect any <script> blocks for a JS redirect
+        const scripts = Array.from(doc.querySelectorAll("script"));
+        for (const s of scripts) {
+          const txt = s.textContent || "";
+          // look for window.location.href = "…";
+          let m = txt.match(/window\.location\.href\s*=\s*['"](.*?)['"]/);
+          if (m && m[1]) {
+            window.open(m[1], "_blank");
+            return;
+          }
+          // look for location.replace("…");
+          m = txt.match(/location\.replace\s*\(\s*['"](.*?)['"]/);
+          if (m && m[1]) {
+            window.open(m[1], "_blank");
+            return;
+          }
+        }
+
+        // 5) If none of the above, just open the NewsNow URL as a last resort
+        window.open(newsNowUrl, "_blank");
+      } catch (err) {
+        // On fetch/parse error, open the original link
+        window.open(newsNowUrl, "_blank");
+      }
+    });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn  = document.getElementById('menu-toggle');
+    const gamesBtn = document.getElementById('games-toggle');
+    const menuCol  = document.querySelector('.column.main-menu');
+    const gamesCol = document.querySelector('.column.tv-listings');
+
+    menuBtn.addEventListener('click', () => {
+      menuCol.classList.toggle('open');
+    });
+    gamesBtn.addEventListener('click', () => {
+      gamesCol.classList.toggle('open');
+    });
+  });
+</script>
+<script>
+    // THE CSV_URL - This is the source of your sports data
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPmKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv';
+
+    async function fetchAndDisplaySportsData() {
+        const gamesLoadingElement = document.getElementById('gamesLoading');
+        const gamesErrorMessageDiv = document.getElementById('gamesErrorMessage');
+        const gamesErrorTextSpan = document.getElementById('gamesErrorText');
+        const dynamicGamesContent = document.getElementById('dynamicGamesContent');
+
+        // Ensure loading is shown and data/error are hidden at the start of fetch
+        gamesLoadingElement.classList.remove('hidden');
+        dynamicGamesContent.classList.add('hidden'); // Hide content while loading
+        gamesErrorMessageDiv.classList.add('hidden'); // Hide error message
+        dynamicGamesContent.innerHTML = ''; // Clear previous data
+
+        try {
+            const response = await fetch(CSV_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const csvText = await response.text();
+            const games = parseCsv(csvText);
+
+            if (games.length === 0) {
+                gamesErrorTextSpan.textContent = 'No sports data found in the CSV.';
+                gamesErrorMessageDiv.classList.remove('hidden');
+                return;
+            }
+
+            // Group games by league
+            const groupedGames = games.reduce((acc, game) => {
+                const league = game.League || 'Other'; // Use 'Other' for games without a specific league
+                if (!acc[league]) {
+                    acc[league] = [];
+                }
+                acc[league].push(game);
+                return acc;
+            }, {});
+
+            // Sort league names alphabetically
+            const sortedLeagueNames = Object.keys(groupedGames).sort();
+
+            sortedLeagueNames.forEach(leagueName => {
+                const leagueGames = groupedGames[leagueName];
+                // Sort games within each league by current stage (LIVE first, then SCHEDULED, then FINISHED) and then by time
+                leagueGames.sort((a, b) => {
+                    const statusOrder = { 'LIVE': 1, 'SCHEDULED': 2, 'FINISHED': 3, 'N/A': 4 };
+                    const statusA = statusOrder[a['Current Inning/Stage'] ? a['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
+                    const statusB = statusOrder[b['Current Inning/Stage'] ? b['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
+
+                    if (statusA !== statusB) {
+                        return statusA - statusB;
+                    }
+
+                    // Then sort by time (assuming "HH:MM AM/PM" format)
+                    const parseTime = (timeStr) => {
+                        if (!timeStr || timeStr === 'N/A') return 0; // Handle N/A or empty times
+                        const [time, ampm] = timeStr.split(' ');
+                        let [hours, minutes] = time.split(':').map(Number);
+                        if (ampm === 'PM' && hours < 12) hours += 12;
+                        if (ampm === 'AM' && hours === 12) hours = 0; // Midnight
+                        return hours * 60 + minutes;
+                    };
+                    const timeA = parseTime(a.Time);
+                    const timeB = parseTime(b.Time);
+                    return timeA - timeB;
+                });
+
+
+                // Create a section for each league
+                const leagueSection = document.createElement('div');
+                leagueSection.classList.add('league-section'); // Custom class for section margin
+
+                const leagueHeader = document.createElement('h2');
+                leagueHeader.classList.add('league-header'); // Custom class for styling
+                leagueHeader.textContent = leagueName;
+                leagueSection.appendChild(leagueHeader);
+
+                const gamesListContainer = document.createElement('div');
+                gamesListContainer.classList.add('game-entry-wrapper'); // Custom class for wrapper styling
+
+                // Reset lastDisplayedTime for each new league
+                let lastDisplayedTime = null; 
+
+                leagueGames.forEach(game => {
+                    const gameEntry = document.createElement('div');
+                    gameEntry.classList.add('game-entry'); // Custom class for flex and hover
+
+                    // --- Status Column (Leftmost) ---
+                    const statusDiv = document.createElement('div');
+                    statusDiv.classList.add('status-cell');
+                    let statusText = '';
+                    let statusClass = 'status-scheduled'; // Default to gray
+
+                    const currentStage = game['Current Inning/Stage'] ? game['Current Inning/Stage'].toUpperCase() : 'N/A';
+                    if (currentStage === 'FINISHED') {
+                        statusText = 'F';
+                        statusClass = 'status-finished';
+                    } else if (currentStage !== 'SCHEDULED' && currentStage !== 'N/A') {
+                        // For live games, show inning/stage
+                        statusText = currentStage.replace(/_INNING/g, '').replace(/_/g, ' '); // Clean up "SIXTH_INNING" to "SIXTH INNING"
+                        statusClass = 'status-live';
+                    } else {
+                        statusText = ''; // Blank for scheduled, as per screenshot
+                    }
+                    statusDiv.textContent = statusText;
+                    statusDiv.classList.add(statusClass);
+                    gameEntry.appendChild(statusDiv);
+
+                    // --- NEW: Time Column (with non-repeating logic) ---
+                    const timeDiv = document.createElement('div');
+                    timeDiv.classList.add('time-cell'); // New class for styling
+
+                    const currentTime = game.Time || '';
+                    if (currentTime && currentTime !== 'N/A' && currentTime !== lastDisplayedTime) {
+                        timeDiv.textContent = currentTime;
+                        lastDisplayedTime = currentTime; // Update last displayed time
+                    } else {
+                        timeDiv.textContent = ''; // Leave blank if same as last or invalid
+                    }
+                    gameEntry.appendChild(timeDiv);
+
+                    // --- Event (Teams) Column ---
+                    const eventDiv = document.createElement('div');
+                    eventDiv.classList.add('game-details'); // Custom class for flex-grow and padding
+
+                    // Handle event name for non-team sports vs. team sports
+                    let homeTeam = '';
+                    let awayTeam = '';
+                    if (game.Event && game.Event.includes(' - ')) {
+                        const teams = game.Event.split(' - ');
+                        homeTeam = teams[0] ? teams[0].trim() : 'N/A';
+                        awayTeam = teams[1] ? teams[1].trim() : 'N/A';
+                    } else {
+                        // For non-team sports like F1, Golf, etc., use Event as single line
+                        homeTeam = game.Event || 'N/A Event';
+                        awayTeam = game.Time || ''; // Use time for the second line if no away team
+                    }
+
+
+                    eventDiv.innerHTML = `
+                        <div class="team-name">${homeTeam}</div>
+                        <div class="team-name">${awayTeam}</div>
+                    `;
+                    gameEntry.appendChild(eventDiv);
+
+                    // --- Score Column ---
+                    const scoreDiv = document.createElement('div');
+                    scoreDiv.classList.add('game-scores'); // Custom class for text-align, width, flex-shrink
+
+                    let homeScore = game['Home Score'] !== 'N/A' ? game['Home Score'] : '';
+                    let awayScore = game['Away Score'] !== 'N/A' ? game['Away Score'] : '';
+
+                    // Only show scores for non-scheduled/non-N/A stages
+                    if (currentStage === 'SCHEDULED' || currentStage === 'N/A') {
+                        homeScore = '';
+                        awayScore = '';
+                    }
+
+                    scoreDiv.innerHTML = `
+                        <div class="score-value">${homeScore}</div>
+                        <div class="score-value">${awayScore}</div>
+                    `;
+                    gameEntry.appendChild(scoreDiv);
+
+                    // --- Channel Column (Optional, Right-aligned) ---
+                    const channelDiv = document.createElement('div');
+                    channelDiv.classList.add('game-channel'); // Custom class for text-align, width, flex-shrink, text-sm
+                    const channelText = (game.Channels && game.Channels !== 'N/A') ? game.Channels : '';
+                    channelDiv.textContent = channelText;
+                    gameEntry.appendChild(channelDiv);
+
+                    gamesListContainer.appendChild(gameEntry);
+                });
+
+                leagueSection.appendChild(gamesListContainer);
+                dynamicGamesContent.appendChild(leagueSection);
+            });
+
+            dynamicGamesContent.classList.remove('hidden'); // Show content after loading
+
+        } catch (error) {
+            console.error('Failed to fetch or parse sports data:', error);
+            gamesErrorTextSpan.textContent = `Failed to load data: ${error.message}. Please check the CSV URL or try again later.`;
+            gamesErrorMessageDiv.classList.remove('hidden'); // Show error if there's a problem
+        } finally {
+            gamesLoadingElement.classList.add('hidden'); // Always hide loading indicator
+        }
+    }
+
+    /**
+     * Simple CSV parser that assumes no commas within fields unless quoted.
+     * Handles quoted fields and newlines within quoted fields.
+     * @param {string} csvText - The raw CSV string.
+     * @returns {Array<Object>} An array of objects, where each object represents a row.
+     */
+    function parseCsv(csvText) {
+        const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== ''); // Split by newline, remove empty lines
+        if (lines.length === 0) return [];
+
+        const headerLine = lines[0];
+        const dataLines = lines.slice(1);
+
+        // Regex to split by comma, respecting quoted fields
+        const parseLine = (line) => {
+            const result = [];
+            let inQuote = false;
+            let currentField = '';
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuote = !inQuote;
+                    if (!inQuote && line[i + 1] === '"') { // Handle escaped double quotes ""
+                        currentField += '"';
+                        i++; // Skip the next quote
+                    }
+                } else if (char === ',' && !inQuote) {
+                    result.push(currentField.trim());
+                    currentField = '';
+                } else {
+                    currentField += char;
+                }
+            }
+            result.push(currentField.trim()); // Add the last field
+            return result;
+        };
+
+        const headers = parseLine(headerLine);
+        const data = dataLines.map(line => parseLine(line));
+
+        const games = [];
+        data.forEach(row => {
+            if (row.length === headers.length) { // Ensure row has same number of columns as header
+                const game = {};
+                headers.forEach((header, index) => {
+                    game[header.trim()] = row[index];
+                });
+                games.push(game);
+            }
+        });
+        return games;
+    }
+
+    // Function to handle tab switching
+    function setupTabSwitching() {
+        const gamesTabs = document.querySelectorAll('.games-tab');
+        const gamesContents = document.querySelectorAll('.games-content');
+
+ // --- ADD THE NEW CODE HERE ---
+        const defaultGameTab = document.querySelector(".games-tab[data-tab='today']");
+        const defaultGamePane = document.getElementById("tv-listings-today");
+        if (defaultGameTab && defaultGamePane) {
+            defaultGameTab.classList.add("active");
+            defaultGamePane.style.display = "block";
+        }
+        // --- END OF NEW CODE ---
+
+
+        gamesTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTabId = tab.dataset.tab;
+
+                gamesTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                gamesContents.forEach(content => {
+                    if (content.id === `tv-listings-${targetTabId}`) {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+
+                // If the "TODAY" tab is clicked, fetch and display data
+                if (targetTabId === 'today') {
+                    fetchAndDisplaySportsData();
+                }
+                // You can add logic for 'LIVE' and 'SCORES' tabs here if needed
+                // For example, if you had different CSVs for live/scores:
+                // else if (targetTabId === 'live') { fetchAndDisplayLiveGames(); }
+                // else if (targetTabId === 'scores') { fetchAndDisplayScores(); }
+            });
+        });
+
+        // Trigger the initial load for the "TODAY" tab when the page loads
+        document.querySelector('.games-tab[data-tab="today"]').click();
+    }
+
+    // Initialize tab switching and load initial data when the page loads
+    document.addEventListener('DOMContentLoaded', setupTabSwitching);
+</script>
+
+	    <script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const todayTab = document.querySelector('.games-tab[data-target="today"]');
+    if (todayTab) todayTab.click();
+  });
 </script>
 	   
 
