@@ -3154,47 +3154,45 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
         return games;
     }
 
-    // Function to handle tab switching
-    function setupTabSwitching() {
-        const gamesTabs = document.querySelectorAll('.games-tab');
-        const gamesContents = document.querySelectorAll('.games-content');
+   <script>
+  // Function to handle tab switching
+  function setupTabSwitching() {
+      const gamesTabs = document.querySelectorAll('.games-tab');
+      const gamesContents = document.querySelectorAll('.games-content');
 
-        gamesTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const targetTabId = tab.dataset.tab;
+      gamesTabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+              const targetTabId = tab.dataset.tab;
 
-                gamesTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
+              gamesTabs.forEach(t => t.classList.remove('active'));
+              tab.classList.add('active');
 
-                gamesContents.forEach(content => {
-                    if (content.id === `tv-listings-${targetTabId}`) {
-                        content.style.display = 'block';
-                    } else {
-                        content.style.display = 'none';
-                    }
-                });
+              gamesContents.forEach(content => {
+                  if (content.id === `tv-listings-${targetTabId}`) {
+                      content.style.display = 'block';
+                  } else {
+                      content.style.display = 'none';
+                  }
+              });
 
-                // If the "TODAY" tab is clicked, fetch and display data
-                if (targetTabId === 'today') {
-                    fetchAndDisplaySportsData();
-                }
-                // You can add logic for 'LIVE' and 'SCORES' tabs here if needed
-                // For example, if you had different CSVs for live/scores:
-                // else if (targetTabId === 'live') { fetchAndDisplayLiveGames(); }
-                // else if (targetTabId === 'scores') { fetchAndDisplayScores(); }
-            });
-        });
+              // If the "TODAY" tab is clicked, fetch and display data
+              if (targetTabId === 'today') {
+                  fetchAndDisplaySportsData();
+              }
+              // You can add logic for 'LIVE' and 'SCORES' tabs here if needed
+          });
+      });
+  }
 
-        // Trigger the initial load for the "TODAY" tab when the page loads
-        window.addEventListener('load', () => {
-  const todayTab = document.querySelector('.games-tab[data-tab="today"]');
-  if (todayTab) todayTab.click();
-});
-    }
+  // Initialize tab switching
+  document.addEventListener('DOMContentLoaded', setupTabSwitching);
 
-    // Initialize tab switching and load initial data when the page loads
-    document.addEventListener('DOMContentLoaded', setupTabSwitching);
+  // Trigger initial fetch for "TODAY" tab content on page load
+  document.addEventListener('DOMContentLoaded', () => {
+      fetchAndDisplaySportsData();
+  });
 </script>
+
 
 	    <script>
   window.addEventListener("DOMContentLoaded", () => {
