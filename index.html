@@ -2918,6 +2918,12 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
     const gamesErrorTextSpan = document.getElementById('gamesErrorText');
     const dynamicGamesContent = document.getElementById('dynamicGamesContent');
 
+	    // Force visibility of the container to prevent accidental hiding
+    const todayContentBlock = document.getElementById('tv-listings-today');
+    if (todayContentBlock) {
+        todayContentBlock.style.display = 'block';
+    }
+	   
     // Ensure loading is shown and data/error are hidden at the start of fetch
     if (gamesLoadingElement) {
         gamesLoadingElement.classList.remove('hidden');
