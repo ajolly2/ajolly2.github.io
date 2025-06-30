@@ -3184,13 +3184,20 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
       });
   }
 
-  // Initialize tab switching
-  document.addEventListener('DOMContentLoaded', setupTabSwitching);
+document.addEventListener('DOMContentLoaded', () => {
+    setupTabSwitching();
+    fetchAndDisplaySportsData();
 
-  // Trigger initial fetch for "TODAY" tab content on page load
-  document.addEventListener('DOMContentLoaded', () => {
-      fetchAndDisplaySportsData();
-  });
+    // Force "TODAY" tab active manually
+    const todayTab = document.querySelector('.games-tab[data-tab="today"]');
+    if (todayTab) todayTab.classList.add('active');
+
+    const contentBlocks = document.querySelectorAll('.games-content');
+    contentBlocks.forEach(el => {
+        el.style.display = (el.id === 'tv-listings-today') ? 'block' : 'none';
+    });
+});
+
 </script>
 
 
