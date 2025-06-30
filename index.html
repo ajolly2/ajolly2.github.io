@@ -51,7 +51,7 @@
 <meta name="twitter:image" content="https://github.com/ajolly2/ajolly2.github.io/blob/master/thporth_AllSportsNews_logo-red.png?raw=true" />
    <style>
   /* ────────────────────────────────────────────────────────── */
-  /* Global Resets                        */
+  /*                        Global Resets                        */
   /* ────────────────────────────────────────────────────────── */
   html,
   body {
@@ -77,7 +77,7 @@
 
 /* Loading indicator styling */
 .loading-indicator {
-    /* REMOVED: display: none; */ /* Handled by .hidden class */
+    display: none; /* flex */
     flex-direction: column; /* flex-col */
     align-items: center; /* items-center */
     justify-content: center; /* justify-center */
@@ -85,7 +85,7 @@
     color: #9ca3af; /* text-gray-400 */
 }
 .loading-spinner {
-    /* REMOVED: display: none; */ /* Handled by .hidden class */
+    display: none;
     animation: spin 1s linear infinite; /* animate-spin */
     height: 2.5rem; /* h-10 */
     width: 2.5rem; /* w-10 */
@@ -93,7 +93,7 @@
     margin-bottom: 0.75rem; /* mb-3 */
 }
 .loading-text {
-    /* REMOVED: display: none; */ /* Handled by .hidden class */
+   display: none;
     font-size: 1.125rem; /* text-lg */
     line-height: 1.75rem; /* leading-7 */
 }
@@ -104,7 +104,7 @@
 
 /* Error message styling */
 .error-message {
-    /* REMOVED: display: none; */ /* Handled by .hidden class */
+     display: none;
     background-color: #991b1b; /* bg-red-800 */
     border-width: 1px; /* border */
     border-color: #dc2626; /* border-red-600 */
@@ -251,7 +251,7 @@
 }
 .column.tv-listings::-webkit-scrollbar-thumb,
 .games-content::-webkit-scrollbar-thumb,
-.game-entry-wrapper::-webkit-scrollbar-track { /* Corrected: should be thumb */
+.game-entry-wrapper::-webkit-scrollbar-thumb {
     background-color: #4a4a4a; /* Darker gray */
     border-radius: 4px;
 }
@@ -265,9 +265,56 @@
 .hidden {
     display: none !important;
 }
-/* REMOVED: Old MLB Games widget (scoped) CSS as it conflicts with new structure */
-/* ────────────────────────────────────────────────────────── */
-  /* Top Bars                          */
+/* ────── Today’s MLB Games widget (scoped) ────── */
+#tv-listings-today #games .game-row {
+  display: grid;
+  /* col1=time • col2=teams • col3=scores • col4=channel */
+  grid-template-columns: 60px 1fr 50px 80px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #333;
+  font-size: 13px;
+}
+
+#tv-listings-today #games .time {
+  color: #ccc;
+}
+#tv-listings-today #games .time.live {
+  color: #DC143C;
+  font-weight: bold;
+}
+
+#tv-listings-today #games .teams {
+  display: flex;
+  flex-direction: column;
+  padding-left: 8px;
+}
+
+#tv-listings-today #games .team-name {
+  line-height: 1.2;
+}
+
+#tv-listings-today #games .score-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-variant-numeric: tabular-nums;
+}
+
+#tv-listings-today #games .channel-cell {
+  text-align: right;
+  font-size: 12px;
+}
+#tv-listings-today #games .channel-cell a {
+  color: #99f;
+  text-decoration: none;
+}
+#tv-listings-today #games .channel-cell a:hover {
+  text-decoration: underline;
+}
+/* ──────────────────────────────────────────────── */
+  /* ────────────────────────────────────────────────────────── */
+  /*                         Top Bars                          */
   /* ────────────────────────────────────────────────────────── */
   #topBar {
     width: 100%;
@@ -290,7 +337,7 @@
   }
 
   /* ────────────────────────────────────────────────────────── */
-  /* Layout Containers                    */
+  /*                        Layout Containers                    */
   /* ────────────────────────────────────────────────────────── */
   .container {
     display: flex;
@@ -341,7 +388,7 @@
   }
 
   /* ────────────────────────────────────────────────────────── */
-  /* Main‐Menu Styling                     */
+  /*                        Main‐Menu Styling                     */
   /* ────────────────────────────────────────────────────────── */
   #menuTopBox {
     width: 165px;
@@ -456,7 +503,7 @@
   }
 
   /* ────────────────────────────────────────────────────────── */
-  /* RSS‐Feed Links                       */
+  /*                        RSS‐Feed Links                       */
   /* ────────────────────────────────────────────────────────── */
   .news .rss-feed {
     padding-left: 10px;
@@ -510,7 +557,7 @@
   }
 
   /* ────────────────────────────────────────────────────────── */
-  /* News Column (Split Scroll Areas)          */
+  /*                   News Column (Split Scroll Areas)          */
   /* ────────────────────────────────────────────────────────── */
 
   /* 1) Keep “News” bar pinned at the top: */
@@ -718,20 +765,86 @@
   }
 
   /* ────────────────────────────────────────────────────────── */
-  /* TV‐Listings (Games) Styling               */
-  /* ──────────────────────────────────────────────────────────────────────────── */
-  /* NOTE: The following styles are specifically for the games schedule generated
-     by the new JavaScript. Old conflicting styles have been removed. */
+  /*                    TV‐Listings (Games) Styling               */
+  /* ────────────────────────────────────────────────────────── */
   .column.tv-listings #live-games-container {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
 
-  /* The league-section, league-header, game-entry-wrapper, game-entry,
-     status-cell, time-cell, game-details, team-name, game-scores, score-value,
-     game-channel styles are already defined above under "NEW: Styles for Sports Schedule Display"
-     and will apply here. */
+  .league-section {
+    margin-bottom: 16px;
+  }
+
+  /* Remove padding-top: 12px; */
+  .league-header::before {
+    content: "";
+    display: block;
+    height: 32px; /* Or whatever space you want above */
+  }
+
+  .league-header {
+    font-weight: bold;
+    color: #fff;
+    font-size: 16px;
+    line-height: 18px;
+    margin-bottom: 16px;
+  }
+
+  /* the wrapper around all the rows for a league */
+  .games-list {}
+
+  .game-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    align-items: center;
+    padding: 4px 10px;
+    margin-bottom: 10px;
+    background: transparent;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .game-row:nth-child(odd) {
+    background: transparent;
+  }
+
+  .game-time {
+    font-size: 11px;
+    color: #ccc;
+  }
+
+  .game-time.live {
+    color: #DC143C !important;
+    font-weight: bold;
+  }
+
+  .game-time-final {
+    padding-left: 12px !important;
+    text-align: left !important; /* Make sure it’s not being centered */
+    color: #ccc; /* or whatever color you want for the F */
+    background: none;
+  }
+
+.game-teams {
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;   /* same as old .game-matchup’s padding */
+  font-size: 11px;
+  color: #ccc;
+  line-height: 1.2;
+}
+
+.game-teams .team {
+  margin: 0;
+  padding: 0;
+}
+
+  .game-channel {
+    text-align: right;
+    font-size: 11px;
+    color: #ccc;
+  }
 
   .games-tab {
     flex: 1;
@@ -765,7 +878,7 @@
 
 
   /* ────────────────────────────────────────────────────────── */
-  /* Fonts (Owners)                       */
+  /*                        Fonts (Owners)                       */
   /* ────────────────────────────────────────────────────────── */
   @font-face {
     font-family: 'Owners';
@@ -1347,34 +1460,31 @@
     <div class="games-tab" data-tab="live">LIVE</div>
   </div>
   <div id="tv-listings-container">
-    <div id="tv-listings-scores" class="games-content" style="display: block;">
-        <!-- Content for SCORES tab -->
-        <p style="padding: 10px; text-align: center; color: #aaa;">Scores feature coming soon!</p>
-    </div>
+    <div id="tv-listings-scores" class="games-content" style="display: block;"></div>
     <div id="tv-listings-today" class="games-content" style="display: none;">
-        <!-- This div will hold the dynamically loaded game content -->
-        <div id="games">
-            <!-- Loading Indicator for Games -->
-            <div id="gamesLoading" class="loading-indicator hidden">
-                <svg class="loading-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <p class="loading-text">Loading sports data...</p>
+  <!-- The game listings from the CSV will be injected here -->
+            <div id="games">
+                <!-- Loading Indicator for Games -->
+                <div id="gamesLoading" class="loading-indicator hidden">
+                    <svg class="loading-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="loading-text">Loading sports data...</p>
+                </div>
+                <!-- Error Message for Games -->
+                <div id="gamesErrorMessage" class="error-message hidden" role="alert">
+                    <strong>Error!</strong>
+                    <span id="gamesErrorText"></span>
+                </div>
+                <!-- This div will hold the dynamically loaded game content -->
+                <div id="dynamicGamesContent"></div>
             </div>
-            <!-- Error Message for Games -->
-            <div id="gamesErrorMessage" class="error-message hidden" role="alert">
-                <strong>Error!</strong>
-                <span id="gamesErrorText"></span>
-            </div>
-            <!-- This div will hold the dynamically loaded game content -->
-            <div id="dynamicGamesContent"></div>
-        </div>
-    </div>
-    <div id="tv-listings-live" class="games-content" style="display: none;">
-        <!-- Live games will be injected here -->
-        <p style="padding: 10px; text-align: center; color: #aaa;">Live games feature coming soon!</p>
-    </div>
+<div id="games-today">Loading…</div>
+
+
+</div>
+    <div id="tv-listings-live" class="games-content" style="display: none;"></div>
   </div>
 </div>
 
@@ -1730,12 +1840,9 @@ const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbO
       const fullName = fullTeamName(row[1]);
       const abbr = abbreviateTeam(row[1]);
 
-      // Check if compactBody exists before appending to it
-      if (compactBody) {
-        const trCompact = document.createElement('tr');
-        trCompact.innerHTML = `<td>${row[0]}</td><td>${abbr}</td><td>${row[9]}</td>`;
-        compactBody.appendChild(trCompact);
-      }
+      const trCompact = document.createElement('tr');
+      trCompact.innerHTML = `<td>${row[0]}</td><td>${abbr}</td><td>${row[9]}</td>`;
+      compactBody.appendChild(trCompact);
 
       const trFull = document.createElement('tr');
       row[1] = fullName;
@@ -1750,10 +1857,8 @@ const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBrFvKbdYc4RQpxFbO
   document.querySelectorAll('#menuList li[data-section]').forEach(item => {
     item.addEventListener('click', () => {
       const show = item.dataset.section === 'PremierLeague';
-      const standingsPanel = document.getElementById('standings-PremierLeague');
-      const topScorersPanel = document.getElementById('topScorers-PremierLeague');
-      if (standingsPanel) standingsPanel.style.display = show ? 'block' : 'none';
-      if (topScorersPanel) topScorersPanel.style.display = show ? 'block' : 'none';
+      document.getElementById('standings-PremierLeague').style.display = show ? 'block' : 'none';
+      document.getElementById('topScorers-PremierLeague').style.display = show ? 'block' : 'none';
     });
   });
 </script>
@@ -1804,10 +1909,10 @@ const teamName = row[1].replace(/ FC$/, '').trim();
         : fullName;
 
       const teamAbbrev = teamAbbreviations[teamName] || "";
-      // const teamSpan = `<span style="font-size: 9px; color: blue; margin-left: 5px;">${teamAbbrev}</span>`; // This variable was unused
+      const teamSpan = `<span style="font-size: 9px; color: blue; margin-left: 5px;">${teamAbbrev}</span>`;
 
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-size:8px; color:#818181;">${teamAbbrev}</span></td><td style="text-align:center">${goals}</td>`;
+tr.innerHTML = `<td style="text-align:left">${formattedName} <span style="font-size:8px; color:#818181;">${teamAbbrev}</span></td><td style="text-align:center">${goals}</td>`;
       tbody.appendChild(tr);
     }
   }
@@ -2278,12 +2383,533 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
 
 	   
 
-<!-- REMOVED: Old standings loader script as it was conflicting -->
-<!-- REMOVED: <div id="live-games-container"></div> -->
+<!-- ↓ Replace your existing standings loader with this entire <script> block ↓ -->
+<div id="live-games-container"></div>
 
-<!-- NEW: Consolidated Sports Schedule JavaScript -->
+<!-- Put this <script> after your <div id="live-games-container"></div> -->
 <script>
-    // THE CORRECTED CSV_URL - This is the source of your sports data
+  // ─── FULL TEAM_ABBR — as provided ─────────────────────────────────────────
+  const TEAM_ABBR = {
+    "Arizona Diamondbacks":"ARI","Atlanta Braves":"ATL","Baltimore Orioles":"BAL","Boston Red Sox":"BOS",
+    "Chicago White Sox":"CHW","Chicago Cubs":"CHC","Cincinnati Reds":"CIN","Cleveland Guardians":"CLE",
+    "Colorado Rockies":"COL","Detroit Tigers":"DET","Houston Astros":"HOU","Kansas City Royals":"KC",
+    "Los Angeles Angels":"LAA","Los Angeles Dodgers":"LAD","Miami Marlins":"MIA","Milwaukee Brewers":"MIL",
+    "Minnesota Twins":"MIN","New York Yankees":"NYY","New York Mets":"NYM","Athletics":"ATH",
+    "Philadelphia Phillies":"PHI","Pittsburgh Pirates":"PIT","San Diego Padres":"SD","San Francisco Giants":"SF",
+    "Seattle Mariners":"SEA","St. Louis Cardinals":"STL","Tampa Bay Rays":"TB","Texas Rangers":"TEX",
+    "Toronto Blue Jays":"TOR","Washington Nationals":"WSH"
+  };
+
+  // ─── your CSV endpoints ───────────────────────────────────────────────────
+  const leagueOrderURL =
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vRkzU6UkVdQoCIU_nF3fAH5NGOzjGbjsCcvDljVe763NopA2DYvYWwBpKCDE-jXyhLpoJaSl_-PTRt3/pub?gid=0&single=true&output=csv';
+
+ const sheetURLs = {
+  MLB: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vToJOR-n-NOVeS-_JAtdyacwCiOEYWKMbsMpqB9oZweQvzMBY29imLHblh-VHTY00UWcd7LR7aO-DsU/pub?gid=1312714292&single=true&output=csv'
+};
+
+  let leagueOrder = [];
+
+  async function loadLeagueOrder() {
+    try {
+      const txt = await (await fetch(leagueOrderURL)).text();
+      leagueOrder = txt.trim()
+        .split(/\r?\n/)
+        .map(r => r.split(',')[0])
+        .filter(l => sheetURLs[l]);
+    } catch {
+      leagueOrder = Object.keys(sheetURLs);
+    }
+  }
+
+  function parseTimeToLocal(timeStr) {
+    // ET string → local Date
+    const eastNow = new Date().toLocaleString("en-US", { timeZone: "America/New_York" });
+    const base = new Date(eastNow);
+    const YYYY = base.getFullYear();
+    const MM   = String(base.getMonth()+1).padStart(2,'0');
+    const DD   = String(base.getDate()).padStart(2,'0');
+
+    let [time, mod] = timeStr.split(' ');
+    if (!time||!mod) return null;
+    let [h,m] = time.split(':').map(x=>parseInt(x,10));
+    if (mod==='PM'&&h!==12) h+=12;
+    if (mod==='AM'&&h===12) h=0;
+
+    const iso = `${YYYY}-${MM}-${DD}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00-04:00`;
+    return new Date(iso);
+  }
+
+  async function fetchAllGames() {
+    const byLeague = {};
+    await Promise.all(Object.entries(sheetURLs).map(async ([lg,url])=>{
+      try {
+        const txt = await (await fetch(url)).text();
+        const rows = txt.trim().split(/\r?\n/).slice(1).map(r=>r.split(','));
+        if(rows.length) byLeague[lg]=rows;
+      } catch(e){
+        console.warn(`fetch ${lg} failed`,e);
+      }
+    }));
+    return byLeague;
+  }
+
+  function renderGamesByTab(byLeague) {
+    const nowET = new Date().toLocaleString("en-US",{timeZone:"America/New_York"});
+    const baseET = new Date(nowET);
+    const y = baseET.getFullYear(), m = String(baseET.getMonth()+1).padStart(2,'0'), d = String(baseET.getDate()).padStart(2,'0');
+    const todayStr = `${y}-${m}-${d}`;
+    const yestDate = new Date(baseET.getTime() - 864e5);
+    const yy = yestDate.getFullYear(), mm = String(yestDate.getMonth()+1).padStart(2,'0'), dd = String(yestDate.getDate()).padStart(2,'0');
+    const yesterdayStr = `${yy}-${mm}-${dd}`;
+
+    const containers = {
+      scores: document.getElementById("tv-listings-scores"),
+      today:  document.getElementById("tv-listings-today"),
+      live:   document.getElementById("tv-listings-live")
+    };
+    Object.values(containers).forEach(c=>c.innerHTML="");
+
+    leagueOrder.forEach(league=>{
+      const games = byLeague[league]||[];
+      const sections = {scores:[], today:[], live:[]};
+      const seen = new Set();
+
+      games.forEach(cols=>{
+        let [date, start, away, home, status, inning, score] = cols;
+        status = status.trim();
+        score = (score||"").replace(/–/g,'-').trim();
+        const isFinal = /^(F|Final)$/i.test(status);
+        const isLive  = status==="In Progress";
+
+        let displayTime;
+        if (isFinal)            displayTime='F';
+        else if (isLive)        displayTime=inning||'';
+        else {
+          const dt = parseTimeToLocal(start);
+          displayTime = dt ? dt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}) : start;
+        }
+
+        const showTime = (isFinal||isLive||!seen.has(displayTime)) ? displayTime : '';
+        if (!isFinal&&!isLive) seen.add(displayTime);
+
+        let [aScore,hScore] = (score||"0-0").split('-').map(s=>s.trim());
+        const aNum = parseInt(aScore,10)||0, hNum = parseInt(hScore,10)||0;
+        const aCode = TEAM_ABBR[away]||away.split(' ').slice(-1)[0];
+        const hCode = TEAM_ABBR[home]||home.split(' ').slice(-1)[0];
+        const awayHTML = aNum>hNum ? `<span class="winner">${aCode}</span>` : `<span>${aCode}</span>`;
+        const homeHTML = hNum>aNum ? `<span class="winner">${hCode}</span>` : `<span>${hCode}</span>`;
+
+        const row = document.createElement("div");
+        row.className="game-row";
+        row.innerHTML=`
+          <div class="game-time${showTime==='F'?' game-time-final':(isLive?' live':'')}">${showTime}</div>
+          <div class="game-teams">
+            <div class="team-row" style="display:flex;justify-content:space-between;">
+              ${awayHTML}<span>${aScore}</span>
+            </div>
+            <div class="team-row" style="display:flex;justify-content:space-between;">
+              ${homeHTML}<span>${hScore}</span>
+            </div>
+          </div>
+          <div class="game-channel"></div>
+        `;
+
+        if      (date===yesterdayStr&&isFinal) sections.scores.push(row);
+        else if (date===todayStr&&isFinal)     sections.today.push(row);
+        else if (date===todayStr&&isLive)      sections.live.push(row);
+        else if (date===todayStr)              sections.today.push(row);
+      });
+
+      Object.entries(sections).forEach(([key,list])=>{
+        if(!list.length) return;
+        const box=document.createElement("div");
+        box.className="league-section";
+        box.innerHTML=`<div class="league-header">${league}</div>`;
+        list.forEach(r=>box.appendChild(r));
+        containers[key].appendChild(box);
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", async ()=>{
+    await loadLeagueOrder();
+    const allData = await fetchAllGames();
+    renderGamesByTab(allData);
+
+    const tabs = document.querySelectorAll(".games-tab"),
+          panes = document.querySelectorAll(".games-content");
+    tabs.forEach(tab=>{
+      tab.addEventListener("click",()=>{
+        tabs.forEach(t=>t.classList.remove("active"));
+        panes.forEach(p=>p.style.display="none");
+        tab.classList.add("active");
+        document.getElementById("tv-listings-"+tab.dataset.tab).style.display="block";
+      });
+    });
+
+    // default to TODAY
+    document.querySelector(".games-tab[data-tab='today']")?.click();
+  });
+</script>
+	    
+<script>
+  // -- FEED URLs: Replace with your real feeds --
+const HEADLINES_FEED = "https://www.espn.com/espn/rss/news";
+const BREAKING_FEED = "https://rss.app/feeds/XcFXtVdyCBGtIC6O.xml";
+const FANTASY_FEED = "https://fantasynews.cbssports.com/rss/headlines/";
+const TRANSACTIONS_FEED = "https://www.espn.com/espn/rss/mlb/news"; // EXAMPLE, replace as needed
+
+// -- Generic function to fetch and render a basic RSS feed --
+function fetchRSSFeed(url, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = "Loading...";
+  fetch(url)
+    .then(res => res.text())
+    .then(str => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(str, "application/xml");
+      const items = Array.from(xml.querySelectorAll("item"));
+      if (!items.length) {
+        container.innerHTML = "<p>No stories found.</p>";
+        return;
+      }
+      const ul = document.createElement("ul");
+      ul.style.margin = "0";
+      ul.style.padding = "0";
+      ul.style.listStyle = "none";
+      items.forEach(item => {
+        const li = document.createElement("li");
+        li.style.padding = "6px 0";
+        const title = item.querySelector("title")?.textContent || "";
+        const link = item.querySelector("link")?.textContent || "#";
+        li.innerHTML = `<a href="${link}" target="_blank" style="color:#212121;text-decoration:none;">${title}</a>`;
+        ul.appendChild(li);
+      });
+      container.innerHTML = "";
+      container.appendChild(ul);
+    })
+    .catch(() => {
+      container.innerHTML = "<p>Error loading feed.</p>";
+    });
+}
+
+// -- Tabs logic for Breaking/Fantasy/Transactions
+document.addEventListener("DOMContentLoaded", function() {
+  // Load default feeds
+  fetchRSSFeed(HEADLINES_FEED, "headlines-feed");
+  fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+
+  const tabs = document.querySelectorAll(".news-tab");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById("breaking-feed").style.display = "none";
+      document.getElementById("fantasy-feed").style.display = "none";
+      document.getElementById("transactions-feed").style.display = "none";
+
+      if (tab.dataset.tab === "breaking") {
+        document.getElementById("breaking-feed").style.display = "block";
+        fetchRSSFeed(BREAKING_FEED, "breaking-feed");
+      }
+      if (tab.dataset.tab === "fantasy") {
+        document.getElementById("fantasy-feed").style.display = "block";
+        fetchRSSFeed(FANTASY_FEED, "fantasy-feed");
+      }
+      if (tab.dataset.tab === "transactions") {
+        document.getElementById("transactions-feed").style.display = "block";
+        fetchRSSFeed(TRANSACTIONS_FEED, "transactions-feed");
+      }
+    });
+  });
+});
+</script>
+ 
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // ── A) Grab all four tab elements and define their order ──
+    const tabs    = Array.from(document.querySelectorAll(".headlines-tab"));
+    const sources = ["espn", "cbs", "yahoo", "fox"];
+
+    // ── B) Keep track of which feeds already have a scroll listener ──
+    const scrollListeners = {};
+
+    // ── C) Function to attach a “scroll to bottom” watcher on a feed ──
+    function attachScrollWatcher(src) {
+      const feedEl = document.getElementById(src + "-feed");
+      // If there's no such element or we've already wired it, do nothing
+      if (!feedEl || scrollListeners[src]) return;
+
+      const onScroll = () => {
+        // When scrolled to (or within 1px of) bottom, auto‐advance:
+        if (feedEl.scrollHeight - feedEl.scrollTop - feedEl.clientHeight <= 1) {
+          const idx     = sources.indexOf(src);
+          const nextIdx = idx + 1;
+          if (nextIdx < sources.length) {
+            const nextTab = document.querySelector(
+              `.headlines-tab[data-source="${sources[nextIdx]}"]`
+            );
+            if (nextTab) nextTab.click();
+          }
+        }
+      };
+
+      feedEl.addEventListener("scroll", onScroll);
+      scrollListeners[src] = onScroll;
+    }
+
+    // ── D) Function to activate (highlight) exactly one tab + feed ──
+    function activateSource(src) {
+      // 1) Toggle “active” class on tabs
+      tabs.forEach(t => t.classList.toggle(
+        "active",
+        t.getAttribute("data-source") === src
+      ));
+
+      // 2) Hide all four feed‐divs, then show only the chosen one
+      sources.forEach(s => {
+        const div = document.getElementById(s + "-feed");
+        if (div) {
+          div.style.display = (s === src) ? "block" : "none";
+        }
+      });
+
+      // 3) After switching, (re‐)attach the scroll watcher to the newly visible feed
+      attachScrollWatcher(src);
+    }
+
+    // ── E) Add click listeners to each .headlines-tab ──
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const src = tab.getAttribute("data-source"); // “espn” / “cbs” / etc.
+        activateSource(src);
+      });
+    });
+
+    // ── F) On initial load, activate ESPN by default ──
+    activateSource("espn");
+  });
+</script>
+	    <script>
+  async function loadSocialFeed() {
+const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_sources/main/social_feed.xml?nocache=" + new Date().getTime());
+    const xmlText = await response.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(xmlText, "application/xml");
+
+    const items = [...xml.querySelectorAll("item")].slice(0, 10); // Top 10 posts
+    const container = document.getElementById("social-feed-container");
+    container.innerHTML = ""; // Clear loading state
+
+    items.forEach(item => {
+      const title = item.querySelector("title")?.textContent ?? "";
+      const link = item.querySelector("link")?.textContent ?? "#";
+      const pubDate = item.querySelector("pubDate")?.textContent ?? "";
+      const description = item.querySelector("description")?.textContent ?? "";
+      const imgMatch = description.match(/<img[^>]+src="([^">]+)"/i);
+      const imgSrc = imgMatch ? imgMatch[1] : "";
+
+      const div = document.createElement("div");
+      div.style.marginBottom = "15px";
+      div.innerHTML = `
+        <a href="${link}" target="_blank" style="text-decoration:none;color:inherit;">
+          ${imgSrc ? `<img src="${imgSrc}" style="width:100%;max-height:140px;object-fit:cover;border-radius:6px;">` : ""}
+          <div style="font-weight:bold;margin-top:5px;">${title}</div>
+          <div style="font-size:11px;color:gray;">${new Date(pubDate).toLocaleString()}</div>
+        </a>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  loadSocialFeed();
+</script>
+
+	    <script>
+  /**
+   * Turn a raw headline into a normalized array of words.
+   *  - Lowercase
+   *  - Remove punctuation
+   *  - Split on whitespace
+   *  - Filter out empty tokens
+   */
+  function headlineToWordArray(str) {
+    return str
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")   // strip any non‐alphanumeric (keeps letters/numbers/spaces)
+      .split(/\s+/)              // split on whitespace
+      .filter(word => word.length > 0);
+  }
+
+  /**
+   * Compute Jaccard similarity of two arrays of words:
+   *    |Intersection(words1, words2)| / |Union(words1, words2)|
+   */
+  function jaccardSimilarity(wordsA, wordsB) {
+    const setA = new Set(wordsA);
+    const setB = new Set(wordsB);
+    let intersectionCount = 0;
+    for (let w of setA) {
+      if (setB.has(w)) intersectionCount++;
+    }
+    const unionCount = setA.size + setB.size - intersectionCount;
+    if (unionCount === 0) return 0;
+    return intersectionCount / unionCount;
+  }
+
+  /**
+   * Remove any post element whose headline is “too similar” to one already kept.
+   * We keep track of word‐sets of all headlines we’ve accepted, then for each new one
+   * we measure its Jaccard similarity against all “seen” sets. If any overlap ≥ threshold, we remove it.
+   */
+  function removeNearDuplicateHeadlines() {
+    const container = document.getElementById("my-rss-widget");
+    if (!container) return;
+
+    // Grab every <a> under #my-rss-widget (RSS.app normally puts each item in an <a>).
+    const links = Array.from(container.querySelectorAll("a"));
+
+    // Array of word‐sets we have accepted so far
+    const seenWordSets = [];
+    // Threshold of Jaccard similarity above which we consider two headlines “duplicates”
+    const SIMILARITY_THRESHOLD = 0.65;
+
+    links.forEach(link => {
+      const rawText = link.textContent || "";
+      const words = headlineToWordArray(rawText);
+      // Compare against each seen word‐set:
+      let isDuplicate = false;
+      for (let seenWords of seenWordSets) {
+        const similarity = jaccardSimilarity(words, seenWords);
+        if (similarity >= SIMILARITY_THRESHOLD) {
+          isDuplicate = true;
+          break;
+        }
+      }
+
+      if (isDuplicate) {
+        // Remove this entire “item.” Climb up until you hit a direct child of #my-rss-widget:
+        let el = link;
+        while (el && el.parentElement && el.parentElement.id !== "my-rss-widget") {
+          el = el.parentElement;
+        }
+        if (el && el.parentElement === container) {
+          container.removeChild(el);
+        }
+      } else {
+        // Not a duplicate: add this word‐array to seenWordSets
+        seenWordSets.push(words);
+      }
+    });
+  }
+
+  /**
+   * Observe #my-rss-widget until at least one <a> appears, then run the fuzzy dedupe.
+   * Also run a fallback after 3 seconds in case feed loads slowly.
+   */
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("my-rss-widget");
+    if (!container) return;
+
+    const observer = new MutationObserver((mutations, obs) => {
+      // If at least one <a> is present, RSS.app has rendered items
+      if (container.querySelector("a")) {
+        removeNearDuplicateHeadlines();
+        obs.disconnect();
+      }
+    });
+
+    observer.observe(container, { childList: true, subtree: true });
+
+    // Fallback in case feed injection is delayed
+    setTimeout(removeNearDuplicateHeadlines, 3000);
+  });
+</script>
+
+	    <!-- put this right before the closing </body> tag -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const breakingContainer = document.getElementById("breaking-feed");
+    if (!breakingContainer) return;
+
+    breakingContainer.addEventListener("click", async (evt) => {
+      // Only proceed if a link (<a>) was clicked inside #breaking-feed
+      const anchor = evt.target.closest("a");
+      if (!anchor || !breakingContainer.contains(anchor)) return;
+      evt.preventDefault();
+
+      const newsNowUrl = anchor.href;
+      try {
+        // 1) Fetch the NewsNow page HTML
+        const resp = await fetch(newsNowUrl, { redirect: "follow" });
+        const html = await resp.text();
+        const doc = new DOMParser().parseFromString(html, "text/html");
+
+        // 2) Look for a <meta http-equiv="refresh"> redirect
+        const metaRefresh = doc.querySelector('meta[http-equiv="refresh"]');
+        if (metaRefresh) {
+          const content = metaRefresh.getAttribute("content") || "";
+          // “content” is often like “0; URL=https://…”
+          const match = content.match(/URL=(.*)/i);
+          if (match && match[1]) {
+            window.open(match[1], "_blank");
+            return;
+          }
+        }
+
+        // 3) Fallback: check for <link rel="canonical">
+        const linkCanonical = doc.querySelector('link[rel="canonical"]');
+        if (linkCanonical && linkCanonical.href) {
+          window.open(linkCanonical.href, "_blank");
+          return;
+        }
+
+        // 4) Fallback: inspect any <script> blocks for a JS redirect
+        const scripts = Array.from(doc.querySelectorAll("script"));
+        for (const s of scripts) {
+          const txt = s.textContent || "";
+          // look for window.location.href = "…";
+          let m = txt.match(/window\.location\.href\s*=\s*['"](.*?)['"]/);
+          if (m && m[1]) {
+            window.open(m[1], "_blank");
+            return;
+          }
+          // look for location.replace("…");
+          m = txt.match(/location\.replace\s*\(\s*['"](.*?)['"]/);
+          if (m && m[1]) {
+            window.open(m[1], "_blank");
+            return;
+          }
+        }
+
+        // 5) If none of the above, just open the NewsNow URL as a last resort
+        window.open(newsNowUrl, "_blank");
+      } catch (err) {
+        // On fetch/parse error, open the original link
+        window.open(newsNowUrl, "_blank");
+      }
+    });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn  = document.getElementById('menu-toggle');
+    const gamesBtn = document.getElementById('games-toggle');
+    const menuCol  = document.querySelector('.column.main-menu');
+    const gamesCol = document.querySelector('.column.tv-listings');
+
+    menuBtn.addEventListener('click', () => {
+      menuCol.classList.toggle('open');
+    });
+    gamesBtn.addEventListener('click', () => {
+      gamesCol.classList.toggle('open');
+    });
+  });
+</script>
+<script>
+    // THE CSV_URL - This is the source of your sports data
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPmKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv';
 
     async function fetchAndDisplaySportsData() {
@@ -2551,101 +3177,26 @@ document.querySelectorAll("#menuList li[data-section]").forEach(item => {
                     fetchAndDisplaySportsData();
                 }
                 // You can add logic for 'LIVE' and 'SCORES' tabs here if needed
+                // For example, if you had different CSVs for live/scores:
+                // else if (targetTabId === 'live') { fetchAndDisplayLiveGames(); }
+                // else if (targetTabId === 'scores') { fetchAndDisplayScores(); }
             });
         });
 
         // Trigger the initial load for the "TODAY" tab when the page loads
-        // This will also call fetchAndDisplaySportsData()
-        document.querySelector(".games-tab[data-tab='today']")?.click();
+        document.querySelector('.games-tab[data-tab="today"]').click();
     }
 
     // Initialize tab switching and load initial data when the page loads
     document.addEventListener('DOMContentLoaded', setupTabSwitching);
 </script>
 
-
-	    <!-- put this right before the closing </body> tag -->
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const breakingContainer = document.getElementById("breaking-feed");
-    if (!breakingContainer) return;
-
-    breakingContainer.addEventListener("click", async (evt) => {
-      // Only proceed if a link (<a>) was clicked inside #breaking-feed
-      const anchor = evt.target.closest("a");
-      if (!anchor || !breakingContainer.contains(anchor)) return;
-      evt.preventDefault();
-
-      const newsNowUrl = anchor.href;
-      try {
-        // 1) Fetch the NewsNow page HTML
-        const resp = await fetch(newsNowUrl, { redirect: "follow" });
-        const html = await resp.text();
-        const doc = new DOMParser().parseFromString(html, "text/html");
-
-        // 2) Look for a <meta http-equiv="refresh"> redirect
-        const metaRefresh = doc.querySelector('meta[http-equiv="refresh"]');
-        if (metaRefresh) {
-          const content = metaRefresh.getAttribute("content") || "";
-          // “content” is often like “0; URL=https://…”
-          const match = content.match(/URL=(.*)/i);
-          if (match && match[1]) {
-            window.open(match[1], "_blank");
-            return;
-          }
-        }
-
-        // 3) Fallback: check for <link rel="canonical">
-        const linkCanonical = doc.querySelector('link[rel="canonical"]');
-        if (linkCanonical && linkCanonical.href) {
-          window.open(linkCanonical.href, "_blank");
-          return;
-        }
-
-        // 4) Fallback: inspect any <script> blocks for a JS redirect
-        const scripts = Array.from(doc.querySelectorAll("script"));
-        for (const s of scripts) {
-          const txt = s.textContent || "";
-          // look for window.location.href = "…";
-          let m = txt.match(/window\.location\.href\s*=\s*['"](.*?)['"]/);
-          if (m && m[1]) {
-            window.open(m[1], "_blank");
-            return;
-          }
-          // look for location.replace("…");
-          m = txt.match(/location\.replace\s*\(\s*['"](.*?)['"]/);
-          if (m && m[1]) {
-            window.open(m[1], "_blank");
-            return;
-          }
-        }
-
-        // 5) If none of the above, just open the NewsNow URL as a last resort
-        window.open(newsNowUrl, "_blank");
-      } catch (err) {
-        // On fetch/parse error, open the original link
-        window.open(newsNowUrl, "_blank");
-      }
-    });
+	    <script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const todayTab = document.querySelector('.games-tab[data-target="today"]');
+    if (todayTab) todayTab.click();
   });
 </script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const menuBtn  = document.getElementById('menu-toggle');
-    const gamesBtn = document.getElementById('games-toggle');
-    const menuCol  = document.querySelector('.column.main-menu');
-    const gamesCol = document.querySelector('.column.tv-listings');
-
-    menuBtn.addEventListener('click', () => {
-      menuCol.classList.toggle('open');
-    });
-    gamesBtn.addEventListener('click', () => {
-      gamesCol.classList.toggle('open');
-    });
-  });
-</script>
-
-
 	   
 
   </body>
