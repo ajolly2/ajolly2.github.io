@@ -1500,7 +1500,7 @@
                 <!-- This div will hold the dynamically loaded game content -->
                 <div id="dynamicGamesContent"></div>
             </div>
-<div id="games-today">Loading…</div>
+            <div id="games-today" style="display: none;">Loading…</div>
 
 
 </div>
@@ -2767,7 +2767,7 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
 
 	<script>
 		// THE CSV_URL - This is the source of your sports data
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPmKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv';
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR6pp-58Dr8kqohWql-zg1LzXt7w6d9PCRj0GWcFmdTMLCAcDAhDaASiVmtTGa4WhWQ0UJtc15NvjUX/pub?gid=650169906&single=true&output=csv';
 
     async function fetchAndDisplaySportsData() {
         const gamesLoadingElement = document.getElementById('gamesLoading');
