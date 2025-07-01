@@ -131,7 +131,7 @@
     margin-bottom: 16px; /* mb-4 */
 }
 .league-section:last-child {
-    margin-bottom: 0;
+    margin-bottom: 16px;
 }
 
 /* League header styling (matches screenshot dark theme) */
@@ -143,8 +143,8 @@
     font-weight: 600; /* semi-bold */
     border-bottom: 1px solid #4a4a4a;
     border-top: 1px solid #4a4a4a;
-    margin-top: 1.5rem; /* Spacing between leagues */
-    margin-bottom: 0.5rem;
+    margin-top: 32px; /* Spacing between leagues */
+    margin-bottom: 5px !important;;
     border-radius: 0.5rem; /* Rounded corners */
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
@@ -155,33 +155,31 @@
     border-width: 1px; /* border */
     border-color: #374151; /* border-gray-700 */
     overflow: hidden; /* overflow-hidden */
-    background-color: #1f2937; /* bg-gray-800 */
+    background-color: #1f1f1f; /* bg-gray-800 */
+    padding-bottom: 32px;
+    margin-bottom: 32px;
 }
 .game-entry-wrapper .game-entry:not(:last-child) {
     border-bottom: 1px solid #374151; /* divide-y divide-gray-700 */
+    margin-bottom: 0;
 }
 
 /* Individual game entry styling */
 .game-entry {
     display: flex; /* flex */
     align-items: center; /* items-center */
-    padding-top: 0.5rem; /* py-2 */
-    padding-bottom: 0.5rem; /* py-2 */
-    padding-left: 1rem; /* px-4 */
-    padding-right: 1rem; /* px-4 */
+    padding-top: 0; /* py-2 */
+    padding-bottom: 0; /* py-2 */
+    padding-left: 3px; /* px-4 */
+    margin-left: 0;
+    padding-right: 3px; /* px-4 */
 }
 .game-entry:hover {
     background-color: #374151; /* hover:bg-gray-700 */
 }
 
 /* Status cell styling */
-.status-cell {
-    font-weight: 600; /* font-semibold */
-    text-align: center; /* text-center */
-    width: 50px; /* fixed width */
-    flex-shrink: 0; /* flex-shrink-0 */
-    padding-right: 0.5rem; /* small padding to separate from event */
-}
+
 .status-finished {
     color: #22c55e; /* text-green-500 */
 }
@@ -196,32 +194,36 @@
 .time-cell {
     font-weight: 500; /* Medium weight */
     text-align: center; /* Center align time */
-    width: 80px; /* Fixed width for time */
+    width: 50px; /* Fixed width for time */
     flex-shrink: 0;
-    padding-right: 0.5rem; /* Small padding to separate from event */
+    padding-right: 0 !important;
+    text-align: left !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
     color: #e0e0e0; /* Light text color */
-    font-size: 0.875rem; /* text-sm */
+    font-size: 11px; /* text-sm */
 }
 
 /* Game details (teams) styling */
 .game-details {
     flex-grow: 1; /* flex-grow */
-    padding-left: 0.5rem; /* padding-left */
-    padding-right: 0.5rem; /* padding-right */
+    padding-left: 3px; /* padding-left */
+    padding-right: 3px; /* padding-right */
     color: #e5e7eb; /* text-gray-200 */
 }
 .team-name {
-    font-size: 0.875rem; /* text-sm */
+    font-size: 12px; /* text-sm */
     line-height: 1.25rem; /* leading-5 */
-    padding-top: 0.25rem; /* py-0.25rem (simulated) */
-    padding-bottom: 0.25rem; /* py-0.25rem (simulated) */
+    padding-top: 1px; /* py-0.25rem (simulated) */
+    padding-bottom: 1px; /* py-0.25rem (simulated) */
+    padding-left: 0 !important;
 }
 
 /* Game scores styling */
 .game-scores {
     text-align: right; /* text-right */
     padding-right: 1rem; /* padding-right */
-    width: 60px; /* fixed width */
+    width: 20px; /* fixed width */
     flex-shrink: 0; /* flex-shrink-0 */
     color: #e5e7eb; /* text-gray-200 */
 }
@@ -271,9 +273,10 @@
   /* col1=time • col2=teams • col3=scores • col4=channel */
   grid-template-columns: 60px 1fr 50px 80px;
   align-items: center;
-  padding: 6px 0;
+  padding: 1px 0;
   border-bottom: 1px solid #333;
   font-size: 13px;
+  margin-bottom: 0;
 }
 
 #tv-listings-today #games .time {
@@ -291,7 +294,7 @@
 }
 
 #tv-listings-today #games .team-name {
-  line-height: 1.2;
+  line-height: 17px;
 }
 
 #tv-listings-today #games .score-cell {
@@ -774,23 +777,30 @@
   }
 
   .league-section {
-    margin-bottom: 16px;
+    margin-bottom: 14px !important;
   }
 
-  /* Remove padding-top: 12px; */
-  .league-header::before {
-    content: "";
-    display: block;
-    height: 32px; /* Or whatever space you want above */
-  }
 
   .league-header {
+    display: flex;
+    align-items: center;      /* Vertically center */
+    justify-content: flex-start; /* Or 'center' if you want horizontal centering */
     font-weight: bold;
     color: #fff;
-    font-size: 16px;
-    line-height: 18px;
-    margin-bottom: 16px;
-  }
+    font-size: 14px;
+    line-height: 16px;
+    margin-bottom: 12px;
+    margin-top: 40px;
+    background: #2a2a2a;
+    border: 0px solid #1f1f1f;
+    border-radius: 0 0 0 0;
+    height: 25px;             /* Set your desired height */
+    padding-left: 1rem;       /* Optional: keep your horizontal padding */
+}
+
+.league-header:first-child {
+    margin-top: 0;
+}
 
   /* the wrapper around all the rows for a league */
   .games-list {}
@@ -800,7 +810,7 @@
     grid-template-columns: 60px 1fr 60px;
     align-items: center;
     padding: 4px 10px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     background: transparent;
     border-bottom: 1px solid #2a2a2a;
   }
@@ -1099,6 +1109,16 @@
     width: 100% !important;
     min-width: 0;
   }
+}
+
+.game-entry, .game-entry * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  padding-bottom: 0 !important;
+  line-height: 1.1 !important;
 }
 
 
@@ -2747,299 +2767,306 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
 
 	<script>
 		// THE CSV_URL - This is the source of your sports data
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPmKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv';
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSvVV3UJfaXdgQVBh--jFkv0tzTsWVZh6WJMBupQxHPmKr3EK6m3g_4klk9Su3-k_mybidOQK0yOx1f/pub?gid=1610446629&single=true&output=csv';
 
-    async function fetchAndDisplaySportsData() {
-        const gamesLoadingElement = document.getElementById('gamesLoading');
-        const gamesErrorMessageDiv = document.getElementById('gamesErrorMessage');
-        const gamesErrorTextSpan = document.getElementById('gamesErrorText');
-        const dynamicGamesContent = document.getElementById('dynamicGamesContent');
+    async function fetchAndDisplaySportsData() {
+        const gamesLoadingElement = document.getElementById('gamesLoading');
+        const gamesErrorMessageDiv = document.getElementById('gamesErrorMessage');
+        const gamesErrorTextSpan = document.getElementById('gamesErrorText');
+        const dynamicGamesContent = document.getElementById('dynamicGamesContent');
 	    
 console.log('gamesLoadingElement:', gamesLoadingElement);
 	    
-        // Check if elements exist before trying to use them to prevent errors
-        if (gamesLoadingElement) gamesLoadingElement.classList.remove('hidden');
-        if (dynamicGamesContent) {
-            dynamicGamesContent.classList.add('hidden'); // Hide content while loading
-            dynamicGamesContent.innerHTML = ''; // Clear previous data
-        }
-        if (gamesErrorMessageDiv) gamesErrorMessageDiv.classList.add('hidden'); // Hide error message
+        // Check if elements exist before trying to use them to prevent errors
+        if (gamesLoadingElement) gamesLoadingElement.classList.remove('hidden');
+        if (dynamicGamesContent) {
+            dynamicGamesContent.classList.add('hidden'); // Hide content while loading
+            dynamicGamesContent.innerHTML = ''; // Clear previous data
+        }
+        if (gamesErrorMessageDiv) gamesErrorMessageDiv.classList.add('hidden'); // Hide error message
 
-        try {
-            const response = await fetch(CSV_URL);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const csvText = await response.text();
-            const games = parseCsv(csvText);
+        try {
+            const response = await fetch(CSV_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const csvText = await response.text();
+            const games = parseCsv(csvText);
 
-            if (games.length === 0) {
-                if (gamesErrorTextSpan) gamesErrorTextSpan.textContent = 'No sports data found in the CSV.';
-                if (gamesErrorMessageDiv) gamesErrorMessageDiv.classList.remove('hidden');
-                return;
-            }
+            if (games.length === 0) {
+                if (gamesErrorTextSpan) gamesErrorTextSpan.textContent = 'No sports data found in the CSV.';
+                if (gamesErrorMessageDiv) gamesErrorMessageDiv.classList.remove('hidden');
+                return;
+            }
 
-            // Group games by league
-            const groupedGames = games.reduce((acc, game) => {
-                const league = game.League || 'Other'; // Use 'Other' for games without a specific league
-                if (!acc[league]) {
-                    acc[league] = [];
-                }
-                acc[league].push(game);
-                return acc;
-            }, {});
+            // Group games by league
+            const groupedGames = games.reduce((acc, game) => {
+                const league = game.League || 'Other'; // Use 'Other' for games without a specific league
+                if (!acc[league]) {
+                    acc[league] = [];
+                }
+                acc[league].push(game);
+                return acc;
+            }, {});
 
-            // Sort league names alphabetically
-            const sortedLeagueNames = Object.keys(groupedGames).sort();
+            // Sort league names alphabetically
+            const sortedLeagueNames = Object.keys(groupedGames).sort();
 
-            sortedLeagueNames.forEach(leagueName => {
-                const leagueGames = groupedGames[leagueName];
-                // Sort games within each league by current stage (LIVE first, then SCHEDULED, then FINISHED) and then by time
-                leagueGames.sort((a, b) => {
-                    const statusOrder = { 'LIVE': 1, 'SCHEDULED': 2, 'FINISHED': 3, 'N/A': 4 };
-                    const statusA = statusOrder[a['Current Inning/Stage'] ? a['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
-                    const statusB = statusOrder[b['Current Inning/Stage'] ? b['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
+            sortedLeagueNames.forEach(leagueName => {
+                const leagueGames = groupedGames[leagueName];
+                // Sort games within each league by current stage (LIVE first, then SCHEDULED, then FINISHED) and then by time
+                leagueGames.sort((a, b) => {
+                    const statusOrder = { 'LIVE': 1, 'SCHEDULED': 2, 'FINISHED': 3, 'N/A': 4 };
+                    const statusA = statusOrder[a['Current Inning/Stage'] ? a['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
+                    const statusB = statusOrder[b['Current Inning/Stage'] ? b['Current Inning/Stage'].toUpperCase() : 'N/A'] || 4;
 
-                    if (statusA !== statusB) {
-                        return statusA - statusB;
-                    }
+                    if (statusA !== statusB) {
+                        return statusA - statusB;
+                    }
 
-                    // Then sort by time (assuming "HH:MM AM/PM" format)
-                    const parseTime = (timeStr) => {
-                        if (!timeStr || timeStr === 'N/A') return 0; // Handle N/A or empty times
-                        const [time, ampm] = timeStr.split(' ');
-                        let [hours, minutes] = time.split(':').map(Number);
-                        if (ampm === 'PM' && hours < 12) hours += 12;
-                        if (ampm === 'AM' && hours === 12) hours = 0; // Midnight
-                        return hours * 60 + minutes;
-                    };
-                    const timeA = parseTime(a.Time);
-                    const timeB = parseTime(b.Time);
-                    return timeA - timeB;
-                });
-
-
-                // Create a section for each league
-                const leagueSection = document.createElement('div');
-                leagueSection.classList.add('league-section'); // Custom class for section margin
-
-                const leagueHeader = document.createElement('h2');
-                leagueHeader.classList.add('league-header'); // Custom class for styling
-                leagueHeader.textContent = leagueName;
-                leagueSection.appendChild(leagueHeader);
-
-                const gamesListContainer = document.createElement('div');
-                gamesListContainer.classList.add('game-entry-wrapper'); // Custom class for wrapper styling
-
-                // Reset lastDisplayedTime for each new league
-                let lastDisplayedTime = null; 
-
-                leagueGames.forEach(game => {
-                    const gameEntry = document.createElement('div');
-                    gameEntry.classList.add('game-entry'); // Custom class for flex and hover
-
-                    // --- Status Column (Leftmost) ---
-                    const statusDiv = document.createElement('div');
-                    statusDiv.classList.add('status-cell');
-                    let statusText = '';
-                    let statusClass = 'status-scheduled'; // Default to gray
-
-                    const currentStage = game['Current Inning/Stage'] ? game['Current Inning/Stage'].toUpperCase() : 'N/A';
-                    if (currentStage === 'FINISHED') {
-                        statusText = 'F';
-                        statusClass = 'status-finished';
-                    } else if (currentStage !== 'SCHEDULED' && currentStage !== 'N/A') {
-                        // For live games, show inning/stage
-                        statusText = currentStage.replace(/_INNING/g, '').replace(/_/g, ' '); // Clean up "SIXTH_INNING" to "SIXTH INNING"
-                        statusClass = 'status-live';
-                    } else {
-                        statusText = ''; // Blank for scheduled, as per screenshot
-                    }
-                    statusDiv.textContent = statusText;
-                    statusDiv.classList.add(statusClass);
-                    gameEntry.appendChild(statusDiv);
-
-                    // --- NEW: Time Column (with non-repeating logic) ---
-                    const timeDiv = document.createElement('div');
-                    timeDiv.classList.add('time-cell'); // New class for styling
-
-                    const currentTime = game.Time || '';
-                    if (currentTime && currentTime !== 'N/A' && currentTime !== lastDisplayedTime) {
-                        timeDiv.textContent = currentTime;
-                        lastDisplayedTime = currentTime; // Update last displayed time
-                    } else {
-                        timeDiv.textContent = ''; // Leave blank if same as last or invalid
-                    }
-                    gameEntry.appendChild(timeDiv);
-
-                    // --- Event (Teams) Column ---
-                    const eventDiv = document.createElement('div');
-                    eventDiv.classList.add('game-details'); // Custom class for flex-grow and padding
-
-                    // Handle event name for non-team sports vs. team sports
-                    let homeTeam = '';
-                    let awayTeam = '';
-                    if (game.Event && game.Event.includes(' - ')) {
-                        const teams = game.Event.split(' - ');
-                        homeTeam = teams[0] ? teams[0].trim() : 'N/A';
-                        awayTeam = teams[1] ? teams[1].trim() : 'N/A';
-                    } else {
-                        // For non-team sports like F1, Golf, etc., use Event as single line
-                        homeTeam = game.Event || 'N/A Event';
-                        awayTeam = game.Time || ''; // Use time for the second line if no away team
-                    }
+                    // Then sort by time (assuming "HH:MM AM/PM" format)
+                    const parseTime = (timeStr) => {
+                        if (!timeStr || timeStr === 'N/A') return 0; // Handle N/A or empty times
+                        const [time, ampm] = timeStr.split(' ');
+                        let [hours, minutes] = time.split(':').map(Number);
+                        if (ampm === 'PM' && hours < 12) hours += 12;
+                        if (ampm === 'AM' && hours === 12) hours = 0; // Midnight
+                        return hours * 60 + minutes;
+                    };
+                    const timeA = parseTime(a.Time);
+                    const timeB = parseTime(b.Time);
+                    return timeA - timeB;
+                });
 
 
-                    eventDiv.innerHTML = `
-                        <div class="team-name">${homeTeam}</div>
-                        <div class="team-name">${awayTeam}</div>
-                    `;
-                    gameEntry.appendChild(eventDiv);
+                // Create a section for each league
+                const leagueSection = document.createElement('div');
+                leagueSection.classList.add('league-section'); // Custom class for section margin
 
-                    // --- Score Column ---
-                    const scoreDiv = document.createElement('div');
-                    scoreDiv.classList.add('game-scores'); // Custom class for text-align, width, flex-shrink
+                const leagueHeader = document.createElement('h2');
+                leagueHeader.classList.add('league-header'); // Custom class for styling
+                leagueHeader.textContent = leagueName;
+                leagueSection.appendChild(leagueHeader);
 
-                    let homeScore = game['Home Score'] !== 'N/A' ? game['Home Score'] : '';
-                    let awayScore = game['Away Score'] !== 'N/A' ? game['Away Score'] : '';
+                const gamesListContainer = document.createElement('div');
+                gamesListContainer.classList.add('game-entry-wrapper'); // Custom class for wrapper styling
 
-                    // Only show scores for non-scheduled/non-N/A stages
-                    if (currentStage === 'SCHEDULED' || currentStage === 'N/A') {
-                        homeScore = '';
-                        awayScore = '';
-                    }
+                // Reset lastDisplayedTime for each new league
+                let lastDisplayedTime = null; 
 
-                    scoreDiv.innerHTML = `
-                        <div class="score-value">${homeScore}</div>
-                        <div class="score-value">${awayScore}</div>
-                    `;
-                    gameEntry.appendChild(scoreDiv);
+                leagueGames.forEach(game => {
+                    const gameEntry = document.createElement('div');
+                    gameEntry.classList.add('game-entry'); // Custom class for flex and hover
 
-                    // --- Channel Column (Optional, Right-aligned) ---
-                    const channelDiv = document.createElement('div');
-                    channelDiv.classList.add('game-channel'); // Custom class for text-align, width, flex-shrink, text-sm
-                    const channelText = (game.Channels && game.Channels !== 'N/A') ? game.Channels : '';
-                    channelDiv.textContent = channelText;
-                    gameEntry.appendChild(channelDiv);
+ // --- Unified Time/Status Column (Far-left) ---
+const timeDiv = document.createElement('div');
+timeDiv.classList.add('time-cell');
 
-                    gamesListContainer.appendChild(gameEntry);
-                });
+const currentStage = game['Current Inning/Stage'] ? game['Current Inning/Stage'].toUpperCase() : 'N/A';
+let timeText = '';
+let timeClass = '';
 
-                leagueSection.appendChild(gamesListContainer);
-                dynamicGamesContent.appendChild(leagueSection);
-            });
+if (currentStage === 'FINISHED') {
+    timeText = 'F';
+    timeClass = 'status-finished';
+} else if (currentStage !== 'SCHEDULED' && currentStage !== 'N/A') {
+    // For live games, show inning/stage
+    timeText = currentStage.replace(/_INNING/g, '').replace(/_/g, ' ');
+    timeClass = 'status-live';
+} else {
+    // Upcoming game: show start time (if not a repeat)
+    const currentTime = game.Time || '';
+    if (currentTime && currentTime !== 'N/A' && currentTime !== lastDisplayedTime) {
+        timeText = currentTime;
+        lastDisplayedTime = currentTime;
+    } else {
+        timeText = '';
+    }
+    timeClass = 'status-scheduled';
+}
+timeDiv.textContent = timeText;
+timeDiv.classList.add(timeClass);
+gameEntry.appendChild(timeDiv);
 
-            if (dynamicGamesContent) dynamicGamesContent.classList.remove('hidden'); // Show content after loading
+// --- Event (Teams) Column ---
+const eventDiv = document.createElement('div');
+eventDiv.classList.add('game-details');
 
-        } catch (error) {
-            console.error('Failed to fetch or parse sports data:', error);
-            if (gamesErrorTextSpan) gamesErrorTextSpan.textContent = `Failed to load data: ${error.message}. Please check the CSV URL or try again later.`;
-            if (gamesErrorMessageDiv) gamesErrorMessageDiv.classList.remove('hidden'); // Show error if there's a problem
-        } finally {
-            if (gamesLoadingElement) gamesLoadingElement.classList.add('hidden'); // Always hide loading indicator
-        }
-    }
+// Handle event name for non-team sports vs. team sports
+let homeTeam = '';
+let awayTeam = '';
+if (game.Event && game.Event.includes(' - ')) {
+    const teams = game.Event.split(' - ');
+    homeTeam = teams[0] ? teams[0].trim() : 'N/A';
+    awayTeam = teams[1] ? teams[1].trim() : 'N/A';
+} else {
+    // For non-team sports like F1, Golf, etc., use Event as single line
+    homeTeam = game.Event || 'N/A Event';
+    awayTeam = game.Time || ''; // Use time for the second line if no away team
+}
 
-    /**
-     * Simple CSV parser that assumes no commas within fields unless quoted.
-     * Handles quoted fields and newlines within quoted fields.
-     * @param {string} csvText - The raw CSV string.
-     * @returns {Array<Object>} An array of objects, where each object represents a row.
-     */
-    function parseCsv(csvText) {
-        const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== ''); // Split by newline, remove empty lines
-        if (lines.length === 0) return [];
+const homeDiv = document.createElement('div');
+homeDiv.classList.add('team-name');
+homeDiv.textContent = homeTeam;
+eventDiv.appendChild(homeDiv);
 
-        const headerLine = lines[0];
-        const dataLines = lines.slice(1);
+const awayDiv = document.createElement('div');
+awayDiv.classList.add('team-name');
+awayDiv.textContent = awayTeam;
+eventDiv.appendChild(awayDiv);
 
-        // Regex to split by comma, respecting quoted fields
-        const parseLine = (line) => {
-            const result = [];
-            let inQuote = false;
-            let currentField = '';
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                if (char === '"') {
-                    inQuote = !inQuote;
-                    if (!inQuote && line[i + 1] === '"') { // Handle escaped double quotes ""
-                        currentField += '"';
-                        i++; // Skip the next quote
-                    }
-                } else if (char === ',' && !inQuote) {
-                    result.push(currentField.trim());
-                    currentField = '';
-                } else {
-                    currentField += char;
-                }
-            }
-            result.push(currentField.trim()); // Add the last field
-            return result;
-        };
+gameEntry.appendChild(eventDiv);
 
-        const headers = parseLine(headerLine);
-        const data = dataLines.map(line => parseLine(line));
+// --- Score Column ---
+const scoreDiv = document.createElement('div');
+scoreDiv.classList.add('game-scores');
 
-        const games = [];
-        data.forEach(row => {
-            if (row.length === headers.length) { // Ensure row has same number of columns as header
-                const game = {};
-                headers.forEach((header, index) => {
-                    game[header.trim()] = row[index];
-                });
-                games.push(game);
-            }
-        });
-        return games;
-    }
+let homeScore = (game['Home Score'] && game['Home Score'] !== 'N/A') ? game['Home Score'] : '';
+let awayScore = (game['Away Score'] && game['Away Score'] !== 'N/A') ? game['Away Score'] : '';
 
-    // Function to handle tab switching
-    function setupTabSwitching() {
-        const gamesTabs = document.querySelectorAll('.games-tab');
-        const gamesContents = document.querySelectorAll('.games-content');
+// Only show scores for non-scheduled/non-N/A stages
+if (currentStage === 'SCHEDULED' || currentStage === 'N/A') {
+    homeScore = '';
+    awayScore = '';
+}
 
-        gamesTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const targetTabId = tab.dataset.tab;
+const homeScoreDiv = document.createElement('div');
+homeScoreDiv.classList.add('score-value');
+homeScoreDiv.textContent = homeScore;
+scoreDiv.appendChild(homeScoreDiv);
 
-                gamesTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
+const awayScoreDiv = document.createElement('div');
+awayScoreDiv.classList.add('score-value');
+awayScoreDiv.textContent = awayScore;
+scoreDiv.appendChild(awayScoreDiv);
 
-                gamesContents.forEach(content => {
-                    if (content.id === `tv-listings-${targetTabId}`) {
-                        content.style.display = 'block';
-                    } else {
-                        content.style.display = 'none';
-                    }
-                });
+gameEntry.appendChild(scoreDiv);
 
-                // If the "TODAY" tab is clicked, fetch and display data
-                if (targetTabId === 'today') {
-                    fetchAndDisplaySportsData();
-                }
-                // You can add logic for 'LIVE' and 'SCORES' tabs here if needed
-                // For example, if you had different CSVs for live/scores:
-                // else if (targetTabId === 'live') { fetchAndDisplayLiveGames(); }
-                // else if (targetTabId === 'scores') { fetchAndDisplayScores(); }
-            });
-        });
+                    // --- Channel Column (Optional, Right-aligned) ---
+                    const channelDiv = document.createElement('div');
+                    channelDiv.classList.add('game-channel'); // Custom class for text-align, width, flex-shrink, text-sm
+                    const channelText = (game.Channels && game.Channels !== 'N/A') ? game.Channels : '';
+                    channelDiv.textContent = channelText;
+                    gameEntry.appendChild(channelDiv);
 
-        // Trigger the initial load for the "TODAY" tab when the page loads
-        document.querySelector('.games-tab[data-tab="today"]').click();
-    }
+                    gamesListContainer.appendChild(gameEntry);
+                });
 
-    // Initialize tab switching and load initial data when the page loads
-    document.addEventListener('DOMContentLoaded', setupTabSwitching);
+                leagueSection.appendChild(gamesListContainer);
+                dynamicGamesContent.appendChild(leagueSection);
+            });
+
+            if (dynamicGamesContent) dynamicGamesContent.classList.remove('hidden'); // Show content after loading
+
+        } catch (error) {
+            console.error('Failed to fetch or parse sports data:', error);
+            if (gamesErrorTextSpan) gamesErrorTextSpan.textContent = `Failed to load data: ${error.message}. Please check the CSV URL or try again later.`;
+            if (gamesErrorMessageDiv) gamesErrorMessageDiv.classList.remove('hidden'); // Show error if there's a problem
+        } finally {
+            if (gamesLoadingElement) gamesLoadingElement.classList.add('hidden'); // Always hide loading indicator
+        }
+    }
+
+    /**
+     * Simple CSV parser that assumes no commas within fields unless quoted.
+     * Handles quoted fields and newlines within quoted fields.
+     * @param {string} csvText - The raw CSV string.
+     * @returns {Array<Object>} An array of objects, where each object represents a row.
+     */
+    function parseCsv(csvText) {
+        const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== ''); // Split by newline, remove empty lines
+        if (lines.length === 0) return [];
+
+        const headerLine = lines[0];
+        const dataLines = lines.slice(1);
+
+        // Regex to split by comma, respecting quoted fields
+        const parseLine = (line) => {
+            const result = [];
+            let inQuote = false;
+            let currentField = '';
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuote = !inQuote;
+                    if (!inQuote && line[i + 1] === '"') { // Handle escaped double quotes ""
+                        currentField += '"';
+                        i++; // Skip the next quote
+                    }
+                } else if (char === ',' && !inQuote) {
+                    result.push(currentField.trim());
+                    currentField = '';
+                } else {
+                    currentField += char;
+                }
+            }
+            result.push(currentField.trim()); // Add the last field
+            return result;
+        };
+
+        const headers = parseLine(headerLine);
+        const data = dataLines.map(line => parseLine(line));
+
+        const games = [];
+        data.forEach(row => {
+            if (row.length === headers.length) { // Ensure row has same number of columns as header
+                const game = {};
+                headers.forEach((header, index) => {
+                    game[header.trim()] = row[index];
+                });
+                games.push(game);
+            }
+        });
+        return games;
+    }
+
+    // Function to handle tab switching
+    function setupTabSwitching() {
+        const gamesTabs = document.querySelectorAll('.games-tab');
+        const gamesContents = document.querySelectorAll('.games-content');
+
+        gamesTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTabId = tab.dataset.tab;
+
+                gamesTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                gamesContents.forEach(content => {
+                    if (content.id === `tv-listings-${targetTabId}`) {
+                        content.style.display = 'block';
+                    } else {
+                        content.style.display = 'none';
+                    }
+                });
+
+                // If the "TODAY" tab is clicked, fetch and display data
+                if (targetTabId === 'today') {
+                    fetchAndDisplaySportsData();
+                }
+                // You can add logic for 'LIVE' and 'SCORES' tabs here if needed
+                // For example, if you had different CSVs for live/scores:
+                // else if (targetTabId === 'live') { fetchAndDisplayLiveGames(); }
+                // else if (targetTabId === 'scores') { fetchAndDisplayScores(); }
+            });
+        });
+
+        // Trigger the initial load for the "TODAY" tab when the page loads
+        document.querySelector('.games-tab[data-tab="today"]').click();
+    }
+
+    // Initialize tab switching and load initial data when the page loads
+    document.addEventListener('DOMContentLoaded', setupTabSwitching);
 </script>
 
-	    <script>
-  window.addEventListener("DOMContentLoaded", () => {
-    const todayTab = document.querySelector('.games-tab[data-target="today"]');
-    if (todayTab) todayTab.click();
-  });
+	    <script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const todayTab = document.querySelector('.games-tab[data-target="today"]');
+    if (todayTab) todayTab.click();
+  });
 </script>
-	</script>
 	   
 
   </body>
 </html> 
+
