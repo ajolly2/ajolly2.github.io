@@ -1,95 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>MLB Live Scores</title>
-  <style>
-    body { font-family: sans-serif; background: #151515; color: #eee; padding: 1rem; }
-    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
-    #debug { font-size: 0.9rem; color: #ccc; margin-bottom: 1rem; }
-    #games { display: flex; flex-direction: column; gap: .5rem; }
-    .game {
-      display: grid;
-      grid-template-columns: 80px 1fr 60px;
-      gap: .5rem;
-      padding: .5rem;
-      border-bottom: 1px solid #444;
-      align-items: center;
-    }
-    .time { color: #ccc; }
-    .teams {}
-    .score { text-align: right; font-weight: bold; }
-    .error { color: #f66; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live ts Scores</title>
+    <style>
+        /* Basic CSS for display - you'll expand on this */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        #scores-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .game-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+        .game-card h2 {
+            margin-top: 0;
+            color: #007bff;
+            font-size: 1.3em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .team-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            flex-grow: 1;
+        }
+        .score {
+            font-weight: bold;
+            font-size: 1.5em;
+            color: #28a745;
+            min-width: 50px;
+            text-align: right;
+        }
+        .status {
+            font-style: italic;
+            color: #666;
+            margin-top: 15px;
+            text-align: right;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
-  <h1>MLB Live Scores</h1>
-  <div id="debug">Initializing…</div>
-  <div id="games"></div>
+    <h1>Live Sports Scores</h1>
+    <div id="scores-container">
+        <p>Loading scores...</p>
+    </div>
 
-  <script>
-    const URL = 'https://raw.githubusercontent.com/ajolly2/livesoccertv-scraper/main/data/raw_flash.json';
-    const debug = document.getElementById('debug');
-    const container = document.getElementById('games');
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-    function getISO(offset = 0) {
-      const d = new Date();
-      d.setDate(d.getDate() + offset);
-      return d.toISOString().slice(0,10);
-    }
+    <script>
+        // Your Firebase project configuration - these are the values you provided.
+        const firebaseConfig = {
+          apiKey: "AIzaSyBu7fmm2nEc8VudPeHQUXOcN8MNjMtrqho",
+          authDomain: "flashlivesportsscraperdata.firebaseapp.com",
+          projectId: "flashlivesportsscraperdata",
+          storageBucket: "flashlivesportsscraperdata.firebasestorage.app",
+          messagingSenderId: "1093514946337",
+          appId: "1:1093514946337:web:9a077f2d4fb12f79294060",
+          measurementId: "G-V8RH1SZD69"
+        };
 
-    function inRange(iso) {
-      const date = iso.slice(0,10);
-      return date === getISO(0) || date === getISO(-1);
-    }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
 
-    async function refresh() {
-      try {
-        debug.textContent = `Fetching… ${new Date().toLocaleTimeString()}`;
-        const res = await fetch(URL);
-        if (!res.ok) throw new Error(res.statusText);
-        const all = await res.json();
+        // Get a reference to the Firestore database
+        const db = firebase.firestore();
 
-        // pick games from today or yesterday, any league
-        const games = all.filter(g => inRange(g.start_time));
+        // Get the container where scores will be displayed
+        const scoresContainer = document.getElementById('scores-container');
 
-        const leagues = [...new Set(games.map(g=>g.league))];
-        debug.textContent = `Found ${games.length} games across ${leagues.join(', ')}`;
+        // Function to render or update a single game card
+        function renderGameCard(gameData, gameId) {
+            let gameCard = document.getElementById(`game-${gameId}`);
+            if (!gameCard) {
+                // Create new card if it doesn't exist
+                gameCard = document.createElement('div');
+                gameCard.id = `game-${gameId}`;
+                gameCard.className = 'game-card';
+                scoresContainer.appendChild(gameCard);
+            }
 
-        container.innerHTML = '';
-        if (!games.length) {
-          container.textContent = 'No games in the last 24 hrs.';
-          return;
+            // Populate the card with game data
+            gameCard.innerHTML = `
+                <h2>${gameData['League'] || 'N/A'} - ${gameData['Sport'] || 'N/A'}</h2>
+                <p>Start Time: ${new Date(gameData['Start Time Unix'] * 1000).toLocaleString() || 'N/A'}</p>
+                <div class="team-row">
+                    <span class="team-name">${gameData['Home Team'] || 'Home'}</span>
+                    <span class="score">${gameData['Home Score'] !== undefined ? gameData['Home Score'] : 'N/A'}</span>
+                </div>
+                <div class="team-row">
+                    <span class="team-name">${gameData['Away Team'] || 'Away'}</span>
+                    <span class="score">${gameData['Away Score'] !== undefined ? gameData['Away Score'] : 'N/A'}</span>
+                </div>
+                <p class="status">Status: ${gameData['Status'] || 'N/A'}</p>
+                `;
         }
 
-        // sort by kickoff
-        games.sort((a,b) => new Date(a.start_time) - new Date(b.start_time));
+        // Function to remove a game card
+        function removeGameCard(gameId) {
+            const gameCard = document.getElementById(`game-${gameId}`);
+            if (gameCard) {
+                gameCard.remove();
+            }
+        }
 
-        games.forEach(g => {
-          const live = /In Progress|Top|Bot|\d+(st|nd|rd|th)/.test(g.status);
-          const when = live
-            ? g.status
-            : new Date(g.start_time)
-                .toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+        // Listen for real-time updates from the 'games' collection
+        // This will automatically update your UI whenever data changes in Firestore
+        // Ordering by 'Start Time Unix' ensures games are displayed chronologically
+        db.collection('games').orderBy('Start Time Unix').onSnapshot((snapshot) => {
+            // Clear the loading message after the first data load
+            const loadingMessage = scoresContainer.querySelector('p');
+            if (loadingMessage && loadingMessage.textContent === 'Loading scores...') {
+                scoresContainer.innerHTML = '';
+            }
 
-          const row = document.createElement('div');
-          row.className = 'game';
-          row.innerHTML = `
-            <div class="time">${when}</div>
-            <div class="teams">${g.away} @ ${g.home}</div>
-            <div class="score">${g.score_away||''}–${g.score_home||''}</div>
-            <div class="league" style="font-size:.8em;color:#888;margin-left:.5em;">${g.league}</div>
-          `;
-          container.appendChild(row);
+            snapshot.docChanges().forEach((change) => {
+                const gameData = change.doc.data();
+                // IMPORTANT: Ensure 'Game ID' from your Firestore document is truly unique
+                // and consistent. If not, use change.doc.id for the HTML element ID.
+                const gameId = gameData['Game ID'] || change.doc.id; 
+
+                if (change.type === 'added' || change.type === 'modified') {
+                    renderGameCard(gameData, gameId);
+                } else if (change.type === 'removed') {
+                    removeGameCard(gameId);
+                }
+            });
+        }, (error) => {
+            console.error("Error listening to Firestore: ", error);
+            scoresContainer.innerHTML = `<p>Error loading scores. Please check console for details.</p>`;
         });
-      } catch (err) {
-        debug.textContent = `Error: ${err.message}`;
-        console.error(err);
-      }
-    }
-
-    refresh();
-    setInterval(refresh, 60_000);
-  </script>
+    </script>
 </body>
 </html>
