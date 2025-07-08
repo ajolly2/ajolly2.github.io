@@ -133,10 +133,16 @@
             }
         }
 
-        // Listen for real-time updates from the 'games' collection
+        // Listen for real-time updates from the correct Firestore collection path
         // This will automatically update your UI whenever data changes in Firestore
         // Ordering by 'Start Time Unix' ensures games are displayed chronologically
-        db.collection('games').orderBy('Start Time Unix').onSnapshot((snapshot) => {
+        db.collection('artifacts')
+          .doc('flashlivesportsscraperdata')
+          .collection('public')
+          .doc('data')
+          .collection('sportsGames')
+          .orderBy('Start Time Unix')
+          .onSnapshot((snapshot) => {
             // Clear the loading message after the first data load
             const loadingMessage = scoresContainer.querySelector('p');
             if (loadingMessage && loadingMessage.textContent === 'Loading scores...') {
