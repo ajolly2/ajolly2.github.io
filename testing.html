@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Live Sports Scores</title>
+  <title>Live Sports Scores by League</title>
   <style>
     body {
       background-color: #111;
@@ -16,7 +16,6 @@
       text-align: center;
       margin-bottom: 20px;
       font-size: 2em;
-      color: #eee;
     }
     table {
       width: 100%;
@@ -27,18 +26,36 @@
       border-bottom: 1px solid #333;
       vertical-align: middle;
     }
+    /* League header styling */
+    .league-header td {
+      background: #222;
+      color: #ffcc00;
+      font-size: 1.2em;
+      font-weight: bold;
+      border: none;
+      padding: 12px 8px;
+    }
+    /* Column widths & alignment */
     .time-col {
       width: 80px;
       font-weight: bold;
     }
     .match-col {
-      flex: 1;
+      /* expands */
+    }
+    .score-col {
+      width: 80px;
+      text-align: center;
+    }
+    .status-col {
+      width: 120px;
+      text-align: center;
+      font-style: italic;
     }
     .links-col {
       text-align: right;
       width: 120px;
     }
-    /* Placeholder styling for the betting logos */
     .links-col img {
       height: 1.2em;
       margin-left: 8px;
@@ -49,7 +66,9 @@
 <body>
   <h1>Live Sports Scores</h1>
   <table id="scores-table">
-    <tbody></tbody>
+    <tbody>
+      <tr><td colspan="5">Loading…</td></tr>
+    </tbody>
   </table>
 
   <!-- Firebase compat SDKs -->
@@ -57,7 +76,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <script>
-    // Your FlashLive Sports Scraper project's config
+    // ← your flashlive-sports-scraper project's config
     const firebaseConfig = {
       apiKey: "AIzaSyAtVcKiDt0J-60_Psit5Ip2HCL7FN2NVgI",
       authDomain: "flashlive-sports-scraper.firebaseapp.com",
@@ -67,19 +86,17 @@
       appId: "1:227831135271:web:29e655cac33b2e32d42202",
       measurementId: "G-RMBDDB0MF2"
     };
-    // Initialize Firebase & Firestore
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Helper to format UNIX timestamps to "5:00 AM"
+    // helper: UNIX → "5:00 AM"
     function formatTime(unix) {
       return new Date(unix * 1000)
         .toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     }
 
-    const tbody = document.querySelector("#scores-table tbody");
+    const tbody = document.querySelector('#scores-table tbody');
 
-    // Real-time listener
     db.collection('artifacts')
       .doc('flashlivesportsscraperdata')
       .collection('public')
@@ -87,43 +104,79 @@
       .collection('sportsGames')
       .orderBy('Start Time Unix')
       .onSnapshot(snapshot => {
-        // Clear existing rows
-        tbody.innerHTML = '';
-        let lastTime = null;
+        // 1️⃣ Pull all games into an array
+        const games = snapshot.docs.map(d => d.data());
 
-        snapshot.docs.forEach(doc => {
-          const game = doc.data();
-          const timeStr = formatTime(game['Start Time Unix']);
-
-          const tr = document.createElement('tr');
-
-          // Time column (only show when different from previous)
-          const tdTime = document.createElement('td');
-          tdTime.className = 'time-col';
-          tdTime.textContent = timeStr !== lastTime ? timeStr : '';
-          tr.appendChild(tdTime);
-
-          // Teams column
-          const tdMatch = document.createElement('td');
-          tdMatch.className = 'match-col';
-          tdMatch.textContent = `${game['Home Team']} vs ${game['Away Team']}`;
-          tr.appendChild(tdMatch);
-
-          // Betting logos column (replace src with your actual images)
-          const tdLinks = document.createElement('td');
-          tdLinks.className = 'links-col';
-          tdLinks.innerHTML = `
-            <img src="bet365.png" alt="bet365">
-            <img src="unibet.png" alt="Unibet">
-          `;
-          tr.appendChild(tdLinks);
-
-          tbody.appendChild(tr);
-          lastTime = timeStr;
+        // 2️⃣ Group by League
+        const byLeague = {};
+        games.forEach(g => {
+          const L = g['League'] || 'Unknown League';
+          byLeague[L] = byLeague[L] || [];
+          byLeague[L].push(g);
         });
-      }, error => {
-        console.error("Error loading scores:", error);
-        tbody.innerHTML = `<tr><td colspan="3">Error loading scores.</td></tr>`;
+
+        // 3️⃣ Clear table
+        tbody.innerHTML = '';
+
+        // 4️⃣ Render each league block (alphabetical)
+        Object.keys(byLeague).sort().forEach(league => {
+          // League header
+          const headerRow = document.createElement('tr');
+          headerRow.className = 'league-header';
+          headerRow.innerHTML = `<td colspan="5">${league}</td>`;
+          tbody.appendChild(headerRow);
+
+          // Sort this league’s games by time
+          byLeague[league]
+            .sort((a, b) => a['Start Time Unix'] - b['Start Time Unix'])
+            .forEach(game => {
+              const tr = document.createElement('tr');
+
+              // Time
+              const tdTime = document.createElement('td');
+              tdTime.className = 'time-col';
+              tdTime.textContent = formatTime(game['Start Time Unix'] || 0);
+              tr.appendChild(tdTime);
+
+              // Matchup
+              const tdMatch = document.createElement('td');
+              tdMatch.className = 'match-col';
+              tdMatch.textContent = `${game['Home Team']} vs ${game['Away Team']}`;
+              tr.appendChild(tdMatch);
+
+              // Score
+              const tdScore = document.createElement('td');
+              tdScore.className = 'score-col';
+              // show blank if undefined
+              const hs = game['Home Score'];
+              const as = game['Away Score'];
+              tdScore.textContent =
+                (hs != null ? hs : '') + (hs!=null||as!=null ? '–' : '') + (as != null ? as : '');
+              tr.appendChild(tdScore);
+
+              // Status / timing (e.g. "Q2", "Final", "Top 3rd")
+              const tdStatus = document.createElement('td');
+              tdStatus.className = 'status-col';
+              tdStatus.textContent = game['Status'] || '';
+              tr.appendChild(tdStatus);
+
+              // Betting logos / links
+              const tdLinks = document.createElement('td');
+              tdLinks.className = 'links-col';
+              tdLinks.innerHTML = `
+                <img src="bet365.png" alt="bet365">
+                <img src="unibet.png" alt="Unibet">
+              `;
+              tr.appendChild(tdLinks);
+
+              tbody.appendChild(tr);
+            });
+        });
+      }, err => {
+        console.error("Firestore error:", err);
+        tbody.innerHTML = `<tr><td colspan="5" style="color:red">
+          Error loading scores:<br>${err.message}
+        </td></tr>`;
       });
   </script>
 </body>
