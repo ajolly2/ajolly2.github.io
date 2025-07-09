@@ -1,170 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live ts Scores</title>
-    <style>
-        /* Basic CSS for display - you'll expand on this */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        h1 {
-            color: #0056b3;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        #scores-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .game-card {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease-in-out;
-        }
-        .game-card:hover {
-            transform: translateY(-5px);
-        }
-        .game-card h2 {
-            margin-top: 0;
-            color: #007bff;
-            font-size: 1.3em;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-        .team-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0;
-        }
-        .team-name {
-            font-weight: bold;
-            font-size: 1.1em;
-            flex-grow: 1;
-        }
-        .score {
-            font-weight: bold;
-            font-size: 1.5em;
-            color: #28a745;
-            min-width: 50px;
-            text-align: right;
-        }
-        .status {
-            font-style: italic;
-            color: #666;
-            margin-top: 15px;
-            text-align: right;
-            font-size: 0.9em;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Sports Scores</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2em;
+      color: #eee;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #333;
+      vertical-align: middle;
+    }
+    .time-col {
+      width: 80px;
+      font-weight: bold;
+    }
+    .match-col {
+      flex: 1;
+    }
+    .links-col {
+      text-align: right;
+      width: 120px;
+    }
+    /* Placeholder styling for the betting logos */
+    .links-col img {
+      height: 1.2em;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+  </style>
 </head>
 <body>
-    <h1>Live Sports Scores</h1>
-    <div id="scores-container">
-        <p>Loading scores...</p>
-    </div>
+  <h1>Live Sports Scores</h1>
+  <table id="scores-table">
+    <tbody></tbody>
+  </table>
 
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <!-- Firebase compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-    <script>
-        // Your Firebase project configuration - these are the values you provided.
-        const firebaseConfig = {
-          apiKey: "AIzaSyBu7fmm2nEc8VudPeHQUXOcN8MNjMtrqho",
-          authDomain: "flashlivesportsscraperdata.firebaseapp.com",
-          projectId: "flashlivesportsscraperdata",
-          storageBucket: "flashlivesportsscraperdata.appspot.com",
-          messagingSenderId: "1093514946337",
-          appId: "1:1093514946337:web:9a077f2d4fb12f79294060",
-          measurementId: "G-V8RH1SZD69"
-        };
+  <script>
+    // Your FlashLive Sports Scraper project's config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtVcKiDt0J-60_Psit5Ip2HCL7FN2NVgI",
+      authDomain: "flashlive-sports-scraper.firebaseapp.com",
+      projectId: "flashlive-sports-scraper",
+      storageBucket: "flashlive-sports-scraper.firebasestorage.app",
+      messagingSenderId: "227831135271",
+      appId: "1:227831135271:web:29e655cac33b2e32d42202",
+      measurementId: "G-RMBDDB0MF2"
+    };
+    // Initialize Firebase & Firestore
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+    // Helper to format UNIX timestamps to "5:00 AM"
+    function formatTime(unix) {
+      return new Date(unix * 1000)
+        .toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
 
-        // Get a reference to the Firestore database
-        const db = firebase.firestore();
+    const tbody = document.querySelector("#scores-table tbody");
 
-        // Get the container where scores will be displayed
-        const scoresContainer = document.getElementById('scores-container');
+    // Real-time listener
+    db.collection('artifacts')
+      .doc('flashlivesportsscraperdata')
+      .collection('public')
+      .doc('data')
+      .collection('sportsGames')
+      .orderBy('Start Time Unix')
+      .onSnapshot(snapshot => {
+        // Clear existing rows
+        tbody.innerHTML = '';
+        let lastTime = null;
 
-        // Function to render or update a single game card
-        function renderGameCard(gameData, gameId) {
-            let gameCard = document.getElementById(`game-${gameId}`);
-            if (!gameCard) {
-                // Create new card if it doesn't exist
-                gameCard = document.createElement('div');
-                gameCard.id = `game-${gameId}`;
-                gameCard.className = 'game-card';
-                scoresContainer.appendChild(gameCard);
-            }
+        snapshot.docs.forEach(doc => {
+          const game = doc.data();
+          const timeStr = formatTime(game['Start Time Unix']);
 
-            // Populate the card with game data
-            gameCard.innerHTML = `
-                <h2>${gameData['League'] || 'N/A'} - ${gameData['Sport'] || 'N/A'}</h2>
-                <p>Start Time: ${new Date(gameData['Start Time Unix'] * 1000).toLocaleString() || 'N/A'}</p>
-                <div class="team-row">
-                    <span class="team-name">${gameData['Home Team'] || 'Home'}</span>
-                    <span class="score">${gameData['Home Score'] !== undefined ? gameData['Home Score'] : 'N/A'}</span>
-                </div>
-                <div class="team-row">
-                    <span class="team-name">${gameData['Away Team'] || 'Away'}</span>
-                    <span class="score">${gameData['Away Score'] !== undefined ? gameData['Away Score'] : 'N/A'}</span>
-                </div>
-                <p class="status">Status: ${gameData['Status'] || 'N/A'}</p>
-                `;
-        }
+          const tr = document.createElement('tr');
 
-        // Function to remove a game card
-        function removeGameCard(gameId) {
-            const gameCard = document.getElementById(`game-${gameId}`);
-            if (gameCard) {
-                gameCard.remove();
-            }
-        }
+          // Time column (only show when different from previous)
+          const tdTime = document.createElement('td');
+          tdTime.className = 'time-col';
+          tdTime.textContent = timeStr !== lastTime ? timeStr : '';
+          tr.appendChild(tdTime);
 
-        // Listen for real-time updates from the correct Firestore collection path
-        // This will automatically update your UI whenever data changes in Firestore
-        // Ordering by 'Start Time Unix' ensures games are displayed chronologically
-        db.collection('artifacts')
-          .doc('flashlivesportsscraperdata')
-          .collection('public')
-          .doc('data')
-          .collection('sportsGames')
-          .orderBy('Start Time Unix')
-          .onSnapshot((snapshot) => {
-            // Clear the loading message after the first data load
-            const loadingMessage = scoresContainer.querySelector('p');
-            if (loadingMessage && loadingMessage.textContent === 'Loading scores...') {
-                scoresContainer.innerHTML = '';
-            }
+          // Teams column
+          const tdMatch = document.createElement('td');
+          tdMatch.className = 'match-col';
+          tdMatch.textContent = `${game['Home Team']} vs ${game['Away Team']}`;
+          tr.appendChild(tdMatch);
 
-            snapshot.docChanges().forEach((change) => {
-                const gameData = change.doc.data();
-                // IMPORTANT: Ensure 'Game ID' from your Firestore document is truly unique
-                // and consistent. If not, use change.doc.id for the HTML element ID.
-                const gameId = gameData['Game ID'] || change.doc.id; 
+          // Betting logos column (replace src with your actual images)
+          const tdLinks = document.createElement('td');
+          tdLinks.className = 'links-col';
+          tdLinks.innerHTML = `
+            <img src="bet365.png" alt="bet365">
+            <img src="unibet.png" alt="Unibet">
+          `;
+          tr.appendChild(tdLinks);
 
-                if (change.type === 'added' || change.type === 'modified') {
-                    renderGameCard(gameData, gameId);
-                } else if (change.type === 'removed') {
-                    removeGameCard(gameId);
-                }
-            });
-        }, (error) => {
-            console.error("Error listening to Firestore: ", error);
-            scoresContainer.innerHTML = `<p>Error loading scores. Please check console for details.</p>`;
+          tbody.appendChild(tr);
+          lastTime = timeStr;
         });
-    </script>
+      }, error => {
+        console.error("Error loading scores:", error);
+        tbody.innerHTML = `<tr><td colspan="3">Error loading scores.</td></tr>`;
+      });
+  </script>
 </body>
 </html>
