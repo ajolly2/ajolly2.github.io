@@ -2779,6 +2779,42 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
   });
 </script>
 
+	    <script>
+		    // Mapping of original league names to display names (exact matches)
+const leagueNameMap = {
+  "USA: WNBA": "WNBA",
+  "USA: NBA Salt Lake City Summer League": "NBA Summer League",
+  "USA: MLB": "MLB",
+  "World: Club Friendly": "Club Friendly",
+  // Add more as needed
+};
+
+// Mapping for "contains" keywords
+const leagueNameContainsMap = [
+  { keyword: "Tour de France", display: "Tour de France" },
+  { keyword: "Wimbledon", display: "Wimbledon" },
+  // Add more as needed
+];
+
+// Function to get display name for a league
+function getDisplayLeagueName(originalName) {
+  // 1. Exact match mapping
+  if (leagueNameMap[originalName]) {
+    return leagueNameMap[originalName];
+  }
+  // 2. Contains mapping
+  if (originalName) {
+    for (const rule of leagueNameContainsMap) {
+      if (originalName.toLowerCase().includes(rule.keyword.toLowerCase())) {
+        return rule.display;
+      }
+    }
+  }
+  // 3. Generic: remove prefix before colon
+  return originalName && originalName.includes(':') ? originalName.split(':')[1].trim() : originalName;
+}
+	    </script>
+	    
 <script>
   async function fetchAndDisplaySportsData() {
   const gamesLoadingElement = document.getElementById('gamesLoading');
@@ -2831,7 +2867,7 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
       leagueSection.classList.add('league-section');
       const leagueHeader = document.createElement('h2');
       leagueHeader.classList.add('league-header');
-      leagueHeader.textContent = leagueName;
+      leagueHeader.textContent = getDisplayLeagueName(leagueName);
       leagueSection.appendChild(leagueHeader);
 
       const gamesListContainer = document.createElement('div');
