@@ -2900,6 +2900,41 @@ const response = await fetch("https://raw.githubusercontent.com/ajolly2/Social_s
   }
 }
 </script>
+
+	    <script>
+function setupTabSwitching() {
+    const gamesTabs = document.querySelectorAll('.games-tab');
+    const gamesContents = document.querySelectorAll('.games-content');
+
+    gamesTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetTabId = tab.dataset.tab;
+
+            gamesTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            gamesContents.forEach(content => {
+                if (content.id === `tv-listings-${targetTabId}`) {
+                    content.style.display = 'block';
+                } else {
+                    content.style.display = 'none';
+                }
+            });
+
+            // If the "TODAY" tab is clicked, fetch and display data
+            if (targetTabId === 'today') {
+                fetchAndDisplaySportsData();
+            }
+        });
+    });
+
+    // Trigger the initial load for the "TODAY" tab when the page loads
+    const todayTab = document.querySelector('.games-tab[data-tab="today"]');
+    if (todayTab) todayTab.click();
+}
+
+document.addEventListener('DOMContentLoaded', setupTabSwitching);
+</script>
 	
 	   
 
