@@ -90,12 +90,13 @@
     const db = firebase.firestore();
 
    // helper: UNIX → "5:00 AM"
+// helper: UNIX → "5:00 AM"
 function formatTime(unix) {
   return new Date(unix * 1000)
     .toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
 
-// Mapping of original league names to display names
+// Mapping of original league names to display names (exact matches)
 const leagueNameMap = {
   "USA: WNBA": "WNBA",
   "USA: NBA Salt Lake City Summer League": "NBA Summer League",
@@ -104,12 +105,29 @@ const leagueNameMap = {
   // Add more as needed
 };
 
+// Mapping for "contains" keywords
+const leagueNameContainsMap = [
+  { keyword: "Tour de France", display: "Tour de France" },
+  { keyword: "Wimbledon", display: "Wimbledon" },
+  // Add more as needed
+];
+
 // Function to get display name for a league
 function getDisplayLeagueName(originalName) {
+  // 1. Exact match mapping
   if (leagueNameMap[originalName]) {
     return leagueNameMap[originalName];
   }
-  return originalName.includes(':') ? originalName.split(':')[1].trim() : originalName;
+  // 2. Contains mapping
+  if (originalName) {
+    for (const rule of leagueNameContainsMap) {
+      if (originalName.toLowerCase().includes(rule.keyword.toLowerCase())) {
+        return rule.display;
+      }
+    }
+  }
+  // 3. Generic: remove prefix before colon
+  return originalName && originalName.includes(':') ? originalName.split(':')[1].trim() : originalName;
 }
 
     const tbody = document.querySelector('#scores-table tbody');
